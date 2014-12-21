@@ -109,6 +109,17 @@ class Common(General) :
             d[k] = self.data[index,dKeys[k]]
 
         return d
+
+    def containsEnergyVariation(self) : 
+        '''Method to determine if the energy is constant in the lattice
+        Required if there is 
+        1) RfCavities
+        ''' 
+        for i in range(0,len(data),1) : 
+            if self.type[i] == 'LCAV' : 
+                return True
+        return False 
+
         
 class Twiss(General) : 
     '''Twiss data structure
