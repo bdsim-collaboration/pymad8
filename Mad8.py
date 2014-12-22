@@ -129,10 +129,10 @@ class Common(General) :
         
         for i in range(0,len(self.data),1) : 
             if self.type[i] == 'RCOL' or self.type[i] == 'ECOL' : 
-                f.write('{:20s} {:5s} {:12.10f} {:12.10f} {:12.10f} {:20s}\n'.format(self.name[i],self.type[i].lower(),
+                f.write('{:20s} {:5s} {:12.10f} {:12.10f} {:12.10f} {:20s} {:20s}\n'.format(self.name[i],self.type[i].lower(),
                                                     self.data[i][self.keys['ecol']['l']],
                                                     self.data[i][self.keys['ecol']['xsize']],self.data[i][self.keys['ecol']['ysize']],
-                                                    'G4MATERIAL'))
+                                                    'G4MATERIAL','BDSIM_GEOM'))
 
         # close file 
         f.close()
