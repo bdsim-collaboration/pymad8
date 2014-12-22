@@ -120,7 +120,22 @@ class Common(General) :
                 return True
         return False 
 
+    def makeCollimatorTemplate(self, fileName = 'collimator.dat') : 
+        '''Method to make a template of the collimator description file,
+        it will require editing to add information not present in twiss file''' 
+
+        # open file 
+        f = open(fileName,'w') 
         
+        for i in range(0,len(self.data),1) : 
+            if self.type[i] == 'RCOL' or self.type[i] == 'ECOL' : 
+                f.write('{:20s} {:5s} {:12.10f} {:12.10f} {:12.10f} {:20s}\n'.format(self.name[i],self.type[i].lower(),
+                                                    self.data[i][self.keys['ecol']['l']],
+                                                    self.data[i][self.keys['ecol']['xsize']],self.data[i][self.keys['ecol']['ysize']],
+                                                    'G4MATERIAL'))
+
+        # close file 
+        f.close()
 class Twiss(General) : 
     '''Twiss data structure
     data : numpy array of data 
