@@ -1,6 +1,10 @@
 import pylab as pl 
 import numpy as np
-import fortranformat as ff
+try:
+    import fortranformat as ff
+except ImportError:
+    print 'Mad8.py > WARNING - no fortranformat python module found'
+    print 'this module will not work as intended'
 
 def getValueByName(name, key, common, table) : 
     ind1 = common.findByName(name)
