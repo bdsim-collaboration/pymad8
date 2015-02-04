@@ -1,5 +1,3 @@
-# maybe this should be in Converter.py
-
 import re as _re
 import numpy as _np
 
