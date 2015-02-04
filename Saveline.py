@@ -1,8 +1,11 @@
+# maybe this should be in Converter.py
+
 import re as _re
 import numpy as _np
 
-class Loader :
-    def __init__(self, fileName) :
+
+class Loader:
+    def __init__(self, fileName):
         self.mad8Types = ['LINE',
                           'DRIFT',
                           'VKICKER',
@@ -23,111 +26,113 @@ class Loader :
         self.elementDict = {}
         self.mad8ElementClasses = []
         self.elementList = []
-        # New types.  Think more on type is dict more useful
         self.components = []
         self.sequences = []
         self.samplers = []
 
-        self.loadFile(fileName) # Does some basic file formatting
+        self.loadFile(fileName)  # Does some basic file formatting
         self.fileAnalysis()
-        self.expandFile()
-        # exists in a converter?
-        #self.saveFile('ILC.saveline') # Saves file doesn't update element definitions
+        self.expand_file()
 
-    def loadFile(self, fileName) :
+
+    def loadFile(self, fileName):
         f = open(fileName)
 
         # load entire file and remove continued lines
-        checkNext = False
         # new list of complete lines
         self.ff = []
         # line to add
         lta = ''
         # loop over lines in original file
-        for l in f :
-            sl = l.strip('\n ')   # remove trailing characters
-            t  = sl.split()       # split
-            if len(sl) < 1 :      # remove empty lines
+        for l in f:
+            sl = l.strip('\n ')  # remove trailing characters
+            t = sl.split()  # split
+            if len(sl) < 1:  # remove empty lines
                 self.ff.append(sl)
                 continue
-            if sl[-1] == '&' :    # check for continuations
-                lta = lta+sl[0:-1]# append line
-            else :
-                if len(lta) == 0 :# no continuation
-                    lta = l       # line is complete
+            if sl[-1] == '&':  # check for continuations
+                lta = lta + sl[0:-1]  # append line
+            else:
+                if len(lta) == 0:  # no continuation
+                    lta = l  # line is complete
                     self.ff.append(lta)
                     lta = ''
-                else :
-                    lta = lta+sl  # there was some line to add to
-                    self.ff.append(lta+'\n')# append
-                    lta = ''      # clear line to add
+                else:
+                    lta = lta + sl  #  there was some line to add to
+                    self.ff.append(lta + '\n')  # append
+                    lta = ''  # clear line to add
 
-    def fileAnalysis(self) :
+    def fileAnalysis(self):
         # loop over lines
-        for l in self.ff :
-            l = l.replace(' ','')
+        for l in self.ff:
+            l = l.replace(' ', '')
             sl = _re.split('[:,\n]', l)
             sl = [s.strip() for s in sl]
-
             # skip empty lines
-            if len(sl) <= 1  :
+            if len(sl) <= 1:
                 continue
             # skip comment lines
-            if not sl[0] == '' :
-                if sl[0][0] == '!' :
+            if not sl[0] == '':
+                if sl[0][0] == '!':
                     continue
 
-            name = sl[0]
-            temp = sl[1] # Can you use type (reserved keyword)? Changed just to be sure, better name!
+            element_name = sl[0]
+            element_type = sl[1]
 
             # store all elements in dictionary
-            if name == 'RETURN' :
+            if element_name == 'RETURN':
                 continue
-            elif temp.find('LINE') != -1 : # find() returns -1 if it doesn't find anything
+            elif element_type.find('LINE') != -1:  # find() returns -1 if it doesn't find anything
                 # do lines a little differently find ( and )
-                self.elementDict[name] = ['LINE', l[l.find('(') + 1 : l.find(')')].split(',')]
-            else :
-                self.elementDict[name] = [temp, sl[2:-1]]
-
+                self.elementDict[element_name] = {'LINE': l[l.find('(') + 1: l.find(')')].split(',')}
+            else:
+                element_properties = {}
+                for element_property in sl[2:-1]:
+                    properties = element_property.split('=')
+                    key = properties[0]
+                    value = properties[1]
+                    element_properties[key] = value
+                self.elementDict[element_name] = {element_type: element_properties}
             # store element name to recreate file
-            self.elementList.append(name)
+            self.elementList.append(element_name)
 
             # find element classes
-            try :
-                self.mad8Types.index(temp)
-#                print name, type
-            except ValueError :
-#                print name, type, " <<<< element class"
-                self.mad8ElementClasses.append(temp)
+            try:
+                self.mad8Types.index(element_type)
+            # print name, type
+            except ValueError:
+                # print name, type, " <<<< element class"
+                self.mad8ElementClasses.append(element_type)
 
-    def flattenElements(self, elementName) :
-        if not elementName in self.mad8Types :
+    def flatten_elements(self, element_name):
+        if element_name not in self.mad8Types:
+            for i in self.elementList:
+                if i == self.elementDict[element_name].keys()[0] and not i == '':
+                    type_key = self.elementDict[i].keys()[0]
+                    element_type_key = self.elementDict[element_name].keys()[0]
 
-            for i in self.elementList :
+                    self.elementDict[element_name][type_key] = self.elementDict[element_name][element_type_key]
+                    del self.elementDict[element_name][element_type_key]
 
-                if i == self.elementDict[elementName][0] and not i == '' : # How to handle if they're empty?
-                    self.elementDict[elementName][0] = self.elementDict[i][0]
+                    if self.elementDict[element_name][type_key] == {}:
+                        continue  # No properties to update
 
-                    if self.elementDict[i][1] == [] :
-                        continue # No properties to update
-
-                    if self.elementDict[i][1] == self.elementDict[elementName][1] : # properties are identicle so skip.
+                    if self.elementDict[i].values()[0] == self.elementDict[element_name].values()[0]:  #  properties are identical so skip.
                         continue
 
-                    for prop in self.elementDict[i][1] :
+                    for properties in self.elementDict[i].itervalues():
+                        for property_name, property_value in properties.iteritems():
+                            if property_name in self.elementDict[element_name].keys() and property_value in self.elementDict[element_name].values():
+                                continue  # Already in the list
 
-                        if prop in self.elementDict[elementName][1] :
-                            continue # Already in the list
+                        self.elementDict[element_name].values()[0].update(properties)  #  property isn't empty, the same, or diff val, so add it.
+                        self.flatten_elements(self.elementDict[element_name].keys()[0])
 
-                        self.elementDict[elementName][1].append(prop) #property isn't empty, the same, or diff val, so add it.
-                        self.flattenElements(self.elementDict[elementName][0])
-
-
-    def expandFile(self) :
+    def expand_file(self):
         # loop through all elements
+        for e in self.elementList:
+            self.flatten_elements(e)
 
-        for e in self.elementList :
-            self.flattenElements(e)
 
-def SavelineTest():
-    loader = Loader('ebds.saveline')
+def SavelineTest(file_name):
+    loader = Loader(file_name)
