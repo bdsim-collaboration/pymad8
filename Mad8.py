@@ -46,7 +46,10 @@ class General :
     def getNames(self, ind) : 
         return np.array(self.name)[ind]
 
-    def getData(self, index) :
+    def getRowByName(self, name) : 
+        return self.getRowByIndex(self.findByName(name))
+
+    def getRowByIndex(self, index) : # was getData
         d = {}
         d['name'] = self.name[index].strip().lower()
         d['type'] = self.type[index].strip().lower()
@@ -56,6 +59,9 @@ class General :
             d[k] = self.data[index,dKeys[k]]
 
         return d
+
+    def getColumn(self, key) : 
+        return self.data[:,self.keys[key]]
 
     def subline(self, start, end) : 
         if type(start) == str : 
@@ -96,8 +102,8 @@ class Common(General) :
         'hmonitor'   :{'l':0                                                                              ,'E':9},
         'vmonitor'   :{'l':0                                                                              ,'E':9},
         'mark'       :{'l':0                                                                              ,'E':9},
-        'ecol'       :{'l':0,                             'xsize':4,'ysize':5                             ,'E':9},                 
-        'rcol'       :{'l':0,                             'xsize':4,'ysize':5                             ,'E':9}                 
+        'ecol'       :{'l':0,                             'xsize':4,'ysize':5                             ,'E':9},   
+        'rcol'       :{'l':0,                             'xsize':4,'ysize':5                             ,'E':9} 
     }
 
     def __init__(self) :
@@ -151,6 +157,31 @@ class Twiss(General) :
 
     def __init__(self) : 
         General.__init__(self)
+
+    def plotBeta(self) : 
+        pl.figure(1)
+        self.plotXY('suml','betx')
+        self.plotXY('suml','bety')
+
+    def plotEta(self) :
+        pl.figure(2)
+        self.plotXY('suml','dx');
+        self.plotXY('suml','dy');
+        
+    def plotEtaPrime(self) : 
+        pl.figure(3)
+        self.plotXY('suml','dpx');
+        self.plotXY('suml','dpy');        
+
+    def plotAlf(self) : 
+        pl.figure(3)
+        self.plotXY('suml','alfx');
+        self.plotXY('suml','alfy');                
+
+    def plotMu(self) : 
+        pl.figure(3)
+        self.plotXY('suml','mux');
+        self.plotXY('suml','muy');                
 
 class Survey(General) :
     '''Survey data structure
