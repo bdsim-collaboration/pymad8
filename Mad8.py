@@ -38,7 +38,11 @@ class General :
         self.ind  = np.arange(0,len(self.data),1)
 
     def findByName(self,name) :
-        return self.ind[np.array(self.name) == name]
+        ind = self.ind[np.array(self.name) == name]
+        if len(ind) == 1 : 
+            return ind[0]
+        else : 
+            return ind
 
     def findByType(self,type) :
         return self.ind[np.array(self.type) == type]
