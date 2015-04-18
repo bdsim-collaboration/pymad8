@@ -87,27 +87,27 @@ class General :
 class Common(General) : 
 
     keys = {
-        'drif'       :{'l':0                                                                              ,'E':9},
-        'rben'       :{'l':0, 'angle':1, 'k1':2 , 'k2':3, 'tilt':4 ,'e1':5    , 'e2':6   , 'h1':7 , 'h2':8,'E':9},
-        'sben'       :{'l':0, 'angle':1, 'k1':2 , 'k2':3, 'tilt':4 ,'e1':5    , 'e2':6   , 'h1':7 , 'h2':8,'E':9},        
-        'quad'       :{'l':0,            'k1':2 ,         'tilt':4                                        ,'E':9},
-        'sextupole'  :{'l':0,                    'k2':3 , 'tilt':4                                        ,'E':9},
-        'octupole'   :{'l':0,                             'tilt':4 ,'k3':5                                ,'E':9},     
-        'multipole'  :{       'k0l':1  , 'k1l':2,'k2l':3, 't0':4   ,'k3l':5   , 't1':6   , 't2':7 , 't3':8,'E':9},
-        'solenoid'   :{'l':0,                                       'ks':5                                ,'E':9},
-        'rfcavity'   :{'l':0,                                       'freq':5  , 'volt':6 , 'lag':7        ,'E':9},
-        'elseparator':{'l':0,                             'tilt':4 ,'efield':5                            ,'E':9},
-        'kicker'     :{'l':0,                             'hkick':4,'vkick':5                             ,'E':9},    
-        'hkic'       :{'l':0,                             'hkick':4                                       ,'E':9},    
-        'vkic'       :{'l':0,                                       'vkick':5                             ,'E':9}, 
-        'srot'       :{'l':0,                                       'angle':5                             ,'E':9}, 
-        'yrot'       :{'l':0,                                       'angle':5                             ,'E':9}, 
-        'moni'       :{'l':0                                                                              ,'E':9},
-        'hmonitor'   :{'l':0                                                                              ,'E':9},
-        'vmonitor'   :{'l':0                                                                              ,'E':9},
-        'mark'       :{'l':0                                                                              ,'E':9},
-        'ecol'       :{'l':0,                             'xsize':4,'ysize':5                             ,'E':9},   
-        'rcol'       :{'l':0,                             'xsize':4,'ysize':5                             ,'E':9} 
+        'drif'       :{'l':0                                                                              ,'aper':9,'note':10,'E':11},
+        'rben'       :{'l':0, 'angle':1, 'k1':2 , 'k2':3, 'tilt':4 ,'e1':5    , 'e2':6   , 'h1':7 , 'h2':8,'aper':9,'note':10,'E':11},
+        'sben'       :{'l':0, 'angle':1, 'k1':2 , 'k2':3, 'tilt':4 ,'e1':5    , 'e2':6   , 'h1':7 , 'h2':8,'aper':9,'note':10,'E':11},        
+        'quad'       :{'l':0,            'k1':2 ,         'tilt':4                                        ,'aper':9,'note':10,'E':11},
+        'sextupole'  :{'l':0,                    'k2':3 , 'tilt':4                                        ,'aper':9,'note':10,'E':11},
+        'octupole'   :{'l':0,                             'tilt':4 ,'k3':5                                ,'aper':9,'note':10,'E':11},     
+        'multipole'  :{       'k0l':1  , 'k1l':2,'k2l':3, 't0':4   ,'k3l':5   , 't1':6   , 't2':7 , 't3':8,'aper':9,'note':10,'E':11},
+        'solenoid'   :{'l':0,                                       'ks':5                                ,'aper':9,'note':10,'E':11},
+        'rfcavity'   :{'l':0,                                       'freq':5  , 'volt':6 , 'lag':7        ,'aper':9,'note':10,'E':11},
+        'elseparator':{'l':0,                             'tilt':4 ,'efield':5                            ,'aper':9,'note':10,'E':11},
+        'kicker'     :{'l':0,                             'hkick':4,'vkick':5                             ,'aper':9,'note':10,'E':11},    
+        'hkic'       :{'l':0,                             'hkick':4                                       ,'aper':9,'note':10,'E':11},    
+        'vkic'       :{'l':0,                                       'vkick':5                             ,'aper':9,'note':10,'E':11}, 
+        'srot'       :{'l':0,                                       'angle':5                             ,'aper':9,'note':10,'E':11}, 
+        'yrot'       :{'l':0,                                       'angle':5                             ,'aper':9,'note':10,'E':11}, 
+        'moni'       :{'l':0                                                                              ,'aper':9,'note':10,'E':11},
+        'hmonitor'   :{'l':0                                                                              ,'aper':9,'note':10,'E':11},
+        'vmonitor'   :{'l':0                                                                              ,'aper':9,'note':10,'E':11},
+        'mark'       :{'l':0                                                                              ,'aper':9,'note':10,'E':11},
+        'ecol'       :{'l':0,                             'xsize':4,'ysize':5                             ,'aper':9,'note':10,'E':11},   
+        'rcol'       :{'l':0,                             'xsize':4,'ysize':5                             ,'aper':9,'note':10,'E':11} 
     }
 
     def __init__(self) :
@@ -318,7 +318,7 @@ class OutputReader :
             l3 = ffe2.read(f.readline())
             l4 = ffe2.read(f.readline())
             l5 = ffe2.read(f.readline())  
-            common.addElement(l1[0],l1[1],l1[2:6]+l2+[l1[8]])          
+            common.addElement(l1[0],l1[1],l1[2:6]+l2+[l1[6],l1[7],l1[8]])          
             twiss.addElement(l1[0],l1[1].strip(),l3+l4+l5)
         common.makeArray()
         twiss.makeArray()
@@ -357,7 +357,7 @@ class OutputReader :
             l6 = ffe3.read(f.readline())
             l7 = ffe3.read(f.readline())
             l8 = ffe4.read(f.readline())
-            common.addElement(l1[0],l1[1],l1[2:6]+l2+[l1[8]])            
+            common.addElement(l1[0],l1[1],l1[2:6]+l2+[l1[6],l1[7],l1[8]])          
             rmat.addElement(l1[0],l1[1].strip(),l3+l4+l5+l6+l7+l8)
         f.close()    
 
@@ -401,7 +401,7 @@ class OutputReader :
             l4 = ffe3.read(f.readline())
             l5 = ffe3.read(f.readline())
 
-            common.addElement(l1[0],l1[1],l1[2:6]+l2+[l1[8]])          
+            common.addElement(l1[0],l1[1],l1[2:6]+l2+[l1[6],l1[7],l1[8]])           
             chrom.addElement(l1[0],l1[1].strip(),l3+l4+l5)
             
         common.makeArray()
@@ -440,7 +440,8 @@ class OutputReader :
             l6 = ffe3.read(f.readline())
             l7 = ffe3.read(f.readline())
             l8 = ffe4.read(f.readline())
-            common.addElement(l1[0],l1[1],l1[2:6]+l2+[l1[8]])            
+
+            common.addElement(l1[0],l1[1],l1[2:6]+l2+[l1[6],l1[7],l1[8]])          
             envel.addElement(l1[0],l1[1].strip(),l3+l4+l5+l6+l7+l8)
         f.close()
 
@@ -476,7 +477,7 @@ class OutputReader :
             l2 = ffe2.read(f.readline())
             l3 = ffe3.read(f.readline())
             l4 = ffe4.read(f.readline())
-            common.addElement(l1[0],l1[1],l1[2:6]+l2+[l1[8]])
+            common.addElement(l1[0],l1[1],l1[2:6]+l2+[l1[6],l1[7],l1[8]])          
             survey.addElement(l1[0],l1[1].strip(),l3+l4)            
 
         f.close()
