@@ -134,6 +134,35 @@ class Common(General) :
                 return True
         return False 
 
+    def getApertures(self, raw = True) : 
+        aper = [] 
+
+        if raw : 
+            for i in range(0,len(self.data),1) :             
+                aper.append(self.data[i][self.keys['drif']['aper']])
+            return aper
+        else : 
+            # find first non-zero aperture 
+            for i in range(0,len(self.data),1) : 
+                a = float(self.data[i][self.keys['drif']['aper']])
+                if a != 0 : 
+                    firstA = a
+                    break 
+
+            lastA = firstA 
+            for i in range(0,len(self.data),1) : 
+                a = float(self.data[i][self.keys['drif']['aper']])
+                if a == 0 : 
+                    a = lastA
+                else : 
+                    lastA = a 
+                aper.append(a)
+
+            return aper
+                    
+    def makeLocationList(self, elementNames = []) : 
+        pass
+
     def makeCollimatorTemplate(self, fileName = 'collimator.dat') : 
         '''Method to make a template of the collimator description file,
         it will require editing to add information not present in twiss file''' 
@@ -150,6 +179,7 @@ class Common(General) :
 
         # close file 
         f.close()
+
 class Twiss(General) : 
     '''Twiss data structure
     data : numpy array of data 
