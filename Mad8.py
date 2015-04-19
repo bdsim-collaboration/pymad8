@@ -37,8 +37,12 @@ class General :
         self.data = np.array(self.dataList)
         self.ind  = np.arange(0,len(self.data),1)
 
-    def findByName(self,name) :
+    def getIndex(self,name) : 
         ind = self.ind[np.array(self.name) == name]
+        return ind
+        
+    def findByName(self,name) :
+        ind = self.getIndex(name)
         if len(ind) == 1 : 
             return ind[0]
         else : 
@@ -162,23 +166,6 @@ class Common(General) :
                     
     def makeLocationList(self, elementNames = []) : 
         pass
-
-    def makeCollimatorTemplate(self, fileName = 'collimator.dat') : 
-        '''Method to make a template of the collimator description file,
-        it will require editing to add information not present in twiss file''' 
-
-        # open file 
-        f = open(fileName,'w') 
-        
-        for i in range(0,len(self.data),1) : 
-            if self.type[i] == 'RCOL' or self.type[i] == 'ECOL' : 
-                f.write('{:20s} {:5s} {:12.10f} {:12.10f} {:12.10f} {:20s} {:20s}\n'.format(self.name[i],self.type[i].lower(),
-                                                    self.data[i][self.keys['ecol']['l']],
-                                                    self.data[i][self.keys['ecol']['xsize']],self.data[i][self.keys['ecol']['ysize']],
-                                                    'G4MATERIAL','BDSIM_GEOM'))
-
-        # close file 
-        f.close()
 
 class Twiss(General) : 
     '''Twiss data structure
