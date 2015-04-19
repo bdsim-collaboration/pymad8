@@ -2,6 +2,26 @@ import Mad8 as _Mad8
 
 import pylab as _pl
 
+def linearOptics(name = "ebds1") : 
+    r = _Mad8.OutputReader() 
+    [c,t] = r.readFile(name+".twiss","twiss")
+    [c,e] = r.readFile(name+".envelope","envel")    
+
+def phaseAdvance(name = "ebds1") :
+    r = _Mad8.OutputReader() 
+    [c,t] = r.readFile(name+".twiss","twiss")
+    [c,e] = r.readFile(name+".envelope","envel")    
+
+    suml = t.getColumn("suml")
+    muX  = t.getColumn("mux")
+    muY  = t.getColumn("muy")
+    
+    _pl.subplot(2,1,1)
+    _pl.plot(suml,muX % _pl.pi)
+    
+    _pl.subplot(2,1,2)
+    _pl.plot(suml,muY % _pl.pi)
+
 def apertures(name = "ebds1") : 
     # read mad8 data
     r = _Mad8.OutputReader() 
@@ -28,12 +48,6 @@ def apertures(name = "ebds1") :
 
     _pl.savefig(name+"_apertures.pdf")
 
-def linearOptics(name = "ebds1") : 
-    r = _Mad8.OutputReader() 
-    [c,t] = r.readFile(name+".twiss","twiss")
-    [c,e] = r.readFile(name+".envelope","envel")    
 
-def phaseAdvance(name = "ebds1") :
-    pass
     
 
