@@ -51,6 +51,9 @@ class General :
     def findByType(self,type) :
         return self.ind[np.array(self.type) == type]
 
+    def getNElements(self) : 
+        return len(self.name)
+
     def getNames(self, ind) : 
         return np.array(self.name)[ind]
 
@@ -95,9 +98,9 @@ class Common(General) :
         'rben'       :{'l':0, 'angle':1, 'k1':2 , 'k2':3, 'tilt':4 ,'e1':5    , 'e2':6   , 'h1':7 , 'h2':8,'aper':9,'note':10,'E':11},
         'sben'       :{'l':0, 'angle':1, 'k1':2 , 'k2':3, 'tilt':4 ,'e1':5    , 'e2':6   , 'h1':7 , 'h2':8,'aper':9,'note':10,'E':11},        
         'quad'       :{'l':0,            'k1':2 ,         'tilt':4                                        ,'aper':9,'note':10,'E':11},
-        'sextupole'  :{'l':0,                    'k2':3 , 'tilt':4                                        ,'aper':9,'note':10,'E':11},
-        'octupole'   :{'l':0,                             'tilt':4 ,'k3':5                                ,'aper':9,'note':10,'E':11},     
-        'multipole'  :{       'k0l':1  , 'k1l':2,'k2l':3, 't0':4   ,'k3l':5   , 't1':6   , 't2':7 , 't3':8,'aper':9,'note':10,'E':11},
+        'sext'       :{'l':0,                    'k2':3 , 'tilt':4                                        ,'aper':9,'note':10,'E':11},
+        'octu'       :{'l':0,                             'tilt':4 ,'k3':5                                ,'aper':9,'note':10,'E':11},     
+        'mult'       :{       'k0l':1  , 'k1l':2,'k2l':3, 't0':4   ,'k3l':5   , 't1':6   , 't2':7 , 't3':8,'aper':9,'note':10,'E':11},
         'solenoid'   :{'l':0,                                       'ks':5                                ,'aper':9,'note':10,'E':11},
         'rfcavity'   :{'l':0,                                       'freq':5  , 'volt':6 , 'lag':7        ,'aper':9,'note':10,'E':11},
         'elseparator':{'l':0,                             'tilt':4 ,'efield':5                            ,'aper':9,'note':10,'E':11},
@@ -111,7 +114,10 @@ class Common(General) :
         'vmonitor'   :{'l':0                                                                              ,'aper':9,'note':10,'E':11},
         'mark'       :{'l':0                                                                              ,'aper':9,'note':10,'E':11},
         'ecol'       :{'l':0,                             'xsize':4,'ysize':5                             ,'aper':9,'note':10,'E':11},   
-        'rcol'       :{'l':0,                             'xsize':4,'ysize':5                             ,'aper':9,'note':10,'E':11} 
+        'rcol'       :{'l':0,                             'xsize':4,'ysize':5                             ,'aper':9,'note':10,'E':11},
+        'mark'       :{'l':0,                                                                                       'note':10,'E':11},
+        'inst'       :{'l':0,                                                                                       'note':10,'E':11},
+        'wire'       :{'l':0,                                                                                       'note':10,'E':11},
     }
 
     def __init__(self) :
@@ -128,6 +134,35 @@ class Common(General) :
 
         return d
 
+    def getRowByName(self, name) : 
+        return self.getRowByIndex(self.findByName(name))
+
+    def getRowByIndex(self, index) : # was getData
+        d = {}
+        d['name'] = self.name[index].strip().lower()
+        d['type'] = self.type[index].strip().lower()
+        dKeys = self.keys
+
+        
+        if d['type'] == '' : 
+            return d
+
+        for k in dKeys[d['type']] :             
+            d[k] = self.data[index,dKeys[d['type']][k]]
+        
+        try : 
+            self.keys.keys().index(d['type'])
+            for k in dKeys[d['type']] : 
+                if k != 'note' : 
+                    d[k] = float(d[k])
+            return d
+        except ValueError : 
+            return d
+
+
+    def getColumn(self,colName) : 
+        print "Common.getColumn does not exist"
+    
     def containsEnergyVariation(self) : 
         '''Method to determine if the energy is constant in the lattice
         Required if there is 
