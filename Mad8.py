@@ -118,6 +118,10 @@ class Common(General) :
         'mark'       :{'l':0,                                                                                       'note':10,'E':11},
         'inst'       :{'l':0,                                                                                       'note':10,'E':11},
         'wire'       :{'l':0,                                                                                       'note':10,'E':11},
+        'imon'       :{'l':0,                                                                                       'note':10,'E':11},
+        'prof'       :{'l':0,                                                                                       'note':10,'E':11},
+        'blmo'       :{'l':0,                                                                                       'note':10,'E':11},
+        'lcav'       :{'l':0,                                                                                       'note':10,'E':11}
     }
 
     def __init__(self) :
