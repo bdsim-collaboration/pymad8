@@ -68,7 +68,7 @@ def drawMachineLattice(mad8c, mad8t) :
         ax.plot([e['suml']-e['l'],e['suml']-e['l']],[-0.2,0.2],'-',color=color,alpha=alpha)
 
     # plot beam line 
-    ax.plot([0,mad8t.getRowByIndex(-1)['suml']],[0,0],'k-',lw=1)
+    ax.plot([0,mad8t.getRowByIndex(-1)['suml']],[0,0],'k--',lw=1)
     ax.set_ylim(-0.5,0.5)
 
     # loop over elements and Draw on beamline
@@ -112,7 +112,7 @@ def drawMachineLattice(mad8c, mad8t) :
 def linearOptics(name = "ebds1") : 
     r = _Mad8.OutputReader() 
     [c,t] = r.readFile(name+".twiss","twiss")
-    [c,e] = r.readFile(name+".envelope","envel")    
+#    [c,e] = r.readFile(name+".envelope","envel")    
 
     figure = _plt.figure(1)
 
@@ -122,11 +122,25 @@ def linearOptics(name = "ebds1") :
 
     ax1 = _plt.subplot(gs[1]) 
     sqrtBetX = _pl.sqrt(t.getColumn("betx"))
-    _plt.plot(t.getColumn("suml"),sqrtBetX)
+    _plt.plot(t.getColumn("suml"),sqrtBetX,"b",label="$\\beta_{x}^{1/2}$")
+    sqrtBetY = _pl.sqrt(t.getColumn("bety"))
+    _plt.plot(t.getColumn("suml"),sqrtBetY,"g--",label="$\\beta_{y}^{1/2}$")
+    _plt.ylabel("$\\beta_{x,y}^{1/2}$ $[{\mathrm m}]^{1/2}$")
+    _plt.legend(loc=2)
 
     ax2 = _plt.subplot(gs[2]) 
-    sqrtBetY = _pl.sqrt(t.getColumn("bety"))
-    _plt.plot(t.getColumn("suml"),sqrtBetY)
+    ax2.set_autoscale_on(True)
+    ax2.autoscale_view(True,False,True)
+    sqrtDisX = t.getColumn("dx")
+    _plt.plot(t.getColumn("suml"),sqrtDisX,"b",label="$\\eta_{x}$")
+    sqrtDisY = t.getColumn("dy")
+    _plt.plot(t.getColumn("suml"),sqrtDisY,"g--",label="$\\eta_{y}$")
+    _plt.xlabel("S [m]")
+    _plt.ylabel("$\eta_{x,y}$ [m]")
+    _plt.legend(loc=2)
+
+
+    _plt.savefig(name+"_linear.pdf")
     
     setCallbacks(figure,ax0,ax1)
     setCallbacks(figure,ax0,ax2)
