@@ -1,10 +1,11 @@
 import pylab as pl 
 import numpy as np
+import sys as _sys
 try:
     import fortranformat as ff
 except ImportError:
-    print 'Mad8.py > WARNING - no fortranformat python module found'
-    print 'this module will not work as intended'
+    _sys.stderr.write('Mad8.py > WARNING - no fortranformat python module found\n')
+    _sys.stderr.write('this module will not work as intended\n')
 
 def getValueByName(name, key, common, table) : 
     ind1 = common.findByName(name)
