@@ -184,10 +184,10 @@ def apertures(name = "ebds1") :
     sigmaY = _pl.sqrt(e.getColumn('s33'))
     
     # get apertures 
-    aper    = _pl.array(map(float,c.getApertures(raw=False)))/10.0
+    aper    = _pl.array(map(float,c.getApertures(raw=False)))
+    aper    = aper/aper.max()*max(sigmaX.max(),sigmaX.max())
     aperMax = aper.max()*_pl.ones(len(aper))
-
-    
+        
     # suml 
     suml = t.getColumn('suml')
 
@@ -224,6 +224,36 @@ def apertures(name = "ebds1") :
     _plt.savefig(name+"_apertures.pdf")
 
 
+def energy(name = "ebds1") : 
+    # read mad8 data
+    r = _Mad8.OutputReader() 
+    [c,t] = r.readFile(name+".twiss","twiss")
 
+    # get suml 
+    suml = t.getColumn('suml')[1:]
     
+    figure = _pl.figure(1)
+    figure.subplots_adjust(left=0.15)
+    gs  = _plt.GridSpec(2,1,height_ratios=[1,6])
+    
+    ax0 = figure.add_subplot(gs[0],projection="_My_Axes")
+    drawMachineLattice(c,t)      
 
+    ax1 = _plt.subplot(gs[1]) 
+    e   = c.getColumn("E")
+    _plt.plot(suml,e,"b",label="$E$")
+    _plt.xlabel("$s$ [m]")
+    _plt.ylabel("$E$ [GeV]")
+    _plt.legend()
+    
+    setCallbacks(figure,ax0,ax1)
+    
+def survey(name = "ebds1") : 
+    # read mad8 data
+    r = _Mad8.OutputReader()
+    [c,s] = r.readFile(name+".survey","survey") 
+    
+    # get suml
+    suml = s.getColumn('suml')
+    
+    print suml
