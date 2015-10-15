@@ -121,7 +121,7 @@ class Common(General) :
         'imon'       :{'l':0,                                                                                       'note':10,'E':11},
         'prof'       :{'l':0,                                                                                       'note':10,'E':11},
         'blmo'       :{'l':0,                                                                                       'note':10,'E':11},
-        'lcav'       :{'l':0,                                                                                       'note':10,'E':11}
+        'lcav'       :{'l':0,                                       'freq':5  , 'volt':6 , 'lag':7        ,'aper':9,'note':10,'E':11}
     }
 
     def __init__(self) :
@@ -165,14 +165,23 @@ class Common(General) :
 
 
     def getColumn(self,colName) : 
-        print "Common.getColumn does not exist"
-    
+        d  = [] 
+        if colName == "E" : 
+            for i in range(0,len(self.data),1) : 
+                r = self.getRowByIndex(i)
+                if r['name'] != 'initial' : 
+                    d.append(self.getRowByIndex(i)['E'])
+        else : 
+            print "Common.getColumn does not exist for ", colName
+            return np.array([])
+        return np.array(d)
+
     def containsEnergyVariation(self) : 
         '''Method to determine if the energy is constant in the lattice
         Required if there is 
         1) RfCavities
         ''' 
-        for i in range(0,len(data),1) : 
+        for i in range(0,len(self.data),1) : 
             if self.type[i] == 'LCAV' : 
                 return True
         return False 
