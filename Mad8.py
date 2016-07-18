@@ -253,6 +253,13 @@ class Twiss(General) :
         self.plotXY('suml','mux');
         self.plotXY('suml','muy');                
 
+    def nameFromNearestS(self,s) :
+        suml = self.getColumn('suml')
+        for i in range(0,len(suml)-1) :
+            if s > suml[i] and s < suml[i+1] : 
+                return self.name[i]
+        return "Not found"
+
 class Survey(General) :
     '''Survey data structure
     data : numpy array of data 
