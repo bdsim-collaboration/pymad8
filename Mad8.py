@@ -560,4 +560,50 @@ class OutputReader :
 
         return [common,survey]
     
+class Mad8 :
+    def __init__(self, filename) : 
+        self.particle = ''
+        self.subroutines = []
+        self.readFile(filename) 
 
+    def readFile(self,filename) :
+        f = open(filename)
+        self.file = []
+
+        # load file
+        for l in f : 
+            ls = l.strip()
+            if len(ls) > 0 :
+                self.file.append(l.strip())
+        f.close()
+
+        # determine particle
+        for l in self.file : 
+            if l.find("PARTICLE") != -1:
+                if l.find("ELECTRON") != -1 : 
+                    self.particle = "ELECTRON"
+                elif l.find("POSITRON") != -1 :
+                    self.particle = "POSITRON"
+
+        # determine subroutines
+        for l in self.file :
+            if l.find("SUBROUTINE") != -1: 
+                sl = l.split()
+                if len(sl) > 1 :                     
+                    self.subroutines.append(sl[0])
+
+
+class EchoValue :
+    def __init__(self,echoFileName) : 
+        self.echoFileName = echoFileName
+        self.valueDict = {}
+        
+    def loadValues(self) : 
+        f = open(self.echoFileName) 
+
+        for l in f : 
+            if l.find("Value") != -1 :
+                sl = l.split()
+                k  = sl[3].strip('"')
+                v  = float(sl[5])
+                self.valueDict[k] = v
