@@ -8,6 +8,8 @@ def tidy(input) :
         l  = l.strip(' \n')   # tidy end of lines 
         if len(l) == 0 :      # strip empty lines 
             continue 
+        if l.find("RETURN") != -1 : 
+            continue
         output.append(l)
     return output
 
