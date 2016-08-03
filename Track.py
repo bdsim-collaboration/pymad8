@@ -4,8 +4,8 @@ def MakeTrackFiles(savelineFileName, line, outputFileNameStub) :
     sl  = _Output.Saveline(savelineFileName, line)
     sl.removeDuplicates()
     sl.writeRenamed(outputFileNameStub+"_renamed.mad8")
-    MakeObserveFile(sl.expandedLineRenamed,outputFileNameStub+"_observe.mad8")
-    MakeTableArchiveFile(sl.expandedLineRenamed,outputFileNameStub+"_archive.mad8")
+    MakeObserveFile(sl.expandedLineRenamed[0:-1:3],outputFileNameStub+"_observe.mad8")
+    MakeTableArchiveFile(sl.expandedLineRenamed[0:-1:3],outputFileNameStub+"_archive.mad8")
     MakeTrackCallingFile(outputFileNameStub)
 
 def MakeTrackCallingFile(fileNameStub) : 
