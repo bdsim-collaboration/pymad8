@@ -847,6 +847,6 @@ class Track :
                 
                 print "Loading file ", fn
                 data = _np.loadtxt(folderpath+fn, skiprows=51, unpack=True)
-                self.samplerdict[fn].append(data
+                self.samplerdict[fn].append(data)
         
 ###############################################################################################################
