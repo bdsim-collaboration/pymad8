@@ -622,8 +622,9 @@ class EchoValue :
 
 ###############################################################################################################
 class Saveline :
-    def __init__(self, fileName) : 
+    def __init__(self, fileName, lineName = 'EBDS') : 
         self.fileName = fileName
+        self.lineName = lineName
 
         self.dictFile            = []
         self.expandedLine        = []
@@ -654,8 +655,8 @@ class Saveline :
             d = _Input.decodeFileLine(l)
             self.dictFile.append(d)
             
-    def expandLine(self, lineName = "EBDS") : 
-        line = self.findNamedDict(lineName)['LINE']
+    def expandLine(self) : 
+        line = self.findNamedDict(self.lineName)['LINE']
         self.expandedLine = []
         for l in line : 
             self.expandedLine = self.expandedLine + self.findNamedDict(l)['LINE']
@@ -683,12 +684,9 @@ class Saveline :
             self.expandLine()
 
         self.nameCount = {}
-
     
-        # write lines 
-        
 
-        # find template elements  (only need to write one)
+        # find template elements (only need to write one)
         self.templates = []
         for i in range(0,len(self.dictFile)) : 
             d   = self.findNamedDict(self.dictFile[i]['name'])
@@ -715,11 +713,50 @@ class Saveline :
             d['name'] = newName
             self.dictFileRenamed.append(d)
             self.expandedLineRenamed.append(newName)
+            
+    def makeSubLines(self) :
+        
+        outputLines = []
+        # split elements into 100 element chunks
+        self.splitLine = [self.expandedLineRenamed[i:i+100] for i in range(0, len(self.expandedLineRenamed), 100)]
+        
+        # loop over split lines
+        self.subLines = [] 
+        for i in range(0,len(self.splitLine)) : 
+            line = self.splitLine[i]
+            # loop over elements in line
+            lineName = 'L'+'%06i' % i
+            l = lineName+': LINE = ('
+            self.subLines.append(lineName)
+            for le in line : 
+                l = l + le
+                if line.index(le) < len(line)-1 : 
+                    l = l +', '
+            l = l+')'
+            outputLines.append(l)
 
+        # geneate final line 
+        l = self.lineName+': LINE = ('
+        for sl in self.subLines : 
+            l = l + sl 
+            if self.subLines.index(sl) < len(self.subLines)-1 : 
+                l = l +', '
+            
+        l = l+')'
+        outputLines.append(l)
+
+        return outputLines
 
     def writeRenamed(self,filename) : 
+        # open file
         f = open(filename,'w')
 
+        # write lines 
+        lines = self.makeSubLines();
+        for l in lines : 
+            writeContinuation(f,l+'\n')
+
+        # write components
         for i in range(0,len(self.dictFileRenamed)) :
             l = self.dictFileRenamed[i]['name']+': '+self.dictFileRenamed[i]['type']
 
@@ -727,8 +764,27 @@ class Saveline :
                 if k != 'name' and k != 'type' :
                     l = l+', '+k+'='+str(self.dictFileRenamed[i][k])
             l = l + '\n'
-            f.write(l)
+            writeContinuation(f,l)
+
+        # write rturn 
+        f.write('RETURN\n')
+
+        # close file
         f.close()
+
+def writeContinuation(f, l) : 
+
+    iContinuation = 0
+
+    # loop over all characters in string 
+    for i in range(0,len(l)) : 
+        r = _np.mod(i,75) # 75 characters before searching for a space
+
+        if r>60 and l[i]==' ' and i > iContinuation+30: 
+            iContinuation = i
+            f.write('&\n')
+
+        f.write(l[i])
 
 ###############################################################################################################
 class Track : 
