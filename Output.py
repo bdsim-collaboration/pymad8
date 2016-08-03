@@ -2,6 +2,9 @@ import pylab as _pl
 import numpy as _np
 import sys as _sys
 import copy as _copy
+import os
+from collections import defaultdict
+
 try:
     import fortranformat as _ff
 except ImportError:
@@ -778,9 +781,9 @@ def writeContinuation(f, l) :
 
     # loop over all characters in string 
     for i in range(0,len(l)) : 
-        r = _np.mod(i,75) # 75 characters before searching for a space
+        r = _np.mod(i,60) # 60 characters before searching for a space
 
-        if r>60 and l[i]==' ' and i > iContinuation+30: 
+        if r>40 and l[i]==' ' and i > iContinuation+30: 
             iContinuation = i
             f.write('&\n')
 
@@ -788,10 +791,62 @@ def writeContinuation(f, l) :
 
 ###############################################################################################################
 class Track : 
-    def __init__(self,filename) :
+    def __init__(self,folderpath) :
+        self.folderpath = folderpath
+        self.samplerdict = defaultdict(list)
+
+        if not (self.folderpath.endswith("/")):
+            self.folderpath = self.folderpath+"/"
+        
+        cwd = os.getcwd()
+        print "pymad8 track oputput >> Initialised in directory:"
+        if (folderpath.startswith("/")):
+            print self.folderpath
+        else:
+            print cwd+self.folderpath
+
+    def readFile(self, filename) :
+        """
+        Load a single mad8 track output file in the target directory
+        """
         self.filename = filename
-    
-    def readFile(self, filename) : 
-        self.filename = filename
+
+        if os.path.isfile(self.filename):
+            print "Loading file ", self.filename
+            data = _np.loadtxt(self.filename, skiprows=51, unpack=True)
+            self.samplerdict[self.filename].append(data)
+                
+    def readDir(self) : 
+        """
+        Loop over all mad8 track output files in the target directory and 
+        build a dictionary of the data 
+        """
+        for fn in os.listdir(self.folderpath):
+            if os.path.isfile(self.folderpath+fn):
+                print "Loading file ", fn
+                data = _np.loadtxt(self.folderpath+fn, skiprows=51, unpack=True)
+                self.samplerdict[fn].append(data)
+
+    def appendDir(self, folderpath):
+        """
+        Loop over all mad8 track output files in the target directory and 
+        append the data to the existing dictionary 
+        """
+        if not (folderpath.endswith("/")):
+            folderpath = folderpath+"/"
+        
+        cwd = os.getcwd()
+        print "pymad8 track oputput >> Appending directory:"
+        if (folderpath.startswith("/")):
+            print self.folderpath
+        else:
+            print cwd+folderpath
+            
+        for fn in os.listdir(folderpath):
+            if os.path.isfile(folderpath+fn):
+                
+                print "Loading file ", fn
+                data = _np.loadtxt(folderpath+fn, skiprows=51, unpack=True)
+                self.samplerdict[fn].append(data
         
 ###############################################################################################################
