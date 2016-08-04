@@ -675,6 +675,20 @@ class Saveline :
         else :
             return dict()
 
+    def findRenamedNamedIndex(self,name) :
+        for i in range(0,len(self.dictFileRenamed)) :
+            if self.dictFileRenamed[i]['name'] == name : 
+                return i
+
+        return -1
+
+    def findRenamedNamedDict(self, name) : 
+        idx = self.findRenamedNamedIndex(name)
+        if idx != -1 : 
+            return self.dictFileRenamed[idx]
+        else :
+            return dict()
+
     def removeReplacements(self) : 
         if len(self.expandedLine) == 0 :
             self.expandLine()
@@ -689,7 +703,7 @@ class Saveline :
         # find template elements (only need to write one)
         self.templates = []
         for i in range(0,len(self.dictFile)) : 
-            d   = self.findNamedDict(self.dictFile[i]['name'])
+            d   = _copy.deepcopy(self.findNamedDict(self.dictFile[i]['name']))
             idx = self.findNamedIndex(d['type']) 
             if idx != -1 :                 
                 try : 
