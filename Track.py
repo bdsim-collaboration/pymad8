@@ -1,6 +1,10 @@
 import Output as _Output
-
-def MakeTrackFiles(savelineFileName, line, outputFileNameStub) : 
+try:
+    from pybdsim.Convert import bdsimPrimaries2Mad8 as _bdsimPrimaries2Mad8
+except ImportError:
+    print "Warning: module pybdsim.Convert not found, conversion of bdsim primaries to mad8 inrays will not work"
+    
+def MakeTrackFiles(savelineFileName, line, outputFileNameStub, bdsimOutput=None) : 
     sl  = _Output.Saveline(savelineFileName, line)
     sl.removeDuplicates()
     sl.writeRenamed(outputFileNameStub+"_renamed.mad8")
@@ -16,6 +20,7 @@ def MakeTrackFiles(savelineFileName, line, outputFileNameStub) :
     MakeObserveFile(observeElements,outputFileNameStub+"_observe.mad8")
     MakeTableArchiveFile(observeElements,outputFileNameStub+"_archive.mad8")
     MakeTableMapFile(observeElements,observeIndex,outputFileNameStub+"_trackFileMap.mad8")
+    MakeInraysFile(bdsimOutput, outputFileNameStub+"_inrays.mad8")
     MakeTrackCallingFile(outputFileNameStub)
 
 def MakeTrackCallingFile(fileNameStub) : 
@@ -42,3 +47,7 @@ def MakeTableArchiveFile(elementlist, filename) :
         ws = 'ARCHIVE, TABLE="'+e+'", FILENAME="./track/'+e+'"\n'
         f.write(ws)
     f.close()
+
+def MakeInraysFile(bdsimoutput, filename) : 
+    if(bdsimoutput != None):
+        _bdsimPrimaries2Mad8(bdsimoutput, filename)
