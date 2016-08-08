@@ -2,8 +2,9 @@ import pylab as _pl
 import numpy as _np
 import sys as _sys
 import copy as _copy
-import os
+import os as _os
 from collections import defaultdict
+import pymad8 as _pymad8
 
 try:
     import fortranformat as _ff
@@ -803,64 +804,98 @@ def writeContinuation(f, l) :
 
         f.write(l[i])
 
-###############################################################################################################
+
 class Track : 
-    def __init__(self,folderpath) :
-        self.folderpath = folderpath
-        self.samplerdict = defaultdict(list)
+    def __init__(self,folderpath, filemapname, twissname) :
+        self.folderpath  = folderpath
+        self.filemapname = filemapname
+        self.twissname   = twissname
+        self.trackdata = defaultdict(list)
 
         if not (self.folderpath.endswith("/")):
             self.folderpath = self.folderpath+"/"
         
-        cwd = os.getcwd()
-        print "pymad8 track oputput >> Initialised in directory:"
-        if (folderpath.startswith("/")):
+        cwd = _os.getcwd()
+        print "pymad8.Output.Track >> Initialised in directory:"
+        if (self.folderpath.startswith("/")):
             print self.folderpath
         else:
-            print cwd+self.folderpath
+            print cwd+"/"+self.folderpath
 
-    def readFile(self, filename) :
-        """
-        Load a single mad8 track output file in the target directory
-        """
-        self.filename = filename
+        print "pymad8.Output.Track >> Filemap file:"
+        if (self.filemapname.startswith("/")):
+            print self.filemapname
+        else:
+            print cwd+"/"+self.filemapname
 
-        if os.path.isfile(self.filename):
-            print "Loading file ", self.filename
-            data = _np.loadtxt(self.filename, skiprows=51, unpack=True)
-            self.samplerdict[self.filename].append(data)
-                
+        print "pymad8.Output.Track >> Twiss file:"
+        if (self.twissname.startswith("/")):
+            print self.twissname
+        else:
+            print cwd+"/"+self.twissname
+
+              
     def readDir(self) : 
         """
         Loop over all mad8 track output files in the target directory and 
-        build a dictionary of the data 
+        build a dictionary of the data. File map is used to match data
+        from track files to observation plane in the twiss file.
         """
-        for fn in os.listdir(self.folderpath):
-            if os.path.isfile(self.folderpath+fn):
-                print "Loading file ", fn
+
+        print "pymad8.Output.Track >> Loading twiss file"
+        if(_os.path.isfile(self.twissname)):
+            reader           = _pymad8.Output.OutputReader()
+            [common , twiss] = reader.readFile(self.twissname, 'twiss')
+        else:
+            print "No such file:", self.twissname
+            print "Terminating.."
+            _sys.exit(1)
+            
+        print "pymad8.Output.Track >> Loading element map"
+        if(_os.path.isfile(self.filemapname)):
+            with open(self.filemapname, 'r') as filemap:
+                fmap={line.split()[1] : int(line.split()[0]) for line in filemap.readlines()}
+        else:
+            print "No such file:", self.filemapname
+            print "Terminating.."
+            _sys.exit(1)
+
+        print "pymad8.Output.Track >> Loading track files.."
+        for fn in _os.listdir(self.folderpath):
+            if _os.path.isfile(self.folderpath+fn):
+                #print "Loading file ", fn
                 data = _np.loadtxt(self.folderpath+fn, skiprows=51, unpack=True)
-                self.samplerdict[fn].append(data)
+                self.trackdata[fn].append(data)
+
+        #Get the s p_ositions from the twiss file and match them to the data using the filemap
+        for name in self.trackdata.keys():
+            idx  = fmap[name]
+            S    = twiss.getRowByIndex(idx)["suml"]
+            self.trackdata[name]=[self.trackdata[name],S]
+
+        print "pymad8.Output.Track >> Done"
+            
 
     def appendDir(self, folderpath):
         """
         Loop over all mad8 track output files in the target directory and 
-        append the data to the existing dictionary 
+        append the data to the existing data structure.  
         """
         if not (folderpath.endswith("/")):
             folderpath = folderpath+"/"
         
-        cwd = os.getcwd()
-        print "pymad8 track oputput >> Appending directory:"
+        cwd = _os.getcwd()
+        print "pymad8.Output.Track >> Appending directory:"
         if (folderpath.startswith("/")):
             print self.folderpath
         else:
             print cwd+folderpath
-            
-        for fn in os.listdir(folderpath):
-            if os.path.isfile(folderpath+fn):
-                
-                print "Loading file ", fn
-                data = _np.loadtxt(folderpath+fn, skiprows=51, unpack=True)
-                self.samplerdict[fn].append(data)
-        
-###############################################################################################################
+
+        "pymad8.Output.Track >> Loading files...:"
+        for fn in _os.listdir(folderpath):
+            if _os.path.isfile(folderpath+fn):
+                if(fn in self.trackdata.keys()):
+                    data = _np.loadtxt(folderpath+fn, skiprows=51, unpack=True)
+                    self.trackdata[fn][0][0] = _np.concatenate((self.trackdata[fn][0][0], data), axis=1)
+                else:
+                    print "pymad8.Output.Track >>Sampler name not found in orignal set, skip: ", fn 
