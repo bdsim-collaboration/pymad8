@@ -1,17 +1,25 @@
-import pylab as pl 
-import numpy as np
+import pylab as _pl 
+import numpy as _np
 import sys as _sys
+import copy as _copy
+import os as _os
+from collections import defaultdict
+import pymad8 as _pymad8
+
 try:
-    import fortranformat as ff
+    import fortranformat as _ff
 except ImportError:
     _sys.stderr.write('Mad8.py > WARNING - no fortranformat python module found\n')
     _sys.stderr.write('this module will not work as intended\n')
 
+import Input as _Input
+
+###############################################################################################################
 def getValueByName(name, key, common, table) : 
     ind1 = common.findByName(name)
     ind2 = table.keys[key]
     return table.data[ind1,ind2]
-
+###############################################################################################################
 class General : 
     '''General list of accelerator component infomation'''
     def __init__(self) : 
@@ -35,11 +43,11 @@ class General :
         self.dataList.append(data)
 
     def makeArray(self) :
-        self.data = np.array(self.dataList)
-        self.ind  = np.arange(0,len(self.data),1)
+        self.data = _np.array(self.dataList)
+        self.ind  = _np.arange(0,len(self.data),1)
 
     def getIndex(self,name) : 
-        ind = self.ind[np.array(self.name) == name]
+        ind = self.ind[_np.array(self.name) == name]
         return ind
         
     def findByName(self,name) :
@@ -50,13 +58,13 @@ class General :
             return ind
 
     def findByType(self,type) :
-        return self.ind[np.array(self.type) == type]
+        return self.ind[_np.array(self.type) == type]
 
     def getNElements(self) : 
         return len(self.name)
 
     def getNames(self, ind) : 
-        return np.array(self.name)[ind]
+        return _np.array(self.name)[ind]
 
     def getRowByName(self, name) : 
         return self.getRowByIndex(self.findByName(name))
@@ -84,14 +92,15 @@ class General :
         self.type = self.type[start:end]
         self.name = self.name[start:end]
         self.data = self.data[start:end]
-        self.ind  = pl.arange(0,len(self.data),1)
+        self.ind  = _pl.arange(0,len(self.data),1)
 #        self.ind  = self.ind[start:end]
 
 
     def plotXY(self, xkey, ykey) :        
-        pl.plot(self.data[:,self.keys[xkey]],
+        _pl.plot(self.data[:,self.keys[xkey]],
                 self.data[:,self.keys[ykey]])
 
+###############################################################################################################
 class Common(General) : 
 
     keys = {
@@ -174,8 +183,8 @@ class Common(General) :
                     d.append(self.getRowByIndex(i)['E'])
         else : 
             print "Common.getColumn does not exist for ", colName
-            return np.array([])
-        return np.array(d)
+            return _np.array([])
+        return _np.array(d)
 
     def containsEnergyVariation(self) : 
         '''Method to determine if the energy is constant in the lattice
@@ -216,6 +225,7 @@ class Common(General) :
     def makeLocationList(self, elementNames = []) : 
         pass
 
+###############################################################################################################
 class Twiss(General) : 
     '''Twiss data structure
     data : numpy array of data 
@@ -229,27 +239,27 @@ class Twiss(General) :
         General.__init__(self)
 
     def plotBeta(self) : 
-        pl.figure(1)
+        _pl.figure(1)
         self.plotXY('suml','betx')
         self.plotXY('suml','bety')
 
     def plotEta(self) :
-        pl.figure(2)
+        _pl.figure(2)
         self.plotXY('suml','dx');
         self.plotXY('suml','dy');
         
     def plotEtaPrime(self) : 
-        pl.figure(3)
+        _pl.figure(3)
         self.plotXY('suml','dpx');
         self.plotXY('suml','dpy');        
 
     def plotAlf(self) : 
-        pl.figure(3)
+        _pl.figure(3)
         self.plotXY('suml','alfx');
         self.plotXY('suml','alfy');                
 
     def plotMu(self) : 
-        pl.figure(3)
+        _pl.figure(3)
         self.plotXY('suml','mux');
         self.plotXY('suml','muy');                
 
@@ -260,6 +270,7 @@ class Twiss(General) :
                 return self.name[i]
         return "Not found"
 
+###############################################################################################################
 class Survey(General) :
     '''Survey data structure
     data : numpy array of data 
@@ -270,6 +281,7 @@ class Survey(General) :
     def __init__(self) : 
         General.__init__(self)
 
+###############################################################################################################
 class Rmat(General) : 
     '''Rmatrix data structure
     data : numpy array of data 
@@ -289,6 +301,7 @@ class Rmat(General) :
     def getData(self, index) :
         return self.data[index]
 
+###############################################################################################################
 class Chrom(General) : 
     '''Chromaticity data structure
     data : numpy array of data 
@@ -299,7 +312,8 @@ class Chrom(General) :
 
     def getData(self, index) :
         return self.data[index]
-                
+     
+###############################################################################################################           
 class Envelope(General) : 
     '''Beam envelope data structure
     data : numpy array of data 
@@ -319,6 +333,7 @@ class Envelope(General) :
     def getData(self,index) :
         return self.data[index]
 
+###############################################################################################################
 class OutputReader :
 
     '''Class to load different Mad8 output files
@@ -367,8 +382,8 @@ class OutputReader :
         if f == None :
             f = open(self.fileName,'r')
         
-        ffhr1 = ff.FortranRecordReader('(5A8,I8,L8,I8)')
-        ffhr2 = ff.FortranRecordReader('(A80)')
+        ffhr1 = _ff.FortranRecordReader('(5A8,I8,L8,I8)')
+        ffhr2 = _ff.FortranRecordReader('(A80)')
 
 #        print '"'+l+'"'                
         # read header
@@ -378,8 +393,8 @@ class OutputReader :
 
         print 'Mad8.readTwissFile > nrec='+str(nrec)
         
-        ffe1 = ff.FortranRecordReader('(A4,A16,F12.6,4E16.9,A19,E16.9)')
-        ffe2 = ff.FortranRecordReader('(5E16.9)')
+        ffe1 = _ff.FortranRecordReader('(A4,A16,F12.6,4E16.9,A19,E16.9)')
+        ffe2 = _ff.FortranRecordReader('(5E16.9)')
 
         common  = Common() 
         twiss   = Twiss()
@@ -403,8 +418,8 @@ class OutputReader :
             f = open(self.fileName,'r')
 
         # Standard header definition 
-        ffhr1 = ff.FortranRecordReader('(5A8,I8,L8,I8)')
-        ffhr2 = ff.FortranRecordReader('(A80)')
+        ffhr1 = _ff.FortranRecordReader('(5A8,I8,L8,I8)')
+        ffhr2 = _ff.FortranRecordReader('(A80)')
 
         # read header
         h1 = ffhr1.read(f.readline())
@@ -413,10 +428,10 @@ class OutputReader :
         nrec = h1[7]
         print 'Mad8.readRmatFile  > nrec='+str(nrec)
 
-        ffe1 = ff.FortranRecordReader('(A4,A16,F12.6,4E16.9,A19,E16.9)')
-        ffe2 = ff.FortranRecordReader('(5E16.9)')
-        ffe3 = ff.FortranRecordReader('(6E16.9)')
-        ffe4 = ff.FortranRecordReader('(7E16.9)')
+        ffe1 = _ff.FortranRecordReader('(A4,A16,F12.6,4E16.9,A19,E16.9)')
+        ffe2 = _ff.FortranRecordReader('(5E16.9)')
+        ffe3 = _ff.FortranRecordReader('(6E16.9)')
+        ffe4 = _ff.FortranRecordReader('(7E16.9)')
 
         common  = Common() 
         rmat    = Rmat() 
@@ -452,17 +467,17 @@ class OutputReader :
         f.readline()
 
         # read header
-        ffhr1 = ff.FortranRecordReader('(5A8,I8,L8,I8)')
-        ffhr2 = ff.FortranRecordReader('(A80)')
+        ffhr1 = _ff.FortranRecordReader('(5A8,I8,L8,I8)')
+        ffhr2 = _ff.FortranRecordReader('(A80)')
         h1 = ffhr1.read(f.readline())
         h2 = ffhr2.read(f.readline())
         nrec = h1[7]
 
         print 'Mad8.readChromFile > nrec='+str(nrec)
 
-        ffe1 = ff.FortranRecordReader('(A4,A16,F12.6,4E16.9,A19,E16.9)')
-        ffe2 = ff.FortranRecordReader('(5E16.9)')
-        ffe3 = ff.FortranRecordReader('(6E16.9)')
+        ffe1 = _ff.FortranRecordReader('(A4,A16,F12.6,4E16.9,A19,E16.9)')
+        ffe2 = _ff.FortranRecordReader('(5E16.9)')
+        ffe3 = _ff.FortranRecordReader('(6E16.9)')
         
         common = Common() 
         chrom  = Chrom() 
@@ -486,8 +501,8 @@ class OutputReader :
         if f==None : 
             f = open (self.fileName,'r') 
 
-        ffhr1 = ff.FortranRecordReader('(5A8,I8,L8,I8)')
-        ffhr2 = ff.FortranRecordReader('(A80)')
+        ffhr1 = _ff.FortranRecordReader('(5A8,I8,L8,I8)')
+        ffhr2 = _ff.FortranRecordReader('(A80)')
 
         # read header
         h1 = ffhr1.read(f.readline())
@@ -496,10 +511,10 @@ class OutputReader :
 
         print 'Mad8.readEnvelopeFile > nrec='+str(nrec)
 
-        ffe1 = ff.FortranRecordReader('(A4,A16,F12.6,4E16.9,A19,E16.9)')
-        ffe2 = ff.FortranRecordReader('(5E16.9)')
-        ffe3 = ff.FortranRecordReader('(6E16.9)')
-        ffe4 = ff.FortranRecordReader('(7E16.9)')
+        ffe1 = _ff.FortranRecordReader('(A4,A16,F12.6,4E16.9,A19,E16.9)')
+        ffe2 = _ff.FortranRecordReader('(5E16.9)')
+        ffe3 = _ff.FortranRecordReader('(6E16.9)')
+        ffe4 = _ff.FortranRecordReader('(7E16.9)')
         
         common = Common()
         envel  = Envelope() 
@@ -527,8 +542,8 @@ class OutputReader :
         f = open(self.fileName,'r') 
         
         # Standard header definition 
-        ffhr1 = ff.FortranRecordReader('(5A8,I8,L8,I8)')
-        ffhr2 = ff.FortranRecordReader('(A80)')
+        ffhr1 = _ff.FortranRecordReader('(5A8,I8,L8,I8)')
+        ffhr2 = _ff.FortranRecordReader('(A80)')
 
         # read header
         h1 = ffhr1.read(f.readline())
@@ -537,10 +552,10 @@ class OutputReader :
         nrec = h1[7]
 
         print 'Mad8.readSurveyFile> nrec='+str(nrec)
-        ffe1 = ff.FortranRecordReader('(A4,A16,F12.6,4E16.9,A19,E16.9)')
-        ffe2 = ff.FortranRecordReader('(5E16.9)')
-        ffe3 = ff.FortranRecordReader('(4E16.9)')
-        ffe4 = ff.FortranRecordReader('(3E16.9)')
+        ffe1 = _ff.FortranRecordReader('(A4,A16,F12.6,4E16.9,A19,E16.9)')
+        ffe2 = _ff.FortranRecordReader('(5E16.9)')
+        ffe3 = _ff.FortranRecordReader('(4E16.9)')
+        ffe4 = _ff.FortranRecordReader('(3E16.9)')
         
         common  = Common() 
         survey  = Survey() 
@@ -560,6 +575,7 @@ class OutputReader :
 
         return [common,survey]
     
+###############################################################################################################
 class Mad8 :
     def __init__(self, filename) : 
         self.particle = ''
@@ -592,7 +608,7 @@ class Mad8 :
                 if len(sl) > 1 :                     
                     self.subroutines.append(sl[0])
 
-
+###############################################################################################################
 class EchoValue :
     def __init__(self,echoFileName) : 
         self.echoFileName = echoFileName
@@ -607,3 +623,279 @@ class EchoValue :
                 k  = sl[3].strip('"')
                 v  = float(sl[5])
                 self.valueDict[k] = v
+
+###############################################################################################################
+class Saveline :
+    def __init__(self, fileName, lineName = 'EBDS') : 
+        self.fileName = fileName
+        self.lineName = lineName
+
+        self.dictFile            = []
+        self.expandedLine        = []
+        self.dictFileRenamed     = []
+        self.expandedLineRenamed = []
+        self.readFile(self.fileName)
+        self.parseFile()
+        
+    def readFile(self,fileName) : 
+
+        f = open(fileName) 
+        self.file = [] 
+        for l in f : 
+            self.file.append(l)
+        f.close()
+
+        # tidy file
+        self.file = _Input.tidy(self.file)
+
+        # remove comments
+        self.file = _Input.removeComments(self.file)
+
+        # remove continuation symbols
+        self.file = _Input.removeContinuationSymbols(self.file)
+                
+    def parseFile(self) :
+        for l in self.file : 
+            d = _Input.decodeFileLine(l)
+            self.dictFile.append(d)
+            
+    def expandLine(self) : 
+        line = self.findNamedDict(self.lineName)['LINE']
+        self.expandedLine = []
+        for l in line : 
+            self.expandedLine = self.expandedLine + self.findNamedDict(l)['LINE']
+
+    def findNamedIndex(self,name) :
+        for i in range(0,len(self.dictFile)) :
+            if self.dictFile[i]['name'] == name : 
+                return i
+
+        return -1
+
+    def findNamedDict(self, name) : 
+        idx = self.findNamedIndex(name)
+        if idx != -1 : 
+            return self.dictFile[idx]
+        else :
+            return dict()
+
+    def findRenamedNamedIndex(self,name) :
+        for i in range(0,len(self.dictFileRenamed)) :
+            if self.dictFileRenamed[i]['name'] == name : 
+                return i
+
+        return -1
+
+    def findRenamedNamedDict(self, name) : 
+        idx = self.findRenamedNamedIndex(name)
+        if idx != -1 : 
+            return self.dictFileRenamed[idx]
+        else :
+            return dict()
+
+    def removeReplacements(self) : 
+        if len(self.expandedLine) == 0 :
+            self.expandLine()
+
+    def removeDuplicates(self) : 
+        if len(self.expandedLine) == 0 :
+            self.expandLine()
+
+        self.nameCount = {}
+    
+
+        # find template elements (only need to write one)
+        self.templates = []
+        for i in range(0,len(self.dictFile)) : 
+            d   = _copy.deepcopy(self.findNamedDict(self.dictFile[i]['name']))
+            idx = self.findNamedIndex(d['type']) 
+            if idx != -1 :                 
+                try : 
+                    self.templates.index(self.dictFile[idx]['name'])
+                except: 
+                    self.dictFileRenamed.append(self.dictFile[idx])
+                    self.templates.append(self.dictFile[idx]['name'])
+                        
+        # loop over elements in beamline and append name 
+        for i in range(0,len(self.expandedLine)) :
+            oldName = self.expandedLine[i]
+            d = _copy.deepcopy(self.findNamedDict(oldName))
+            
+            try : 
+                self.nameCount[self.expandedLine[i]] = self.nameCount[self.expandedLine[i]]+1 
+            except KeyError :
+                self.nameCount[self.expandedLine[i]] = 0            
+            
+            newName = d['name']+'_'+str(self.nameCount[d['name']])
+            
+            d['name'] = newName
+            self.dictFileRenamed.append(d)
+            self.expandedLineRenamed.append(newName)
+            
+    def makeSubLines(self) :
+        
+        outputLines = []
+        # split elements into 100 element chunks
+        self.splitLine = [self.expandedLineRenamed[i:i+100] for i in range(0, len(self.expandedLineRenamed), 100)]
+        
+        # loop over split lines
+        self.subLines = [] 
+        for i in range(0,len(self.splitLine)) : 
+            line = self.splitLine[i]
+            # loop over elements in line
+            lineName = 'L'+'%06i' % i
+            l = lineName+': LINE = ('
+            self.subLines.append(lineName)
+            for le in line : 
+                l = l + le
+                if line.index(le) < len(line)-1 : 
+                    l = l +', '
+            l = l+')'
+            outputLines.append(l)
+
+        # geneate final line 
+        l = self.lineName+': LINE = ('
+        for sl in self.subLines : 
+            l = l + sl 
+            if self.subLines.index(sl) < len(self.subLines)-1 : 
+                l = l +', '
+            
+        l = l+')'
+        outputLines.append(l)
+
+        return outputLines
+
+    def writeRenamed(self,filename) : 
+        # open file
+        f = open(filename,'w')
+
+        # write lines 
+        lines = self.makeSubLines();
+        for l in lines : 
+            writeContinuation(f,l+'\n')
+
+        # write components
+        for i in range(0,len(self.dictFileRenamed)) :
+            l = self.dictFileRenamed[i]['name']+': '+self.dictFileRenamed[i]['type']
+
+            for k in self.dictFileRenamed[i].keys() :
+                if k != 'name' and k != 'type' :
+                    l = l+', '+k+'='+str(self.dictFileRenamed[i][k])
+            l = l + '\n'
+            writeContinuation(f,l)
+
+        # write rturn 
+        f.write('RETURN\n')
+
+        # close file
+        f.close()
+
+def writeContinuation(f, l) : 
+
+    iContinuation = 0
+
+    # loop over all characters in string 
+    for i in range(0,len(l)) : 
+        r = _np.mod(i,60) # 60 characters before searching for a space
+
+        if r>40 and l[i]==' ' and i > iContinuation+30: 
+            iContinuation = i
+            f.write('&\n')
+
+        f.write(l[i])
+
+
+class Track : 
+    def __init__(self,folderpath, filemapname, twissname) :
+        self.folderpath  = folderpath
+        self.filemapname = filemapname
+        self.twissname   = twissname
+        self.trackdata = defaultdict(list)
+
+        if not (self.folderpath.endswith("/")):
+            self.folderpath = self.folderpath+"/"
+        
+        cwd = _os.getcwd()
+        print "pymad8.Output.Track >> Initialised in directory:"
+        if (self.folderpath.startswith("/")):
+            print self.folderpath
+        else:
+            print cwd+"/"+self.folderpath
+
+        print "pymad8.Output.Track >> Filemap file:"
+        if (self.filemapname.startswith("/")):
+            print self.filemapname
+        else:
+            print cwd+"/"+self.filemapname
+
+        print "pymad8.Output.Track >> Twiss file:"
+        if (self.twissname.startswith("/")):
+            print self.twissname
+        else:
+            print cwd+"/"+self.twissname
+
+              
+    def readDir(self) : 
+        """
+        Loop over all mad8 track output files in the target directory and 
+        build a dictionary of the data. File map is used to match data
+        from track files to observation plane in the twiss file.
+        """
+
+        print "pymad8.Output.Track >> Loading twiss file"
+        if(_os.path.isfile(self.twissname)):
+            reader           = _pymad8.Output.OutputReader()
+            [common , twiss] = reader.readFile(self.twissname, 'twiss')
+        else:
+            print "No such file:", self.twissname
+            print "Terminating.."
+            _sys.exit(1)
+            
+        print "pymad8.Output.Track >> Loading element map"
+        if(_os.path.isfile(self.filemapname)):
+            with open(self.filemapname, 'r') as filemap:
+                fmap={line.split()[1] : int(line.split()[0]) for line in filemap.readlines()}
+        else:
+            print "No such file:", self.filemapname
+            print "Terminating.."
+            _sys.exit(1)
+
+        print "pymad8.Output.Track >> Loading track files.."
+        for fn in _os.listdir(self.folderpath):
+            if _os.path.isfile(self.folderpath+fn):
+                #print "Loading file ", fn
+                data = _np.loadtxt(self.folderpath+fn, skiprows=51, unpack=True)
+                self.trackdata[fn].append(data)
+
+        #Get the s p_ositions from the twiss file and match them to the data using the filemap
+        for name in self.trackdata.keys():
+            idx  = fmap[name]
+            S    = twiss.getRowByIndex(idx)["suml"]
+            self.trackdata[name]=[self.trackdata[name],S]
+
+        print "pymad8.Output.Track >> Done"
+            
+
+    def appendDir(self, folderpath):
+        """
+        Loop over all mad8 track output files in the target directory and 
+        append the data to the existing data structure.  
+        """
+        if not (folderpath.endswith("/")):
+            folderpath = folderpath+"/"
+        
+        cwd = _os.getcwd()
+        print "pymad8.Output.Track >> Appending directory:"
+        if (folderpath.startswith("/")):
+            print self.folderpath
+        else:
+            print cwd+folderpath
+
+        "pymad8.Output.Track >> Loading files...:"
+        for fn in _os.listdir(folderpath):
+            if _os.path.isfile(folderpath+fn):
+                if(fn in self.trackdata.keys()):
+                    data = _np.loadtxt(folderpath+fn, skiprows=51, unpack=True)
+                    self.trackdata[fn][0][0] = _np.concatenate((self.trackdata[fn][0][0], data), axis=1)
+                else:
+                    print "pymad8.Output.Track >>Sampler name not found in orignal set, skip: ", fn 

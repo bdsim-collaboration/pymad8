@@ -18,15 +18,16 @@ class _My_Axes(_matplotlib.axes.Axes):
 #register the new class of axes
 _matplotlib.projections.register_projection(_My_Axes)
 
-def setCallbacks(figure, axm, axplot) :
+def setCallbacks(figure, axm, axplot,twiss) :
     #put callbacks for linked scrolling
     def MachineXlim(axm): 
         axm.set_autoscale_on(False)
-        axplot.set_xlim(axm.get_xlim())
+        for ax in axplot :
+            ax.set_xlim(axm.get_xlim())
 
     def Click(a) : 
         if a.button == 3 : 
-            print 'Closest element: ',tfs.NameFromNearestS(a.xdata)
+            print 'Closest element: ',twiss.nameFromNearestS(a.xdata)
 
     axm.callbacks.connect('xlim_changed', MachineXlim)
     figure.canvas.mpl_connect('button_press_event', Click) 
@@ -109,9 +110,9 @@ def drawMachineLattice(mad8c, mad8t) :
                 DrawLine(element,'#cccccc',alpha=0.1)
 
     
-def linearOptics(name = "ebds1") : 
+def linearOptics(twissfile = "ebds1") : 
     r = _Mad8.OutputReader() 
-    [c,t] = r.readFile(name+".twiss","twiss")
+    [c,t] = r.readFile(twissfile,"twiss")
 #    [c,e] = r.readFile(name+".envelope","envel")    
 
     figure = _plt.figure(1)
@@ -129,8 +130,8 @@ def linearOptics(name = "ebds1") :
     _plt.legend(loc=2)
 
     ax2 = _plt.subplot(gs[2]) 
-    ax2.set_autoscale_on(True)
-    ax2.autoscale_view(True,False,True)
+    ax2.relim()
+    ax2.autoscale_view(False,False,True)
     sqrtDisX = t.getColumn("dx")
     _plt.plot(t.getColumn("suml"),sqrtDisX,"b",label="$\\eta_{x}$")
     sqrtDisY = t.getColumn("dy")
@@ -140,15 +141,15 @@ def linearOptics(name = "ebds1") :
     _plt.legend(loc=2)
 
 
-    _plt.savefig(name+"_linear.pdf")
-    
-    setCallbacks(figure,ax0,ax1)
-    setCallbacks(figure,ax0,ax2)
+    setCallbacks(figure,ax0,[ax1,ax2],t)
 
-def phaseAdvance(name = "ebds1") :
+#    _plt.savefig(name+"_linear.pdf")
+    
+
+
+def phaseAdvance(twissfile = "ebds1") :
     r = _Mad8.OutputReader() 
-    [c,t] = r.readFile(name+".twiss","twiss")
-    [c,e] = r.readFile(name+".envelope","envel")    
+    [c,t] = r.readFile(twissfile,"twiss")
 
     suml = t.getColumn("suml")
     muX  = t.getColumn("mux")
@@ -168,16 +169,63 @@ def phaseAdvance(name = "ebds1") :
     _pl.xlabel("S [m]")
     _pl.ylabel("$\mu_{y}$")
 
-    setCallbacks(figure,ax0,ax1)
-    setCallbacks(figure,ax0,ax2)
+    setCallbacks(figure,ax0,[ax1,ax2],t)
 
-    _pl.savefig(name+"_phase.pdf")
+#    _pl.savefig(name+"_phase.pdf")
 
-def apertures(name = "ebds1") : 
+def dispersion(twissfile = "ebds1") : 
+    r = _Mad8.OutputReader() 
+    [c,t] = r.readFile(twissfile,"twiss")
+
+    suml = t.getColumn("suml")
+    etaX  = t.getColumn("dx")
+    etaY  = t.getColumn("dy")
+    
+    figure = _plt.figure(1)
+    gs  = _plt.GridSpec(3,1,height_ratios=[1,3,3])
+    ax0 = figure.add_subplot(gs[0],projection="_My_Axes")
+    drawMachineLattice(c,t)     
+
+    ax1 = _plt.subplot(gs[1]) 
+    _pl.plot(suml,etaX)
+    _pl.ylabel("$\eta_{x}$")
+
+    ax2 = _plt.subplot(gs[2]) 
+    _pl.plot(suml,etaY)
+    _pl.xlabel("S [m]")
+    _pl.ylabel("$\eta_{y}$")
+
+    setCallbacks(figure,ax0,[ax1,ax2],t)
+
+def dispersionPrime(twissfile = "ebds1") : 
+    r = _Mad8.OutputReader() 
+    [c,t] = r.readFile(twissfile,"twiss")
+
+    suml = t.getColumn("suml")
+    etapX  = t.getColumn("dpx")
+    etapY  = t.getColumn("dpy")
+    
+    figure = _plt.figure(1)
+    gs  = _plt.GridSpec(3,1,height_ratios=[1,3,3])
+    ax0 = figure.add_subplot(gs[0],projection="_My_Axes")
+    drawMachineLattice(c,t)     
+
+    ax1 = _plt.subplot(gs[1]) 
+    _pl.plot(suml,etapX)
+    _pl.ylabel("$\eta_{x}\prime$")
+
+    ax2 = _plt.subplot(gs[2]) 
+    _pl.plot(suml,etapY)
+    _pl.xlabel("S [m]")
+    _pl.ylabel("$\eta_{y}\prime$")
+
+    setCallbacks(figure,ax0,[ax1,ax2],t)
+
+def apertures(twissfile="ebds1", envelfile="ebds1") : 
     # read mad8 data
     r = _Mad8.OutputReader() 
-    [c,t] = r.readFile(name+".twiss","twiss")
-    [c,e] = r.readFile(name+".envelope","envel")
+    [c,t] = r.readFile(twissfile,"twiss")
+    [c,e] = r.readFile(envelfile,"envel")
 
     # calculate beam sizes
     sigmaX = _pl.sqrt(e.getColumn('s11'))
@@ -218,16 +266,15 @@ def apertures(name = "ebds1") :
     _plt.ylabel("$\sigma_{y}$ [m]")
     _plt.ylim(-sigmaX.max(),sigmaX.max())
 
-    setCallbacks(figure,ax0,ax1)
-    setCallbacks(figure,ax0,ax2)
+    setCallbacks(figure,ax0,[ax1,ax2],t)
 
-    _plt.savefig(name+"_apertures.pdf")
+#    _plt.savefig(name+"_apertures.pdf")
 
 
-def energy(name = "ebds1") : 
+def energy(twissfile = "ebds1") : 
     # read mad8 data
     r = _Mad8.OutputReader() 
-    [c,t] = r.readFile(name+".twiss","twiss")
+    [c,t] = r.readFile(twissfile,"twiss")
 
     # get suml 
     suml = t.getColumn('suml')[1:]
@@ -246,12 +293,12 @@ def energy(name = "ebds1") :
     _plt.ylabel("$E$ [GeV]")
     _plt.legend()
     
-    setCallbacks(figure,ax0,ax1)
+    setCallbacks(figure,ax0,[ax1],t)
     
-def survey(name = "ebds1") : 
+def survey(surveyfile = "ebds1") : 
     # read mad8 data
     r = _Mad8.OutputReader()
-    [c,s] = r.readFile(name+".survey","survey") 
+    [c,s] = r.readFile(surveyfile,"survey") 
     
     # get suml
     suml = s.getColumn('suml')
