@@ -1,4 +1,4 @@
-import Saveline as _Saveline
+import pymad8.Saveline as _Saveline
 
 class Mad8Converter :
 
