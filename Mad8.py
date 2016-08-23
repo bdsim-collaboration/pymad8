@@ -192,19 +192,28 @@ class Common(General) :
 
         if raw : 
             for i in range(0,len(self.data),1) :             
-                aper.append(self.data[i][self.keys['drif']['aper']])
+                try : 
+                    aper.append(self.data[i][self.keys['drif']['aper']])
+                except KeyError : 
+                    aper.append(0.1)
             return aper
         else : 
             # find first non-zero aperture 
             for i in range(0,len(self.data),1) : 
-                a = float(self.data[i][self.keys['drif']['aper']])
+                try : 
+                    a = float(self.data[i][self.keys['drif']['aper']])
+                except KeyError : 
+                    a = 0.1
                 if a != 0 : 
                     firstA = a
                     break 
 
             lastA = firstA 
             for i in range(0,len(self.data),1) : 
-                a = float(self.data[i][self.keys['drif']['aper']])
+                try : 
+                    a = float(self.data[i][self.keys['drif']['aper']])
+                except KeyError :
+                    a = 0.1
                 if a == 0 : 
                     a = lastA
                 else : 
