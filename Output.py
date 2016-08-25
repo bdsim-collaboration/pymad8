@@ -3,7 +3,7 @@ import numpy as _np
 import sys as _sys
 import copy as _copy
 import os as _os
-from collections import defaultdict
+from   collections import defaultdict
 import pymad8 as _pymad8
 
 try:
@@ -199,12 +199,18 @@ class Common(General) :
     def getApertures(self, raw = True) : 
         aper = [] 
 
+        # see if there is any aperture information 
+        for i in range(0,len(self.data),1) :             
+            aper.append(float(self.data[i][self.keys['drif']['aper']]))
+        if sum(aper)== 0 :
+            aper = []
+            for i in range(0,len(self.data),1) :             
+                aper.append(0.1)            
+            return aper
+
         if raw : 
             for i in range(0,len(self.data),1) :             
-                try :
-                    aper.append(self.data[i][self.keys['drif']['aper']])
-                except KeyError :
-                    aper.append(0.1)
+                aper.append(self.data[i][self.keys['drif']['aper']])
             return aper
         else : 
             # find first non-zero aperture 

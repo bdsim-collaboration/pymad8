@@ -1,4 +1,4 @@
-import Mad8 as _Mad8
+import Output as _Output
 
 import pylab as _pl
 import numpy as _np
@@ -111,7 +111,7 @@ def drawMachineLattice(mad8c, mad8t) :
 
     
 def linearOptics(twissfile = "ebds1") : 
-    r = _Mad8.OutputReader() 
+    r = _Output.OutputReader() 
     [c,t] = r.readFile(twissfile,"twiss")
 #    [c,e] = r.readFile(name+".envelope","envel")    
 
@@ -148,7 +148,7 @@ def linearOptics(twissfile = "ebds1") :
 
 
 def phaseAdvance(twissfile = "ebds1") :
-    r = _Mad8.OutputReader() 
+    r = _Output.OutputReader() 
     [c,t] = r.readFile(twissfile,"twiss")
 
     suml = t.getColumn("suml")
@@ -174,7 +174,7 @@ def phaseAdvance(twissfile = "ebds1") :
 #    _pl.savefig(name+"_phase.pdf")
 
 def dispersion(twissfile = "ebds1") : 
-    r = _Mad8.OutputReader() 
+    r = _Output.OutputReader() 
     [c,t] = r.readFile(twissfile,"twiss")
 
     suml = t.getColumn("suml")
@@ -198,7 +198,7 @@ def dispersion(twissfile = "ebds1") :
     setCallbacks(figure,ax0,[ax1,ax2],t)
 
 def dispersionPrime(twissfile = "ebds1") : 
-    r = _Mad8.OutputReader() 
+    r = _Output.OutputReader() 
     [c,t] = r.readFile(twissfile,"twiss")
 
     suml = t.getColumn("suml")
@@ -223,7 +223,7 @@ def dispersionPrime(twissfile = "ebds1") :
 
 def apertures(twissfile="ebds1", envelfile="ebds1") : 
     # read mad8 data
-    r = _Mad8.OutputReader() 
+    r = _Output.OutputReader() 
     [c,t] = r.readFile(twissfile,"twiss")
     [c,e] = r.readFile(envelfile,"envel")
 
@@ -273,7 +273,7 @@ def apertures(twissfile="ebds1", envelfile="ebds1") :
 
 def energy(twissfile = "ebds1") : 
     # read mad8 data
-    r = _Mad8.OutputReader() 
+    r = _Output.OutputReader() 
     [c,t] = r.readFile(twissfile,"twiss")
 
     # get suml 
@@ -297,7 +297,7 @@ def energy(twissfile = "ebds1") :
     
 def survey(surveyfile = "ebds1") : 
     # read mad8 data
-    r = _Mad8.OutputReader()
+    r = _Output.OutputReader()
     [c,s] = r.readFile(surveyfile,"survey") 
     
     # get suml
