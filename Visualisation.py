@@ -5,14 +5,14 @@ import matplotlib.patches as mpt
 import matplotlib.pyplot  as plt
 
 def testOneDim() : 
-    o = m8.Mad8.OutputReader()
+    o = m8.Output.OutputReader()
     [c,s] = o.readFile("./test/atf_v5.1/survey.tape","survey")
     od = OneDim(c,s,False)
     od.plot()
     return od    
 
 def testTwoDim() : 
-    o = m8.Mad8.OutputReader()
+    o = m8.Output.OutputReader()
     [c,s] = o.readFile("./test/atf_v5.1/survey.tape","survey")
     td = TwoDim(c,s,False,False,True)
     td.plot()
@@ -134,8 +134,8 @@ class OneDim :
         # Annotate element
 
     def drawQuad(self,c,s,suml,colour=True) : 
-        ql = c[m8.Mad8.Common.keys['quad']['l']]
-        qk = c[m8.Mad8.Common.keys['quad']['k1']]
+        ql = c[m8.Output.Common.keys['quad']['l']]
+        qk = c[m8.Output.Common.keys['quad']['k1']]
         poscolour = 'r'
         negcolour = 'b'
         if colour == False:
@@ -159,14 +159,14 @@ class OneDim :
 
     def drawBend(self,c,s,suml,colour=True) : 
         #colour argument unused but added for compliance
-        bl = c[m8.Mad8.Common.keys['sben']['l']]
+        bl = c[m8.Output.Common.keys['sben']['l']]
         br = mpt.Rectangle((suml-bl/2.0,-self.bendWidth/2.0),
                            bl,self.bendWidth,color='k')
         ax = plt.gca()            
         ax.add_patch(br)
 
     def drawSext(self,c,s,suml,colour=True) : 
-        sl = c[m8.Mad8.Common.keys['sextupole']['l']]
+        sl = c[m8.Output.Common.keys['sextupole']['l']]
         ax = plt.gca()
         #original but looks like thin lens for most lattices rather
         #than hexagon
@@ -290,9 +290,9 @@ class TwoDim :
             print '>',s
         if self.fancy : 
             # get data
-            ql = c[m8.Mad8.Common.keys['quad']['l']]
-            qk = c[m8.Mad8.Common.keys['quad']['k1']]
-            qt = s[m8.Mad8.Survey.keys['theta']]
+            ql = c[m8.Output.Common.keys['quad']['l']]
+            qk = c[m8.Output.Common.keys['quad']['k1']]
+            qt = s[m8.Output.Survey.keys['theta']]
 
             # make patch
             qr = transformedRect([z,x],ql,self.quadWidth,qt)
@@ -311,8 +311,8 @@ class TwoDim :
 
         if self.fancy : 
             # get data
-            bl = c[m8.Mad8.Common.keys['sben']['l']]
-            bt = s[m8.Mad8.Survey.keys['theta']]
+            bl = c[m8.Output.Common.keys['sben']['l']]
+            bt = s[m8.Output.Survey.keys['theta']]
             
         else : 
             pl.plot([z],[x],'b+')        
