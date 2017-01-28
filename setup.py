@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-   name='pymadx',
+   name='pymad8',
    version='1.0',
    description='BDSIM python helper package',
    author='JAI@RHUL',
