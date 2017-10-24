@@ -13,5 +13,5 @@ setup(
     author='JAI@RHUL',
     author_email='stewart.boogert@rhul.ac.uk',
     description="Write MAD8 models and load MAD8 output.",
-    url='https://bitbucket.org/jairhul/pymadx/'
+    url='https://bitbucket.org/jairhul/pymad8/'
 )
