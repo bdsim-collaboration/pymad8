@@ -1,13 +1,17 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
-   name='pymad8',
-   version='1.0',
-   description='BDSIM python helper package',
-   author='JAI@RHUL',
-   author_email='stewart.boogert@rhul.ac.uk',
-#   py_modules = ['__init__','Beam','Builder','Constants','Data','Gmad','Joinhistograms',
-#                 'ModelProcessing','Options','Plot','Run','Visualisation','XSecBias','_General'],
-   package_dir = {'pymad8': './'},
-   packages=['pymad8'],
+    name='pymad8',
+    version='0.7',
+    packages=find_packages(exclude=["docs", "tests", "old"]),
+    # Not sure how strict these need to be...
+    install_requires=["matplotlib >= 1.7.1",
+                      "numpy >= 1.3.0"],
+    # Some version of python2.7
+    python_requires="==2.7.*",
+
+    author='JAI@RHUL',
+    author_email='stewart.boogert@rhul.ac.uk',
+    description="Write MAD8 models and load MAD8 output.",
+    url='https://bitbucket.org/jairhul/pymadx/'
 )
