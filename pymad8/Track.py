@@ -3,7 +3,9 @@ import warnings
 try:
     from pybdsim.Convert import bdsimPrimaries2Mad8 as _bdsimPrimaries2Mad8
 except ImportError:
-    warnings.warn("Warning: module pybdsim.Convert not found, conversion of bdsim primaries to mad8 inrays will not work", UserWarning)
+    s = "Warning: module pybdsim.Convert not found, conversion of "
+    s += "bdsim primaries to mad8 inrays will not work"
+    warnings.warn(s, UserWarning)
     
 def MakeTrackFiles(savelineFileName, line, outputFileNameStub, bdsimOutput=None) : 
     sl  = _Output.Saveline(savelineFileName, line)

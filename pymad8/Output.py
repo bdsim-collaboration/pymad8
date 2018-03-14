@@ -5,12 +5,7 @@ import copy as _copy
 import os as _os
 from   collections import defaultdict
 import pymad8 as _pymad8
-
-try:
-    import fortranformat as _ff
-except ImportError:
-    _sys.stderr.write('Mad8.py > WARNING - no fortranformat python module found\n')
-    _sys.stderr.write('this module will not work as intended\n')
+import fortranformat as _ff
 
 import Input as _Input
 
