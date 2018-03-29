@@ -33,6 +33,9 @@ class General :
         type = type.strip(' ')
         name = name.strip(' ')
 
+        if type == '' :
+            type == 'init'
+
         self.type.append(type) 
         self.name.append(name) 
         self.dataList.append(data)
@@ -106,10 +109,10 @@ class Common(General) :
         'sext'       :{'l':0,                    'k2':3 , 'tilt':4                                        ,'aper':9,'note':10,'E':11},
         'octu'       :{'l':0,                             'tilt':4 ,'k3':5                                ,'aper':9,'note':10,'E':11},     
         'mult'       :{       'k0l':1  , 'k1l':2,'k2l':3, 't0':4   ,'k3l':5   , 't1':6   , 't2':7 , 't3':8,'aper':9,'note':10,'E':11},
-        'solenoid'   :{'l':0,                                       'ks':5                                ,'aper':9,'note':10,'E':11},
+        'sole'       :{'l':0,                                       'ks':5                                ,'aper':9,'note':10,'E':11},
         'rfcavity'   :{'l':0,                                       'freq':5  , 'volt':6 , 'lag':7        ,'aper':9,'note':10,'E':11},
         'elseparator':{'l':0,                             'tilt':4 ,'efield':5                            ,'aper':9,'note':10,'E':11},
-        'kicker'     :{'l':0,                             'hkick':4,'vkick':5                             ,'aper':9,'note':10,'E':11},    
+        'kick'       :{'l':0,                             'hkick':4,'vkick':5                             ,'aper':9,'note':10,'E':11},    
         'hkic'       :{'l':0,                             'hkick':4                                       ,'aper':9,'note':10,'E':11},    
         'vkic'       :{'l':0,                                       'vkick':5                             ,'aper':9,'note':10,'E':11}, 
         'srot'       :{'l':0,                                       'angle':5                             ,'aper':9,'note':10,'E':11}, 
@@ -152,7 +155,6 @@ class Common(General) :
         d['type'] = self.type[index].strip().lower()
         dKeys = self.keys
 
-        
         if d['type'] == '' : 
             return d
 
@@ -175,7 +177,7 @@ class Common(General) :
             for i in range(0,len(self.data),1) : 
                 r = self.getRowByIndex(i)
                 if r['name'] != 'initial' : 
-                    d.append(self.getRowByIndex(i)['E'])
+                    d.append(self.getRowByIndex(i)['E'])                 
         else : 
             print "Common.getColumn does not exist for ", colName
             return _np.array([])
@@ -415,6 +417,14 @@ class OutputReader :
         common.makeArray()
         twiss.makeArray()
 
+        # minimum and maximum s
+        twiss.smin = twiss.getColumn('suml')[0]
+        twiss.smax = twiss.getColumn('suml')[-1]
+
+        # number of elements 
+        common.nele = len(common.name)
+        twiss.nele  = len(twiss.getColumn('suml'))
+
         return [common,twiss]
 
     def readRmatFile(self, f=None) :
@@ -455,6 +465,14 @@ class OutputReader :
 
         common.makeArray()
         rmat.makeArray()
+
+        # minimum and maximum s
+        rmat.smin = rmat.getColumn('suml')[0]
+        rmat.smax = rmat.getColumn('suml')[-1]
+
+        # number of elements 
+        common.nele = len(common.name)
+        rmat.nele  = len(rmat.getColumn('suml'))
 
         return [common,rmat]
 
@@ -499,6 +517,14 @@ class OutputReader :
         common.makeArray()
         chrom.makeArray()
 
+        # minimum and maximum s
+        chrom.smin = chrom.getColumn('suml')[0]
+        chrom.smax = chrom.getColumn('suml')[-1]
+
+        # number of elements 
+        common.nele = len(common.name)
+        chrom.nele  = len(chrom.getColumn('suml'))
+
         return [common,twiss,chrom]
     
     def readEnvelopeFile(self, f=None) : 
@@ -539,6 +565,14 @@ class OutputReader :
 
         common.makeArray()
         envel.makeArray()
+
+        # minimum and maximum s
+        envel.smin = envel.getColumn('suml')[0]
+        envel.smax = envel.getColumn('suml')[-1]
+
+        # number of elements 
+        common.nele = len(common.name)
+        envel.nele  = len(envel.getColumn('suml'))
 
         return [common,envel] 
 
