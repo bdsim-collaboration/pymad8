@@ -176,8 +176,11 @@ class Common(General) :
         if colName == "E" : 
             for i in range(0,len(self.data),1) : 
                 r = self.getRowByIndex(i)
+                if r['name'] == 'initial' :
+                    d.append(0)
                 if r['name'] != 'initial' : 
                     d.append(self.getRowByIndex(i)['E'])                 
+            d[0] = d[1]
         else : 
             print "Common.getColumn does not exist for ", colName
             return _np.array([])
