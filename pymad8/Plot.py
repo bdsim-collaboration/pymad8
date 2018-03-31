@@ -35,6 +35,7 @@ def AddMachineLatticeToFigure(figure, mad8opt, tightLayout=True):
             try:
                 print 'need to add located element'
                 # print 'Closest element: ',tfs.NameFromNearestS(a.xdata)
+                print a.xdata,mad8opt['twiss'].nameFromNearestS(a.xdata)
             except ValueError:
                 pass # don't complain if the S is out of bounds        
 

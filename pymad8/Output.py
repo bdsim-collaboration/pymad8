@@ -275,7 +275,7 @@ class Twiss(General) :
     def nameFromNearestS(self,s) :
         suml = self.getColumn('suml')
         for i in range(0,len(suml)-1) :
-            if s > suml[i] and s < suml[i+1] : 
+            if s > suml[i-1] and s < suml[i] :
                 return self.name[i]
         return "Not found"
 
