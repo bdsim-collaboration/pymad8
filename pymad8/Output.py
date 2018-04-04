@@ -129,7 +129,8 @@ class Common(General) :
         'imon'       :{'l':0,                                                                                       'note':10,'E':11},
         'prof'       :{'l':0,                                                                                       'note':10,'E':11},
         'blmo'       :{'l':0,                                                                                       'note':10,'E':11},
-        'lcav'       :{'l':0,                                       'freq':5  , 'volt':6 , 'lag':7        ,'aper':9,'note':10,'E':11}
+        'lcav'       :{'l':0,                                       'freq':5  , 'volt':6 , 'lag':7        ,'aper':9,'note':10,'E':11},
+        'matr'       :{'l':0,                                                                              'aper':9,          'E':11}
     }
 
     def __init__(self) :
@@ -158,7 +159,7 @@ class Common(General) :
         if d['type'] == '' : 
             return d
 
-        for k in dKeys[d['type']] :             
+        for k in dKeys[d['type']] :
             d[k] = self.data[index,dKeys[d['type']][k]]
         
         try : 
