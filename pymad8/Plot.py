@@ -115,15 +115,15 @@ def _DrawMachineLattice(axesinstance, mad8opt):
         e['suml'] = t.getRowByIndex(i)['suml']
 
         if e['type'] == 'quad':
-            DrawQuad(e)
+            DrawQuad(e, u'#d10000') #red
         elif e['type'] == 'rben':
-            DrawBend(e)
+            DrawBend(e, u'#0066cc') #blue
         elif e['type'] == 'sben':
-            DrawBend(e)
+            DrawBend(e, u'#0066cc') #blue
         elif e['type'] == 'kick':
             DrawRect(e, u'#4c33b2')
         elif e['type'] == 'hkic':
-            DrawRect(e, u'#4c33b2')
+            DrawRect(e, u'#4c33b2') #purple
         elif e['type'] == 'vkic':
             DrawRect(e, u'#ba55d3')            
         elif e['type'] == 'rcol':
