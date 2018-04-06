@@ -6,6 +6,17 @@ import matplotlib as _matplotlib
 import matplotlib.pyplot as _plt
 import matplotlib.patches as _patches
 
+class _My_Axes(_matplotlib.axes.Axes):
+    """
+    Inherit matplotlib.axes.Axes but override pan action for mouse.
+    Only allow horizontal panning - useful for lattice axes.
+    """
+    name = "_My_Axes"
+    def drag_pan(self, button, key, x, y):
+        _matplotlib.axes.Axes.drag_pan(self, button, 'x', x, y) # pretend key=='x'
+
+_matplotlib.projections.register_projection(_My_Axes)
+
 def AddMachineLatticeToFigure(figure, mad8opt, tightLayout=True):
     """
     Add a diagram above the current graph in the figure that represents the
