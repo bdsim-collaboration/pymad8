@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pymad8',
-    version='0.7',
+    version='1.0',
     packages=find_packages(exclude=["docs", "tests", "old"]),
     # Not sure how strict these need to be...
     install_requires=["matplotlib >= 1.7.1",
