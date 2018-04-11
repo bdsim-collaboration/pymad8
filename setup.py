@@ -7,7 +7,7 @@ setup(
     # Not sure how strict these need to be...
     install_requires=["matplotlib >= 1.7.1",
                       "numpy >= 1.3.0",
-                      "fotranformat >= 0.2.5"],
+                      "fortranformat >= 0.2.5"],
     # Some version of python2.7
     python_requires="==2.7.*",
 
