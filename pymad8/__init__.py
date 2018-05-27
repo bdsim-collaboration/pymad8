@@ -7,20 +7,20 @@ pymad8 - python tools for working with MAD8 output and input.
 | matplotlib  - 1.3.0
 
 | Modules:
-| Input         - 
-| Output        - 
-| Plot          - 
-| Sim           - 
+| Input         -
+| Output        -
+| Plot          -
+| Sim           -
 | Track         -
-| Visualisation - 
+| Visualisation -
 
 Copyright Royal Holloway, University of London 2018.
 """
 
-__version__ = "1.1"
+__version__ = "1.3"
 
 # import Mad8
-import Input 
+import Input
 import Output
 import Plot
 import Sim
