@@ -17,7 +17,7 @@ pymad8 - python tools for working with MAD8 output and input.
 Copyright Royal Holloway, University of London 2018.
 """
 
-__version__ = "1.3"
+__version__ = "1.4.1"
 
 # import Mad8
 import Input
