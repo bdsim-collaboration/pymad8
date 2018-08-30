@@ -46,6 +46,55 @@ def transformedPoly(xy, xyc, theta) :
     # Return transformed poly
     return p
 
+def MakeCombinedSurveyPlot(name,QUAD=True,RBEN=True,SBEN=True,MONI=True,MARK=True):
+    """MakeCombinedSurveyPlot(name,QUAD=True,RBEN=True,SBEN=True,MONI=True,MARK=True)
+    Takes a list of Survey filenames, plots them all on the same 2D plot. For branching machines or segmented models. Elements selectable via booleans, default to true"""
+    Combined=plt.figure()
+    plt.xlabel("x (m)")
+    plt.ylabel("y (m)")
+    ax=Combined.add_subplot(111)
+    for file in name:	
+        loadname = file
+        plotname=str.replace(loadname,"SURVEY_","")
+        loader=m8.Output.OutputReader()
+        loader.fileName=loadname
+        commondata,surveydata=loader.readSurveyFile()
+        TwoD=m8.Visualisation.TwoDim(commondata,surveydata)
+        TwoD.x=TwoD.survey.data[0:,TwoD.survey.keys['x']]
+        TwoD.y=TwoD.survey.data[0:,TwoD.survey.keys['y']]
+        TwoD.z=TwoD.survey.data[0:,TwoD.survey.keys['z']]
+        ax.plot(TwoD.z,TwoD.x,'--',label=plotname)
+        if QUAD:
+            TwoD.drawElements("QUAD") 
+        if RBEN:
+            TwoD.drawElements("RBEN") 
+        if SBEN:
+            TwoD.drawElements("SBEN") 
+        if MONI:
+            TwoD.drawElements("MONI") 
+        if MARK:
+            TwoD.drawElements("MARK")
+
+        xmin = TwoD.x.min()
+        xmax = TwoD.x.max()
+        zmin = TwoD.z.min()
+        zmax = TwoD.z.max()
+        ax.legend(loc='upper left')
+        if zmin < ax.get_xlim()[0]:
+            ax.xlim(zmin-10,ax.get_xlim()[1])
+        if zmax > ax.get_xlim()[1]:
+            ax.xlim(ax.get_xlim()[0],zmax)
+
+        if xmin < ax.get_ylim()[0]:
+            ax.ylim(xmin-10,ax.get_ylim()[1])
+        if xmax > ax.get_ylim()[1]:
+            ax.ylim(ax.get_ylim()[0],xmax)
+		
+    Combined.savefig( "./combined_plot.pdf")
+
+
+
+
 class OneDim :
     def __init__(self, common, survey, debug) :
         self.common = common
@@ -234,7 +283,11 @@ class TwoDim :
         pl.ylim(xmin-10,xmax+10)        
 
         self.drawElements("QUAD") 
-
+        self.drawElements("RBEN") 
+        self.drawElements("SBEN") 
+        self.drawElements("MONI") 
+        self.drawElements("MARK")
+        
     def plotUpdate(self,event) : 
         print 'Visualisation.TwoDim.plotUpdate>'
         self.drawElements("QUAD")
