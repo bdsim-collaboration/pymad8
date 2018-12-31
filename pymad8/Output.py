@@ -666,6 +666,28 @@ class EchoValue :
                 v  = float(sl[5])
                 self.valueDict[k] = v
 
+                #loadvalues doesn't work with the synatax I was given. Loadmarkedvalues does: loops over file for all 'value, (thing)', then looks for lines declaring (thing) and their value, saves them to the dict.
+    def loadMarkedValues(self) : 
+        f = open(self.echoFileName) 
+        findme=[]
+        for l in f : 
+            if l.upper().find("VALUE") != -1 :
+                sl = l.split()
+                k=sl[1].strip(' ')
+                findme.append(k)
+        print findme
+        for quantity in findme:
+            f = open(self.echoFileName)
+            print quantity
+            for l in f :
+                if l.upper().find(str(quantity))!=-1:
+                    ls=l.split()
+                    if ls[0]==quantity:
+                        print ls[2].strip()
+                        self.valueDict[quantity] = ls[2]
+
+
+
 ###############################################################################################################
 class Saveline :
     def __init__(self, fileName, lineName = 'EBDS') : 
