@@ -14,7 +14,7 @@ pymad8 - python tools for working with MAD8 output and input.
 | Track         -
 | Visualisation -
 
-Copyright Royal Holloway, University of London 2018.
+Copyright Royal Holloway, University of London 2019.
 """
 
 __version__ = "1.4.1"
