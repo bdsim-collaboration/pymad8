@@ -149,6 +149,9 @@ def _DrawMachineLattice(axesinstance, mad8opt):
             DrawRect(e, u'#000000',0.1)
         elif e['type'] == 'sole':
             DrawRect(e, u'#000000',0.1)
+        elif e['type'] == 'matr':
+            if e['l'] != 0 :
+                DrawRect(e, u'#000000',0.1)            
         elif e['type'] == 'drif':
             pass
         elif e['type'] == 'moni':
