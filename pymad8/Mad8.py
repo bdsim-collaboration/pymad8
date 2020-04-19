@@ -173,7 +173,7 @@ class Common(General) :
                 if r['name'] != 'initial' : 
                     d.append(self.getRowByIndex(i)['E'])
         else : 
-            print "Common.getColumn does not exist for ", colName
+            print("Common.getColumn does not exist for ", colName)
             return np.array([])
         return np.array(d)
 
@@ -368,7 +368,7 @@ class OutputReader :
         elif self.type == 'envel' : 
             r = self.readEnvelopeFile()
         else : 
-            print 'Mad8.OutputReader.readFile> Unknown file'
+            print('Mad8.OutputReader.readFile> Unknown file')
             return None 
         return r 
 
@@ -385,7 +385,7 @@ class OutputReader :
         h2 = ffhr2.read(f.readline())
         nrec = h1[7]
 
-        print 'Mad8.readTwissFile > nrec='+str(nrec)
+        print('Mad8.readTwissFile > nrec='+str(nrec))
         
         ffe1 = ff.FortranRecordReader('(A4,A16,F12.6,4E16.9,A19,E16.9)')
         ffe2 = ff.FortranRecordReader('(5E16.9)')
@@ -420,7 +420,7 @@ class OutputReader :
         h2 = ffhr2.read(f.readline())
         # number of records
         nrec = h1[7]
-        print 'Mad8.readRmatFile  > nrec='+str(nrec)
+        print('Mad8.readRmatFile  > nrec='+str(nrec))
 
         ffe1 = ff.FortranRecordReader('(A4,A16,F12.6,4E16.9,A19,E16.9)')
         ffe2 = ff.FortranRecordReader('(5E16.9)')
@@ -467,7 +467,7 @@ class OutputReader :
         h2 = ffhr2.read(f.readline())
         nrec = h1[7]
 
-        print 'Mad8.readChromFile > nrec='+str(nrec)
+        print('Mad8.readChromFile > nrec='+str(nrec))
 
         ffe1 = ff.FortranRecordReader('(A4,A16,F12.6,4E16.9,A19,E16.9)')
         ffe2 = ff.FortranRecordReader('(5E16.9)')
@@ -503,7 +503,7 @@ class OutputReader :
         h2 = ffhr2.read(f.readline())
         nrec = h1[7]
 
-        print 'Mad8.readEnvelopeFile > nrec='+str(nrec)
+        print('Mad8.readEnvelopeFile > nrec='+str(nrec))
 
         ffe1 = ff.FortranRecordReader('(A4,A16,F12.6,4E16.9,A19,E16.9)')
         ffe2 = ff.FortranRecordReader('(5E16.9)')
@@ -545,7 +545,7 @@ class OutputReader :
         # number of records
         nrec = h1[7]
 
-        print 'Mad8.readSurveyFile> nrec='+str(nrec)
+        print('Mad8.readSurveyFile> nrec='+str(nrec))
         ffe1 = ff.FortranRecordReader('(A4,A16,F12.6,4E16.9,A19,E16.9)')
         ffe2 = ff.FortranRecordReader('(5E16.9)')
         ffe3 = ff.FortranRecordReader('(4E16.9)')

@@ -130,7 +130,7 @@ class OneDim :
 
     def drawElements(self,type,colour=True) : 
         if self.debug : 
-            print 'pymad8.Visualisation.OneDim.drawElements>'
+            print('pymad8.Visualisation.OneDim.drawElements>')
 
         ilist = self.common.findByType(type) 
         for i in ilist : 
@@ -138,8 +138,8 @@ class OneDim :
     
     def drawElement(self,elem,colour=True) : 
         if self.debug : 
-            print 'pymad8.Visualisation.OneDim.drawElement>',elem
-            print 'pymad8.Visualisation.OneDim.drawElement> Use Colour -> ',colour
+            print('pymad8.Visualisation.OneDim.drawElement>', elem)
+            print('pymad8.Visualisation.OneDim.drawElement> Use Colour -> ', colour)
 
         # find element if string
         if type(elem) == str : 
@@ -178,7 +178,7 @@ class OneDim :
         elif t == 'MARK' : 
             self.drawMark(c,s,suml,colour)
         else :
-            print 'pymad8.Visualisation.OneDim> Type not known'
+            print('pymad8.Visualisation.OneDim> Type not known')
 
         # Annotate element
 
@@ -262,7 +262,7 @@ class TwoDim :
         self.quadWidth= 0.75
 
     def plot(self,event=None) : 
-        print 'Visualisation.TwoDim.plot>'
+        print('Visualisation.TwoDim.plot>')
         self.x = self.survey.data[:,self.survey.keys['x']]
         self.y = self.survey.data[:,self.survey.keys['y']]
         self.z = -self.survey.data[:,self.survey.keys['z']]
@@ -289,12 +289,12 @@ class TwoDim :
         self.drawElements("MARK")
         
     def plotUpdate(self,event) : 
-        print 'Visualisation.TwoDim.plotUpdate>'
+        print('Visualisation.TwoDim.plotUpdate>')
         self.drawElements("QUAD")
 
     def drawElements(self,type) : 
         if self.debug : 
-            print 'pymad8.Visualisation.TwoDim.drawElements>'
+            print('pymad8.Visualisation.TwoDim.drawElements>')
 
         ilist = self.common.findByType(type) 
         for i in ilist : 
@@ -302,7 +302,7 @@ class TwoDim :
 
     def drawElement(self,elem) : 
         if self.debug : 
-            print 'pymad8.Visualisation.TwoDim.drawElement>',elem
+            print('pymad8.Visualisation.TwoDim.drawElement>', elem)
 
         # find element if string
         if type(elem) == str : 
@@ -331,16 +331,16 @@ class TwoDim :
         elif t == 'MARK' : 
             self.drawMark(c,s,ex,ey,ez)
         else :
-            print 'pymad8.Visualisation.TwoDim> Type not known'
+            print('pymad8.Visualisation.TwoDim> Type not known')
         # pl.plot([z[i]],[x[i]],"+")
 
         # Annotate element
 
     def drawQuad(self,c,s,x,y,z) : 
         if self.debug : 
-            print 'Visualisation.TwoDim.drawQuad>'
-            print '>',c
-            print '>',s
+            print('Visualisation.TwoDim.drawQuad>')
+            print('>',c)
+            print('>',s)
         if self.fancy : 
             # get data
             ql = c[m8.Output.Common.keys['quad']['l']]
@@ -360,7 +360,7 @@ class TwoDim :
 
     def drawBend(self,c,s,x,y,z) : 
         if self.debug : 
-            print 'Visualisation.TwoDim.drawDipole>'
+            print('Visualisation.TwoDim.drawDipole>')
 
         if self.fancy : 
             # get data
@@ -372,13 +372,13 @@ class TwoDim :
 
     def drawMoni(self,c,s,x,y,z) :
         if self.debug : 
-            print 'Visualisation.TwoDim.drawMoni>'
+            print('Visualisation.TwoDim.drawMoni>')
 
         pl.plot([z],[x],'g+')                
 
     def drawMark(self,c,s,x,y,z) : 
         if self.debug : 
-            print 'Visualisation.TwoDim.drawMark>'
+            print('Visualisation.TwoDim.drawMark>')
 
         pl.plot([z],[x],'b+')        
     

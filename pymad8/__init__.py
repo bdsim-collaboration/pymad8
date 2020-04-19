@@ -20,12 +20,12 @@ Copyright Royal Holloway, University of London 2019.
 __version__ = "1.5.0"
 
 # import Mad8
-import Input
-import Output
-import Plot
-import Sim
+from . import Input
+from . import Output
+from . import Plot
+from . import Sim
 #import Track  #not imported by default - can be explicitly imported
-import Visualisation
+from . import Visualisation
 
 #import Saveline
 #import Converter

@@ -7,7 +7,7 @@ from   collections import defaultdict
 import pymad8 as _pymad8
 import fortranformat as _ff
 
-import Input as _Input
+from . import Input as _Input
 
 ###############################################################################################################
 def getValueByName(name, key, common, table) : 
@@ -183,7 +183,7 @@ class Common(General) :
                     d.append(self.getRowByIndex(i)['E'])                 
             d[0] = d[1]
         else : 
-            print "Common.getColumn does not exist for ", colName
+            print("Common.getColumn does not exist for ", colName)
             return _np.array([])
         return _np.array(d)
 
@@ -384,7 +384,7 @@ class OutputReader :
         elif self.type == 'envel' : 
             r = self.readEnvelopeFile()
         else : 
-            print 'Mad8.OutputReader.readFile> Unknown file'
+            print('Mad8.OutputReader.readFile> Unknown file')
             return None 
         return r 
 
@@ -401,7 +401,7 @@ class OutputReader :
         h2 = ffhr2.read(f.readline())
         nrec = h1[7]
 
-        print 'Mad8.readTwissFile > nrec='+str(nrec)
+        print('Mad8.readTwissFile > nrec='+str(nrec))
         
         ffe1 = _ff.FortranRecordReader('(A4,A16,F12.6,4E16.9,A19,E16.9)')
         ffe2 = _ff.FortranRecordReader('(5E16.9)')
@@ -444,7 +444,7 @@ class OutputReader :
         h2 = ffhr2.read(f.readline())
         # number of records
         nrec = h1[7]
-        print 'Mad8.readRmatFile  > nrec='+str(nrec)
+        print('Mad8.readRmatFile  > nrec='+str(nrec))
 
         ffe1 = _ff.FortranRecordReader('(A4,A16,F12.6,4E16.9,A19,E16.9)')
         ffe2 = _ff.FortranRecordReader('(5E16.9)')
@@ -499,7 +499,7 @@ class OutputReader :
         h2 = ffhr2.read(f.readline())
         nrec = h1[7]
 
-        print 'Mad8.readChromFile > nrec='+str(nrec)
+        print('Mad8.readChromFile > nrec='+str(nrec))
 
         ffe1 = _ff.FortranRecordReader('(A4,A16,F12.6,4E16.9,A19,E16.9)')
         ffe2 = _ff.FortranRecordReader('(5E16.9)')
@@ -543,7 +543,7 @@ class OutputReader :
         h2 = ffhr2.read(f.readline())
         nrec = h1[7]
 
-        print 'Mad8.readEnvelopeFile > nrec='+str(nrec)
+        print('Mad8.readEnvelopeFile > nrec='+str(nrec))
 
         ffe1 = _ff.FortranRecordReader('(A4,A16,F12.6,4E16.9,A19,E16.9)')
         ffe2 = _ff.FortranRecordReader('(5E16.9)')
@@ -593,7 +593,7 @@ class OutputReader :
         # number of records
         nrec = h1[7]
 
-        print 'Mad8.readSurveyFile> nrec='+str(nrec)
+        print('Mad8.readSurveyFile> nrec='+str(nrec))
         ffe1 = _ff.FortranRecordReader('(A4,A16,F12.6,4E16.9,A19,E16.9)')
         ffe2 = _ff.FortranRecordReader('(5E16.9)')
         ffe3 = _ff.FortranRecordReader('(4E16.9)')
@@ -675,15 +675,15 @@ class EchoValue :
                 sl = l.split()
                 k=sl[1].strip(' ')
                 findme.append(k)
-        print findme
+        print(findme)
         for quantity in findme:
             f = open(self.echoFileName)
-            print quantity
+            print(quantity)
             for l in f :
                 if l.upper().find(str(quantity))!=-1:
                     ls=l.split()
                     if ls[0]==quantity:
-                        print ls[2].strip()
+                        print(ls[2].strip())
                         self.valueDict[quantity] = ls[2]
 
 
@@ -880,23 +880,23 @@ class Track :
             self.folderpath = self.folderpath+"/"
         
         cwd = _os.getcwd()
-        print "pymad8.Output.Track >> Initialised in directory:"
+        print("pymad8.Output.Track >> Initialised in directory:")
         if (self.folderpath.startswith("/")):
-            print self.folderpath
+            print(self.folderpath)
         else:
-            print cwd+"/"+self.folderpath
+            print(cwd+"/"+self.folderpath)
 
-        print "pymad8.Output.Track >> Filemap file:"
+        print("pymad8.Output.Track >> Filemap file:")
         if (self.filemapname.startswith("/")):
-            print self.filemapname
+            print(self.filemapname)
         else:
-            print cwd+"/"+self.filemapname
+            print(cwd+"/"+self.filemapname)
 
-        print "pymad8.Output.Track >> Twiss file:"
+        print("pymad8.Output.Track >> Twiss file:")
         if (self.twissname.startswith("/")):
-            print self.twissname
+            print(self.twissname)
         else:
-            print cwd+"/"+self.twissname
+            print(cwd+"/"+self.twissname)
 
               
     def readDir(self) : 
@@ -906,25 +906,25 @@ class Track :
         from track files to observation plane in the twiss file.
         """
 
-        print "pymad8.Output.Track >> Loading twiss file"
+        print("pymad8.Output.Track >> Loading twiss file")
         if(_os.path.isfile(self.twissname)):
             reader           = _pymad8.Output.OutputReader()
             [common , twiss] = reader.readFile(self.twissname, 'twiss')
         else:
-            print "No such file:", self.twissname
-            print "Terminating.."
+            print("No such file:", self.twissname)
+            print("Terminating..")
             _sys.exit(1)
             
-        print "pymad8.Output.Track >> Loading element map"
+        print("pymad8.Output.Track >> Loading element map")
         if(_os.path.isfile(self.filemapname)):
             with open(self.filemapname, 'r') as filemap:
                 fmap={line.split()[1] : int(line.split()[0]) for line in filemap.readlines()}
         else:
-            print "No such file:", self.filemapname
-            print "Terminating.."
+            print("No such file:", self.filemapname)
+            print("Terminating..")
             _sys.exit(1)
 
-        print "pymad8.Output.Track >> Loading track files.."
+        print("pymad8.Output.Track >> Loading track files..")
         for fn in _os.listdir(self.folderpath):
             if _os.path.isfile(self.folderpath+fn):
                 #print "Loading file ", fn
@@ -937,7 +937,7 @@ class Track :
             S    = twiss.getRowByIndex(idx)["suml"]
             self.trackdata[name]=[self.trackdata[name],S]
 
-        print "pymad8.Output.Track >> Done"
+        print("pymad8.Output.Track >> Done")
             
 
     def appendDir(self, folderpath):
@@ -949,11 +949,11 @@ class Track :
             folderpath = folderpath+"/"
         
         cwd = _os.getcwd()
-        print "pymad8.Output.Track >> Appending directory:"
+        print("pymad8.Output.Track >> Appending directory:")
         if (folderpath.startswith("/")):
-            print self.folderpath
+            print(self.folderpath)
         else:
-            print cwd+folderpath
+            print(cwd+folderpath)
 
         "pymad8.Output.Track >> Loading files...:"
         for fn in _os.listdir(folderpath):
@@ -962,4 +962,4 @@ class Track :
                     data = _np.loadtxt(folderpath+fn, skiprows=51, unpack=True)
                     self.trackdata[fn][0][0] = _np.concatenate((self.trackdata[fn][0][0], data), axis=1)
                 else:
-                    print "pymad8.Output.Track >>Sampler name not found in orignal set, skip: ", fn 
+                    print("pymad8.Output.Track >>Sampler name not found in orignal set, skip: ", fn)

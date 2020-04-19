@@ -1,4 +1,4 @@
-import Output as _Output
+from . import Output as _Output
 
 import pylab as _pl
 import numpy as _np
@@ -44,7 +44,7 @@ def AddMachineLatticeToFigure(figure, mad8opt, tightLayout=True):
     def Click(a):
         if a.button == 3:
             try:
-                print a.xdata,mad8opt['twiss'].nameFromNearestS(a.xdata)
+                print(a.xdata,mad8opt['twiss'].nameFromNearestS(a.xdata))
             except ValueError:
                 pass # don't complain if the S is out of bounds        
 
@@ -187,7 +187,7 @@ def setCallbacks(figure, axm, axplot,twiss) :
 
     def Click(a) : 
         if a.button == 3 : 
-            print 'Closest element: ',twiss.nameFromNearestS(a.xdata)
+            print('Closest element: ',twiss.nameFromNearestS(a.xdata))
 
     axm.callbacks.connect('xlim_changed', MachineXlim)
     figure.canvas.mpl_connect('button_press_event', Click) 
@@ -463,4 +463,4 @@ def survey(surveyfile = "ebds1") :
     # get suml
     suml = s.getColumn('suml')
     
-    print suml
+    print(suml)

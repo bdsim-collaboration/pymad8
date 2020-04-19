@@ -1,6 +1,6 @@
 import pylab as pl 
 import numpy as np 
-import Mad8  as m8
+from . import Mad8  as m8
 
 def testTrack(rmatFile, nparticle = 10) :
     o = m8.OutputReader()     
@@ -28,7 +28,7 @@ class Track :
 
         # loop over particles
         for i in range(0,nparticle) : 
-            print 'Track.Simple.track> particle ',i
+            print('Track.Simple.track> particle ',i)
             p = self.generate() 
             psv = self.trackParticle(p)
             self.psVector[i] = psv
