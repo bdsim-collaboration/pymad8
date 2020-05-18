@@ -107,9 +107,9 @@ class Loader:
     def flatten_elements(self, element_name):
         if element_name not in self.mad8Types:
             for i in self.elementList:
-                if i == self.elementDict[element_name].keys()[0] and not i == '':
-                    type_key = self.elementDict[i].keys()[0]
-                    element_type_key = self.elementDict[element_name].keys()[0]
+                if i == list(self.elementDict[element_name].keys())[0] and not i == '':
+                    type_key = list(self.elementDict[i].keys())[0]
+                    element_type_key = list(self.elementDict[element_name].keys())[0]
 
                     self.elementDict[element_name][type_key] = self.elementDict[element_name][element_type_key]
                     del self.elementDict[element_name][element_type_key]
@@ -117,16 +117,16 @@ class Loader:
                     if self.elementDict[element_name][type_key] == {}:
                         continue  # No properties to update
 
-                    if self.elementDict[i].values()[0] == self.elementDict[element_name].values()[0]:  #  properties are identical so skip.
+                    if list(self.elementDict[i].values())[0] == list(self.elementDict[element_name].values())[0]:  #  properties are identical so skip.
                         continue
 
-                    for properties in self.elementDict[i].itervalues():
-                        for property_name, property_value in properties.iteritems():
-                            if property_name in self.elementDict[element_name].keys() and property_value in self.elementDict[element_name].values():
+                    for properties in self.elementDict[i].values():
+                        for property_name, property_value in properties.items():
+                            if property_name in list(self.elementDict[element_name].keys()) and property_value in list(self.elementDict[element_name].values()):
                                 continue  # Already in the list
 
-                        self.elementDict[element_name].values()[0].update(properties)  #  property isn't empty, the same, or diff val, so add it.
-                        self.flatten_elements(self.elementDict[element_name].keys()[0])
+                        list(self.elementDict[element_name].values())[0].update(properties)  #  property isn't empty, the same, or diff val, so add it.
+                        self.flatten_elements(list(self.elementDict[element_name].keys())[0])
 
     def expand_file(self):
         # loop through all elements

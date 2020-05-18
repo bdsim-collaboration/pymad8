@@ -163,7 +163,7 @@ class Common(General) :
             d[k] = self.data[index,dKeys[d['type']][k]]
         
         try : 
-            self.keys.keys().index(d['type'])
+            list(self.keys.keys()).index(d['type'])
             for k in dKeys[d['type']] : 
                 if k != 'note' : 
                     d[k] = float(d[k])
@@ -842,7 +842,7 @@ class Saveline :
         for i in range(0,len(self.dictFileRenamed)) :
             l = self.dictFileRenamed[i]['name']+': '+self.dictFileRenamed[i]['type']
 
-            for k in self.dictFileRenamed[i].keys() :
+            for k in list(self.dictFileRenamed[i].keys()) :
                 if k != 'name' and k != 'type' :
                     l = l+', '+k+'='+str(self.dictFileRenamed[i][k])
             l = l + '\n'
@@ -932,7 +932,7 @@ class Track :
                 self.trackdata[fn].append(data)
 
         #Get the s p_ositions from the twiss file and match them to the data using the filemap
-        for name in self.trackdata.keys():
+        for name in list(self.trackdata.keys()):
             idx  = fmap[name]
             S    = twiss.getRowByIndex(idx)["suml"]
             self.trackdata[name]=[self.trackdata[name],S]
@@ -958,7 +958,7 @@ class Track :
         "pymad8.Output.Track >> Loading files...:"
         for fn in _os.listdir(folderpath):
             if _os.path.isfile(folderpath+fn):
-                if(fn in self.trackdata.keys()):
+                if(fn in list(self.trackdata.keys())):
                     data = _np.loadtxt(folderpath+fn, skiprows=51, unpack=True)
                     self.trackdata[fn][0][0] = _np.concatenate((self.trackdata[fn][0][0], data), axis=1)
                 else:

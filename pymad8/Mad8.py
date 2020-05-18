@@ -156,7 +156,7 @@ class Common(General) :
             d[k] = self.data[index,dKeys[d['type']][k]]
         
         try : 
-            self.keys.keys().index(d['type'])
+            list(self.keys.keys()).index(d['type'])
             for k in dKeys[d['type']] : 
                 if k != 'note' : 
                     d[k] = float(d[k])
