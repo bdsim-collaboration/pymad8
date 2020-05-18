@@ -48,7 +48,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'pymad8'
-copyright = u'Royal Holloway, University of London 2019'
+copyright = u'Royal Holloway, University of London 2020'
 author = u'S Boogert, A Abramov, L Nevay, W Shields, J Snuverink, S Walker'
 
 # The version info for the project you're documenting, acts as replacement for
