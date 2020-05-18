@@ -1,4 +1,4 @@
-import Output as _Output
+from . import Output as _Output
 import warnings
 
 def MakeTrackFiles(savelineFileName, line, outputFileNameStub):
