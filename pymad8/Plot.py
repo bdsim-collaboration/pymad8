@@ -392,7 +392,7 @@ def apertures(twissfile="ebds1", envelfile="ebds1") :
     sigmaY = _pl.sqrt(e.getColumn('s33'))
     
     # get apertures 
-    aper    = _pl.array(map(float,c.getApertures(raw=False)))
+    aper    = _pl.array(list(map(float,c.getApertures(raw=False))))
     aper    = aper/aper.max()*max(sigmaX.max(),sigmaX.max())
     aperMax = aper.max()*_pl.ones(len(aper))
         
