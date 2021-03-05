@@ -6,7 +6,7 @@ Installation
 Requirements
 ------------
 
- * pymad8 is developed exclusively for Python 2.7.
+ * pymad8 is developed exclusively for Python 3
  * Requires : fortranformat
 
 Installation

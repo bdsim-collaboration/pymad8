@@ -10,14 +10,11 @@ of BDSIM models.
    licence
    authorship
    installation
-   convert
    data
+   convert
    plot
    support
    moduledocs
-	     
-
-
 
 Indices and tables
 ==================
