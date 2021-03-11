@@ -304,7 +304,28 @@ def linearOptics(twissfile = "ebds1") :
     setCallbacks(figure,ax0,[ax1,ax2],t)
 
 #    _plt.savefig(name+"_linear.pdf")
-    
+
+def beamSize(envelfile = "ebds1", twissfile="ebs1") :
+    r =_Output.OutputReader()
+    [c,e] = r.readFile(envelfile,"envel")
+    [c,t] = r.readFile(twissfile,"twiss")
+
+    suml = e.getColumn("suml")
+    s11  = e.getColumn("s11")
+    s22  = e.getColumn("s22")
+    s33  = e.getColumn("s33")
+    s44  = e.getColumn("s44")
+
+    figure = _plt.figure(1)
+    gs  = _plt.GridSpec(3,1,height_ratios=[1,3,3])
+    ax0 = figure.add_subplot(gs[0],projection="_My_Axes")
+    drawMachineLattice(c,t)
+
+    ax1 = _plt.subplot(gs[1])
+    _pl.plot(suml,s11)
+
+    ax1 = _plt.subplot(gs[2])
+    _pl.plot(suml,s33)
 
 
 def phaseAdvance(twissfile = "ebds1") :

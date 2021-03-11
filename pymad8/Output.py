@@ -666,8 +666,11 @@ class EchoValue :
                 v  = float(sl[5])
                 self.valueDict[k] = v
 
-                #loadvalues doesn't work with the synatax I was given. Loadmarkedvalues does: loops over file for all 'value, (thing)', then looks for lines declaring (thing) and their value, saves them to the dict.
-    def loadMarkedValues(self) : 
+                # loadValues doesn't work with the synatax I was given. LoadMarkedValues does: loops over file
+                # for all 'value, (thing)', then looks for lines declaring (thing) and their value, saves them
+                # to the dict.
+
+    def loadMarkedValues(self) :
         f = open(self.echoFileName) 
         findme=[]
         for l in f : 
