@@ -1,4 +1,5 @@
 import numpy as _np
+import matplotlib.pyplot as _plt
 import pandas as _pd
 import fortranformat as _ff
 
@@ -280,17 +281,126 @@ class OutputPandas :
 		'''Empties all data structures in this instance'''
 		self.__init__()
 
+	####################################################################################
 	def getIndexByNames(self,namelist):
-		#if type(namelist) == list :
-		indexlist = []
-		for name in namelist :
-			indexlist += self.data.index[self.data['NAME'] == name].tolist()
-		return indexlist
-		#else :
-		#	return self.data.index[self.data['NAME'] == namelist].tolist()[0]
+		rows = self.getRowsByNames(namelist)
+		if len(rows) == 1 :
+			return rows.index[:].tolist()[0]
+		return rows.index[:].tolist()
 
-	def getIndexByType(self,Type):
-		return self.data.index[self.data['TYPE'] == Type].tolist()
+	def getIndexByTypes(self,typelist):
+		rows = self.getRowsByTypes(typelist)
+		if len(rows) == 1 :
+			return rows.index[:].tolist()[0]
+		return rows.index[:].tolist()
+
+	def getIndexByValues(self,column,value=0,mode='supp'):
+		rows = self.getRowsByValues(column,value,mode)
+		if len(rows) == 1 :
+			return rows.index[:].tolist()[0]
+		return rows.index[:].tolist()
+
+	def getIndexByNearestS(self,s):
+		row = self.getRowByNearestS(s)
+		return row.index[:].tolist()[0]
+
+	####################################################################################
+	def getNamesByIndex(self,indexlist):
+		if type(indexlist) == list :
+			return self.getRowsByIndex(indexlist)['NAME'].tolist()
+		return self.getRowsByIndex(indexlist)['NAME']
+
+	def getNamesByTypes(self,typelist):
+		if type(typelist) == list :
+			return self.getRowsByTypes(typelist)['NAME'].tolist()
+		return self.getRowsByTypes(typelist)['NAME']
+
+	def getNamesByValues(self,column,value=0,mode='supp'):
+		rows =  self.getRowsByValues(column,value,mode)
+		if len(rows) == 1 :
+			return rows['NAME']
+		return rows['NAME'].tolist()
+
+	def getNameByNearestS(self,s):
+		row = getRowByNearestS(s)
+		return row['NAME']
+
+	####################################################################################
+	def getTypeByIndex(self,indexlist):
+		if type(indexlist) == list :
+			return self.getRowsByIndex(indexlist)['TYPE'].tolist()
+		return self.getRowsByIndex(indexlist)['TYPE']
+
+	def getTypeByName(self,namelist):
+		if type(namelist) == list :
+			return self.getRowsByNames(namelist)['TYPE'].tolist()
+		return self.getRowsByNames(namelist)['TYPE']
+
+	def getTypesByValues(self,column,value=0,mode='supp'):
+		rows = self.getRowsByValues(column,value,mode)
+		if len(rows) == 1 :
+			return rows['TYPE']
+		return rows['TYPE'].tolist()
+
+	####################################################################################
+	def getRowsByIndex(self,indexlist):
+		if type (indexlist) == list :
+			return self.data.loc[indexlist]
+		return self.data.loc[[indexlist]]
+
+	def getRowsByNames(self,namelist):
+		if type(namelist) == list :
+			return self.data.loc[self.data['NAME'].isin(namelist)]
+		return self.data.loc[self.data['NAME'] == namelist]
+
+	def getRowsByTypes(self,typelist):
+		if type(typelist) == list :
+			return self.data.loc[self.data['TYPE'].isin(typelist)]
+		return self.data.loc[self.data['TYPE'] == typelist]
+
+	def getRowsByValues(self,column,value=0,mode='supp'):
+		if mode == 'supp':
+			return self.data.loc[self.data[column] > value]
+		if mode == 'inf':
+			return self.data.loc[self.data[column] < value]
+		raise ValueError("Unrecognized mode, use 'supp' or 'inf'")
+
+	def getRowByNearestS(self,s):
+		S = self.data['S'].tolist()
+		for index in range(self.nrec) :
+			if s > S[index-1] and s < S[index] :
+				return self.data.loc[[index]]
+		raise ValueError('Not found')
+
+	def getRowsByFunction(self,f):
+	return self.data.loc[f(self.data)]
+
+	####################################################################################
+	def getColumnsByKeys(self,keylist):
+		return self.data[keylist]
+
+	####################################################################################
+	def getElementByIndex(self,indexlist,keylist):
+		if type(namelist) != list :
+			namelist = [namelist]
+		if type(keylist) != list :
+			keylist = [keylist]
+		return self.data.loc[indexlist,keylist]
+
+	def getElementByNames(self,namelist,keylist):
+		if type(namelist) != list :
+			namelist = [namelist]
+		if type(keylist) != list :
+			keylist = [keylist]
+		elem = self.data.loc[self.data['NAME'].isin(namelist),keylist]
+		if elem.shape == (1,1) :
+			return elem.values[0][0]
+		return elem
+
+	def plotXY(self,Xkey,Ykey):
+		X = self.getColumnsByKeys(Xkey)
+		Y = self.getColumnsByKeys(Ykey)
+		_plt.plot(X,Y)
 
 	def calcBeamSize(self, EmitX, EmitY, Esprd, BunchLen=0):
 		'''Calculate the beam sizes and beam divergences in both planes for each elements
