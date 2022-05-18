@@ -69,7 +69,7 @@ class OutputPandas :
 	def _readTwissFile(self) :
 		'''Read and load a Mad8 twiss file in a DataFrame then save it as internal value 'data' '''
 		
-		colnames_twiss = ['ALPHX','BETX','MUX','DX','DPX','ALPHY','BETY','MUY','DY','DPY','X','PX','Y','PV','S']
+		colnames_twiss = ['ALPHX','BETX','MUX','DX','DPX','ALPHY','BETY','MUY','DY','DPY','X','PX','Y','PY','S']
 		colnames = self.colnames_common + colnames_twiss
 		self.data = _pd.DataFrame(columns=colnames)
 
@@ -98,7 +98,8 @@ class OutputPandas :
 				d[colnames_twiss[i]]=l_twiss[i]
 			self.data = self.data.append(d,ignore_index=True)
 		f.close()
-		
+		self.data.at[0,'E'] = self.data['E'][1]
+
 	##########################################################################################
 	def _readRmatFile(self) :
 		'''Read and load a Mad8 rmat file in a DataFrame then save it as internal value 'data' '''
@@ -140,6 +141,7 @@ class OutputPandas :
 				d[colnames_rmat[i]]=l_rmat[i]
 			self.data = self.data.append(d,ignore_index=True)
 		f.close()
+		self.data.at[0,'E'] = self.data['E'][1]
 
 	##########################################################################################
 	def _readChromFile(self) :
@@ -178,6 +180,7 @@ class OutputPandas :
 				d[colnames_chrom[i]]=l_chrom[i]
 			self.data = self.data.append(d,ignore_index=True)
 		f.close()
+		self.data.at[0,'E'] = self.data['E'][1]
 
 	##########################################################################################
 	def _readEnvelopeFile(self) :
@@ -220,6 +223,7 @@ class OutputPandas :
 				d[colnames_envelop[i]]=l_envelop[i]
 			self.data = self.data.append(d,ignore_index=True)
 		f.close()
+		self.data.at[0,'E'] = self.data['E'][1]
 
 	##########################################################################################
 	def _readSurveyFile(self) :
@@ -256,6 +260,7 @@ class OutputPandas :
 				d[colnames_survey[i]]=l_survey[i]
 			self.data = self.data.append(d,ignore_index=True)
 		f.close()
+		self.data.at[0,'E'] = self.data['E'][1]
 
 	##########################################################################################
 	def _findNelemInFF(self,openfile):
@@ -373,7 +378,7 @@ class OutputPandas :
 		raise ValueError('Not found')
 
 	def getRowsByFunction(self,f):
-	return self.data.loc[f(self.data)]
+		return self.data.loc[f(self.data)]
 
 	####################################################################################
 	def getColumnsByKeys(self,keylist):
@@ -396,6 +401,12 @@ class OutputPandas :
 		if elem.shape == (1,1) :
 			return elem.values[0][0]
 		return elem
+	####################################################################################
+	def sMin(self):
+		return self.data['S'][0]
+
+	def sMax(self):
+		return self.data['S'][self.nrec-1]
 
 	def plotXY(self,Xkey,Ykey):
 		X = self.getColumnsByKeys(Xkey)
@@ -413,7 +424,7 @@ class OutputPandas :
 		SigmaY = []
 		SigmaXP = []
 		SigmaYP = []
-		E0 = self.data['E'][0]
+		E0 = self.data['E'][1]
 		for i in range(0,self.nrec,1) :
 			BetaX = self.data['BETX'][i]
 			BetaY = self.data['BETY'][i]
@@ -434,4 +445,4 @@ class OutputPandas :
 		self.data = self.data.assign(SIGX=SigmaX)
 		self.data = self.data.assign(SIGY=SigmaY)
 		self.data = self.data.assign(SIGXP=SigmaXP)
-		self.data = self.data.assign(SIGYP=SigmaXP)
+		self.data = self.data.assign(SIGYP=SigmaYP)
