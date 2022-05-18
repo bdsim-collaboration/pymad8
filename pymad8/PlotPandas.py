@@ -1,0 +1,161 @@
+from . import Output as _Output
+
+import pylab as _pl
+import numpy as _np
+import matplotlib as _matplotlib
+import matplotlib.pyplot as _plt
+import matplotlib.patches as _patches
+
+class _My_Axes(_matplotlib.axes.Axes):
+    """
+    Inherit matplotlib.axes.Axes but override pan action for mouse.
+    Only allow horizontal panning - useful for lattice axes.
+    """
+    name = "_My_Axes"
+    def drag_pan(self, button, key, x, y):
+        _matplotlib.axes.Axes.drag_pan(self, button, 'x', x, y) # pretend key=='x'
+
+_matplotlib.projections.register_projection(_My_Axes)
+
+def AddMachineLatticeToFigure(figure, mad8opt, tightLayout=True):
+    """
+    Add a diagram above the current graph in the figure that represents the
+    accelerator based on a madx twiss file in tfs format.
+
+    Note you can use matplotlib's gcf() 'get current figure' as an argument.
+
+    >>> pymadx.Plot.AddMachineLatticeToFigure(gcf(), 'afile.tfs')
+
+    """    
+
+    axs = figure.get_axes() # get existing graph
+
+    axoptics = figure.get_axes()[0]
+    _AdjustExistingAxes(figure, tightLayout=tightLayout)
+    axmachine = _PrepareMachineAxes(figure)
+
+    _DrawMachineLattice(axmachine,mad8opt)
+
+    # put callbacks for linked scrolling 
+    def MachineXlim(ax):
+        axmachine.set_autoscale_on(False)
+        axoptics.set_xlim(axmachine.get_xlim())
+
+    def Click(a):
+        if a.button == 3:
+            try:
+                print(a.xdata,mad8opt['twiss'].getNameByNearestS(a.xdata))
+            except ValueError:
+                pass # don't complain if the S is out of bounds        
+
+    MachineXlim(axmachine)
+    axmachine.callbacks.connect('xlim_changed', MachineXlim)
+    figure.canvas.mpl_connect('button_press_event', Click)
+
+def _PrepareMachineAxes(figure):
+    # create new machine axis with proportions 6 : 1
+    axmachine = figure.add_subplot(911, projection="_My_Axes")
+    axmachine.set_facecolor('none') # make background transparent to allow scientific notation
+    _SetMachineAxesStyle(axmachine)
+    return axmachine
+
+def _AdjustExistingAxes(figure, fraction=0.9, tightLayout=True):
+    """
+    Fraction is fraction of height all subplots will be after adjustment.
+    Default is 0.9 for 90% of height. 
+    """
+    # we have to set tight layout before adjustment otherwise if called
+    # later it will cause an overlap with the machine diagram
+    if (tightLayout):
+        _plt.tight_layout()
+
+    axs = figure.get_axes()
+
+    for ax in axs:
+        bbox = ax.get_position()
+        bbox.y0 = bbox.y0 * fraction
+        bbox.y1 = bbox.y1 * fraction
+        ax.set_position(bbox)
+
+def _SetMachineAxesStyle(ax):
+    ax.get_xaxis().set_visible(False)
+    ax.get_yaxis().set_visible(False)
+    ax.spines['top'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
+def _DrawMachineLattice(axesinstance, mad8opt):
+    ax = axesinstance
+    m8 = mad8opt
+
+    def DrawBend(e,color='b',alpha=1.0):
+        br = _patches.Rectangle((e['S']-e['L'],-0.1),e['L'],0.2,color=color,alpha=alpha)
+        ax.add_patch(br)
+    def DrawQuad(e,color='r',alpha=1.0):
+        if e['K1'] > 0 :
+            qr = _patches.Rectangle((e['S']-e['L'],0),e['L'],0.2,color=color,alpha=alpha)
+        elif e['K1'] < 0:
+            qr = _patches.Rectangle((e['S']-e['L'],-0.2),e['L'],0.2,color=color,alpha=alpha)
+        else:
+            #quadrupole off
+            qr = _patches.Rectangle((e['S']-e['L'],-0.1),e['L'],0.2,color='#B2B2B2',alpha=0.5) #a nice grey in hex
+        ax.add_patch(qr)
+    def DrawHex(e,color,alpha=1.0):
+        s = e['S']-e['L']
+        l = e['L']
+        edges = _np.array([[s,-0.1],[s,0.1],[s+l/2.,0.13],[s+l,0.1],[s+l,-0.1],[s+l/2.,-0.13]])
+        sr = _patches.Polygon(edges,color=color,fill=True,alpha=alpha)
+        ax.add_patch(sr)
+    def DrawRect(e,color,alpha=1.0):
+        rect = _patches.Rectangle((e['S']-e['L'],-0.1),e['L'],0.2,color=color,alpha=alpha)
+        ax.add_patch(rect)
+    def DrawLine(e,color,alpha=1.0):
+        ax.plot([e['S']-e['L'],e['L']-e['L']],[-0.2,0.2],'-',color=color,alpha=alpha)
+
+    ax.plot([m8['twiss'].sMin(),m8['twiss'].sMax()],[0,0],'k-',lw=1)
+    ax.set_ylim(-0.2,0.2)
+
+    # loop over elements 
+    for i in range(0,m8['twiss'].nrec) :
+        e = m8['twiss'].getRowsByIndex(i).to_dict(orient='list')
+        for key in e :
+            e[key] = e[key][0]
+
+        if e['TYPE'] == 'QUAD':
+            DrawQuad(e, u'#d10000') #red
+        elif e['TYPE'] == 'RBEN':
+            DrawBend(e, u'#0066cc') #blue
+        elif e['TYPE'] == 'SBEN':
+            DrawBend(e, u'#0066cc') #blue
+        elif e['TYPE'] == 'KICK':
+            DrawRect(e, u'#4c33b2')
+        elif e['TYPE'] == 'HKIC':
+            DrawRect(e, u'#4c33b2') #purple
+        elif e['TYPE'] == 'VKIC':
+            DrawRect(e, u'#ba55d3')
+        elif e['TYPE'] == 'RCOL':
+            DrawRect(e,'k')
+        elif e['TYPE'] == 'ECOL':
+            DrawRect(e,'k')
+        elif e['TYPE'] == 'SEXT':
+            DrawHex(e, u'#ffcc00')
+        elif e['TYPE'] == 'OCTU':
+            DrawHex(e, u'#00994c') #green
+        elif e['TYPE'] == 'LCAV':
+            DrawRect(e, u'#000000',0.1)
+        elif e['TYPE'] == 'SOLE':
+            DrawRect(e, u'#000000',0.1)
+        elif e['TYPE'] == 'MATR':
+            if e['L'] != 0 :
+                DrawRect(e, u'#000000',0.1)
+        elif e['TYPE'] == 'DRIF':
+            pass
+        elif e['TYPE'] == 'MONI':
+            pass
+        elif e['TYPE'] == 'MARK':
+            pass
+        else :
+            pass
+            #print 'not drawn',e['type']
+
