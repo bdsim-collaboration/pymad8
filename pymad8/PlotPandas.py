@@ -1,4 +1,4 @@
-from . import Output as _Output
+from . import OutputPandas as _Output
 
 import pylab as _pl
 import numpy as _np
@@ -38,7 +38,7 @@ def AddMachineLatticeToFigure(figure, mad8opt, tightLayout=True):
 
     # put callbacks for linked scrolling 
     def MachineXlim(ax):
-        axmachine.set_autoscale_on(False)
+        axmachine.set_autoscale_on(True)
         axoptics.set_xlim(axmachine.get_xlim())
 
     def Click(a):

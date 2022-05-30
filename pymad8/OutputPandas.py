@@ -299,8 +299,8 @@ class OutputPandas :
 			return rows.index[:].tolist()[0]
 		return rows.index[:].tolist()
 
-	def getIndexByValues(self,column,value=0,mode='supp'):
-		rows = self.getRowsByValues(column,value,mode)
+	def getIndexByValues(self,key,value=0,mode='supp'):
+		rows = self.getRowsByValues(key,value,mode)
 		if len(rows) == 1 :
 			return rows.index[:].tolist()[0]
 		return rows.index[:].tolist()
@@ -313,39 +313,49 @@ class OutputPandas :
 	def getNamesByIndex(self,indexlist):
 		if type(indexlist) == list :
 			return self.getRowsByIndex(indexlist)['NAME'].tolist()
-		return self.getRowsByIndex(indexlist)['NAME']
+		return self.getRowsByIndex(indexlist)['NAME'].tolist()[0]
 
 	def getNamesByTypes(self,typelist):
 		if type(typelist) == list :
 			return self.getRowsByTypes(typelist)['NAME'].tolist()
-		return self.getRowsByTypes(typelist)['NAME']
+		names = self.getRowsByTypes(typelist)['NAME'].tolist()
+		if len(names) == 1:
+			return names[0]
+		return names
 
-	def getNamesByValues(self,column,value=0,mode='supp'):
-		rows =  self.getRowsByValues(column,value,mode)
+	def getNamesByValues(self,key,value=0,mode='supp'):
+		rows =  self.getRowsByValues(key,value,mode)
 		if len(rows) == 1 :
-			return rows['NAME']
+			return rows['NAME'].tolist()[0]
 		return rows['NAME'].tolist()
 
 	def getNameByNearestS(self,s):
-		row = getRowByNearestS(s)
-		return row['NAME']
+		row = self.getRowByNearestS(s)
+		return row['NAME'].tolist()[0]
 
 	####################################################################################
-	def getTypeByIndex(self,indexlist):
+	def getTypesByIndex(self,indexlist):
 		if type(indexlist) == list :
 			return self.getRowsByIndex(indexlist)['TYPE'].tolist()
-		return self.getRowsByIndex(indexlist)['TYPE']
+		return self.getRowsByIndex(indexlist)['TYPE'].tolist()[0]
 
-	def getTypeByName(self,namelist):
+	def getTypesByNames(self,namelist):
 		if type(namelist) == list :
 			return self.getRowsByNames(namelist)['TYPE'].tolist()
-		return self.getRowsByNames(namelist)['TYPE']
+		types = self.getRowsByNames(namelist)['TYPE'].tolist()
+		if len(types) == 1:
+			return types[0]
+		return types
 
-	def getTypesByValues(self,column,value=0,mode='supp'):
-		rows = self.getRowsByValues(column,value,mode)
+	def getTypesByValues(self,key,value=0,mode='supp'):
+		rows = self.getRowsByValues(key,value,mode)
 		if len(rows) == 1 :
-			return rows['TYPE']
+			return rows['TYPE'].tolist()[0]
 		return rows['TYPE'].tolist()
+
+	def getTypeByNearestS(self,s):
+		row = self.getRowByNearestS(s)
+		return row['TYPE'].tolist()[0]
 
 	####################################################################################
 	def getRowsByIndex(self,indexlist):
@@ -363,18 +373,21 @@ class OutputPandas :
 			return self.data.loc[self.data['TYPE'].isin(typelist)]
 		return self.data.loc[self.data['TYPE'] == typelist]
 
-	def getRowsByValues(self,column,value=0,mode='supp'):
+	def getRowsByValues(self,key,value=0,mode='supp'):
 		if mode == 'supp':
-			return self.data.loc[self.data[column] > value]
+			return self.data.loc[self.data[key] > value]
 		if mode == 'inf':
-			return self.data.loc[self.data[column] < value]
+			return self.data.loc[self.data[key] < value]
 		raise ValueError("Unrecognized mode, use 'supp' or 'inf'")
 
 	def getRowByNearestS(self,s):
 		S = self.data['S'].tolist()
 		for index in range(self.nrec) :
 			if s > S[index-1] and s < S[index] :
-				return self.data.loc[[index]]
+				if s - S[index-1] < S[index] - s :
+					return self.data.loc[[index-1]]
+				else :
+					return self.data.loc[[index]]
 		raise ValueError('Not found')
 
 	def getRowsByFunction(self,f):
@@ -386,11 +399,14 @@ class OutputPandas :
 
 	####################################################################################
 	def getElementByIndex(self,indexlist,keylist):
-		if type(namelist) != list :
-			namelist = [namelist]
+		if type(indexlist) != list :
+			indexlist = [indexlist]
 		if type(keylist) != list :
 			keylist = [keylist]
-		return self.data.loc[indexlist,keylist]
+		elem = self.data.loc[indexlist,keylist]
+		if elem.shape == (1,1) :
+			return elem.values[0][0]
+		return elem
 
 	def getElementByNames(self,namelist,keylist):
 		if type(namelist) != list :
@@ -402,6 +418,13 @@ class OutputPandas :
 			return elem.values[0][0]
 		return elem
 	####################################################################################
+	def getAperture(self,index,defaultAperSize=0.1):
+		name = self.getNamesByIndex(index)
+		aperture = self.data['APER'][index]
+		if aperture == 0 or aperture == _np.nan :
+			aperture = defaultAperSize
+		return aperture
+
 	def sMin(self):
 		return self.data['S'][0]
 
