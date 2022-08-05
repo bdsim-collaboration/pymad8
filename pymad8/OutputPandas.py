@@ -96,7 +96,7 @@ class OutputPandas :
 				d[k]=l_common[kt[k]]
 			for i in range(len(colnames_twiss)) :
 				d[colnames_twiss[i]]=l_twiss[i]
-			self.data = self.data.append(d,ignore_index=True)
+			self.data = _pd.concat([self.data, _pd.DataFrame(d, index=[0])], ignore_index=True)
 		f.close()
 		self.data.at[0,'E'] = self.data['E'][1]
 
@@ -139,7 +139,7 @@ class OutputPandas :
 				d[k]=l_common[kt[k]]
 			for i in range(len(colnames_rmat)) :
 				d[colnames_rmat[i]]=l_rmat[i]
-			self.data = self.data.append(d,ignore_index=True)
+			self.data = _pd.concat([self.data, _pd.DataFrame(d, index=[0])], ignore_index=True)
 		f.close()
 		self.data.at[0,'E'] = self.data['E'][1]
 
@@ -178,7 +178,7 @@ class OutputPandas :
 				d[k]=l_common[kt[k]]
 			for i in range(len(colnames_chrom)) :
 				d[colnames_chrom[i]]=l_chrom[i]
-			self.data = self.data.append(d,ignore_index=True)
+			self.data = _pd.concat([self.data, _pd.DataFrame(d, index=[0])], ignore_index=True)
 		f.close()
 		self.data.at[0,'E'] = self.data['E'][1]
 
@@ -221,7 +221,7 @@ class OutputPandas :
 				d[k]=l_common[kt[k]]
 			for i in range(len(colnames_envelop)) :
 				d[colnames_envelop[i]]=l_envelop[i]
-			self.data = self.data.append(d,ignore_index=True)
+			self.data = _pd.concat([self.data, _pd.DataFrame(d, index=[0])], ignore_index=True)
 		f.close()
 		self.data.at[0,'E'] = self.data['E'][1]
 
@@ -258,7 +258,7 @@ class OutputPandas :
 				d[k]=l_common[kt[k]]
 			for i in range(len(colnames_survey)) :
 				d[colnames_survey[i]]=l_survey[i]
-			self.data = self.data.append(d,ignore_index=True)
+			self.data = _pd.concat([self.data, _pd.DataFrame(d, index=[0])], ignore_index=True)
 		f.close()
 		self.data.at[0,'E'] = self.data['E'][1]
 
