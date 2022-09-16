@@ -82,6 +82,7 @@ class OutputPandas :
 		ffe2 = _ff.FortranRecordReader('(5E16.9)')
 
 		# loop over entries
+		dList = []
 		for i in range(0,self.nrec,1) :
 			l1 = ffe1.read(f.readline())
 			l2 = ffe2.read(f.readline())
@@ -96,8 +97,9 @@ class OutputPandas :
 				d[k]=l_common[kt[k]]
 			for i in range(len(colnames_twiss)) :
 				d[colnames_twiss[i]]=l_twiss[i]
-			self.data = _pd.concat([self.data, _pd.DataFrame(d, index=[0])], ignore_index=True)
+			dList.append(d)
 		f.close()
+		self.data = _pd.DataFrame(dList,columns=colnames)
 		self.data.at[0,'E'] = self.data['E'][1]
 
 	##########################################################################################
