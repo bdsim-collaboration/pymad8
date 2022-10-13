@@ -21,10 +21,8 @@ __version__ = "1.6.0"
 
 # import Mad8
 from . import Input
-from . import Output
-from .OutputPandas import *
+from .Output import *
 from . import Plot
-from . import PlotPandas
 from . import Sim
 #import Track  #not imported by default - can be explicitly imported
 from . import Visualisation
