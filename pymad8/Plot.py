@@ -129,9 +129,7 @@ def _DrawMachineLattice(axesinstance, mad8opt):
 
     # loop over elements 
     for i in range(0, m8['twiss'].nrec):
-        e = m8['twiss'].getRowsByIndex(i).to_dict(orient='list')
-        for key in e:
-            e[key] = e[key][0]
+        e = m8['twiss'].getRowsByIndex(i)
 
         if e['TYPE'] == 'QUAD':
             DrawQuad(e, u'#d10000')  # red
@@ -166,7 +164,7 @@ def _DrawMachineLattice(axesinstance, mad8opt):
             pass
         elif e['TYPE'] == 'MARK':
             pass
-        else :
+        else:
             pass
             # print 'not drawn',e['type']
 
