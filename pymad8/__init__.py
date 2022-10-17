@@ -22,9 +22,9 @@ __version__ = "1.6.0"
 from . import Input
 from . import Output
 from . import Plot
-# from . import Sim
-#import Track  #not imported by default - can be explicitly imported
-# from . import Visualisation
+from . import Sim
+# import Track  #not imported by default - can be explicitly imported
+from . import Visualisation
 
 #import Saveline
 #import Converter

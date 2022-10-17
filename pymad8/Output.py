@@ -409,6 +409,15 @@ class Load:
 			aperture = defaultAperSize
 		return aperture
 
+	def subline(self, start, end):
+		"""Select only a portion of the inital lattice"""
+		if type(start) == str:
+			start = self.getIndexByNames(start)
+		if type(end) == str:
+			end = self.getIndexByNames(end)
+
+		self.data = self.data[start:end]
+
 	def sMin(self):
 		return self.data['S'].min()
 
