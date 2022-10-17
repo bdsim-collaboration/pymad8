@@ -1,6 +1,3 @@
-from . import Output as _Output
-
-import pylab as _pl
 import numpy as _np
 import matplotlib as _matplotlib
 import matplotlib.pyplot as _plt
@@ -9,8 +6,8 @@ import matplotlib.patches as _patches
 
 class _My_Axes(_matplotlib.axes.Axes):
     """
-    Inherit matplotlib.axes.Axes but override pan action for mouse.
-    Only allow horizontal panning - useful for lattice axes.
+    | Inherit matplotlib.axes.Axes but override pan action for mouse.
+    | Only allow horizontal panning - useful for lattice axes.
     """
     name = "_My_Axes"
 
@@ -66,8 +63,8 @@ def _PrepareMachineAxes(figure):
 
 def _AdjustExistingAxes(figure, fraction=0.9, tightLayout=True):
     """
-    Fraction is fraction of height all subplots will be after adjustment.
-    Default is 0.9 for 90% of height. 
+    | Fraction is fraction of height all subplots will be after adjustment.
+    | Default is 0.9 for 90% of height.
     """
     # we have to set tight layout before adjustment otherwise if called
     # later it will cause an overlap with the machine diagram
@@ -167,4 +164,3 @@ def _DrawMachineLattice(axesinstance, mad8opt):
         else:
             pass
             # print 'not drawn',e['type']
-

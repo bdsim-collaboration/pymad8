@@ -1,35 +1,39 @@
-def tidy(input) :     
-    '''tidy input, remove EOL, remove empty lines
-       input : list of file lines 
-    ''' 
+def tidy(input):
+    """
+    | Tidy input, remove EOL, remove empty lines
+    | input : list of file lines
+    """
     output = []
 
-    for l in input : 
-        l  = l.strip(' \n')   # tidy end of lines 
-        if len(l) == 0 :      # strip empty lines 
+    for l in input:
+        l  = l.strip(' \n')  # tidy end of lines
+        if len(l) == 0:      # strip empty lines
             continue 
-        if l.find("RETURN") != -1 : 
+        if l.find("RETURN") != -1:
             continue
         output.append(l)
     return output
 
-def removeContinuationSymbols(input) : 
-    '''remove continuation symbols from input
-       input : list of file lines'''
 
+def removeContinuationSymbols(input):
+    """
+    | Remove continuation symbols from input
+    | input : list of file lines
+    """
     output = []
-    ml     = '' # merged line 
+    ml     = ''  # merged line
+
     # fine line continuations
-    for l in input : 
+    for l in input:
         ai = l.find('&') 
         
-        if ai != -1 : 
-            l = l.replace('&','')
+        if ai != -1:
+            l = l.replace('&', '')
             ml = ml+l
-        else : 
-            if len(ml) == 0 :
+        else:
+            if len(ml) == 0:
                 ml = l
-            else :
+            else:
                 ml = ml+l
             output.append(ml)
             ml = ''
@@ -37,167 +41,183 @@ def removeContinuationSymbols(input) :
     return output
 
 
-def removeComments(input) : 
-    '''remove comment lines'''
-    output = [] 
-    for l in input : 
-        if l[0] == '!' :
+def removeComments(input):
+    """
+    | Remove comment lines
+    | input : list of file lines
+    """
+    output = []
+
+    for l in input:
+        if l[0] == '!':
             continue 
-        else : 
+        else:
             output.append(l)
 
     return output
 
-def decodeFileLine(input) : 
-    '''decode line
-       input is a string of a mad8 line'''
 
-
-    splitInput = input.split();    
+def decodeFileLine(input):
+    """
+    | Decode line for each element type
+    | input : string of a mad8 line
+    """
+    splitInput = input.split()
     
-    for i in range(0,len(splitInput)) : 
+    for i in range(0, len(splitInput)):
         splitInput[i] = splitInput[i].strip(',')
 
     d = dict() 
 
-    if len(splitInput) == 1 : 
+    if len(splitInput) == 1:
         pass
-    elif len(splitInput) > 1 : 
-        type = splitInput[1].strip(',');
-        if type == 'LINE' :
-            if len(splitInput) == 4 :
-                input = input.replace(',',' ')
+    elif len(splitInput) > 1:
+        type = splitInput[1].strip(',')
+        if type == 'LINE':
+            if len(splitInput) == 4:
+                input = input.replace(',', ' ')
                 splitInput = input.split()
 
-            
-            d = decodeLine(splitInput)
-        elif type == 'INSTRUMENT' : 
-            d = decodeNamed(splitInput)
-        elif type == 'MONITOR' :
-            d = decodeNamed(splitInput) 
-        elif type == 'WIRE' : 
-            d = decodeNamed(splitInput) 
-        elif type == 'MARKER' : 
-            d = decodeNamed(splitInput) 
-        elif type == 'PROFILE' : 
-            d = decodeNamed(splitInput) 
-        elif type == 'LCAVITY' :
-            d = decodeLcavity(splitInput)
-        elif type == 'DRIFT' : 
-            d = decodeDrift(splitInput) 
-        elif type == 'SBEND' : 
-            d = decodeSbend(splitInput)             
-        elif type == 'QUADRUPOLE' : 
-            d = decodeQuadrupole(splitInput)             
-        elif type == 'SEXTUPOLE' : 
-            d = decodeSextupole(splitInput)
-        elif type == 'OCTUPOLE' : 
-            d = decodeOctupole(splitInput)
-        elif type == 'DECAPOLE' : 
-            d = decodeDecapole(splitInput)
-        elif type == 'MULTIPOLE' : 
-            d = decodeMultipole(splitInput)
-        elif type == 'VKICKER' : 
-            d = decodeKicker(splitInput)
-        elif type == 'HKICKER' : 
-            d = decodeKicker(splitInput)
-        elif type == 'RCOLLIMATOR' : 
-            d = decodeCollimator(splitInput)
-        elif type == 'ECOLLIMATOR' : 
-            d = decodeCollimator(splitInput)
-        else :
-            if len(splitInput) == 2 : 
-                d = decodeNamed(splitInput)
-            else :
-                d = decodeLcavity(splitInput)
+            d = _decodeLine(splitInput)
+        elif type == 'INSTRUMENT':
+            d = _decodeNamed(splitInput)
+        elif type == 'MONITOR':
+            d = _decodeNamed(splitInput)
+        elif type == 'WIRE':
+            d = _decodeNamed(splitInput)
+        elif type == 'MARKER':
+            d = _decodeNamed(splitInput)
+        elif type == 'PROFILE':
+            d = _decodeNamed(splitInput)
+        elif type == 'LCAVITY':
+            d = _decodeLcavity(splitInput)
+        elif type == 'DRIFT':
+            d = _decodeDrift(splitInput)
+        elif type == 'SBEND':
+            d = _decodeSbend(splitInput)
+        elif type == 'QUADRUPOLE':
+            d = _decodeQuadrupole(splitInput)
+        elif type == 'SEXTUPOLE':
+            d = _decodeSextupole(splitInput)
+        elif type == 'OCTUPOLE':
+            d = _decodeOctupole(splitInput)
+        elif type == 'DECAPOLE':
+            d = _decodeDecapole(splitInput)
+        elif type == 'MULTIPOLE':
+            d = _decodeMultipole(splitInput)
+        elif type == 'VKICKER':
+            d = _decodeKicker(splitInput)
+        elif type == 'HKICKER':
+            d = _decodeKicker(splitInput)
+        elif type == 'RCOLLIMATOR':
+            d = _decodeCollimator(splitInput)
+        elif type == 'ECOLLIMATOR':
+            d = _decodeCollimator(splitInput)
+        else:
+            if len(splitInput) == 2:
+                d = _decodeNamed(splitInput)
+            else:
+                d = _decodeLcavity(splitInput)
 
     return d
 
-def decodeLine(input) :
-    d = decodeNameAndType(input) 
 
-    input[3] = input[3].replace('(','')
-    input[-1] = input[-1].replace(')','')    
+def _decodeLine(input):
+    d = _decodeNameAndType(input)
+
+    input[3] = input[3].replace('(', '')
+    input[-1] = input[-1].replace(')', '')
     d['LINE'] = input[3:]    
 
-        
     return d
 
-def decodeNamed(input) :
-    d = decodeNameAndType(input) 
+
+def _decodeNamed(input):
+    d = _decodeNameAndType(input)
     return d
 
-def decodeLcavity(input) :
-    d = decodeNameAndType(input) 
-    for t in input[2:] : 
-        [key,val] = splitKeyValue(t)
+
+def _decodeLcavity(input):
+    d = _decodeNameAndType(input)
+    for t in input[2:]:
+        [key, val] = _splitKeyValue(t)
         d[key] = val
     return d
 
-def decodeDrift(input) :
-    d = decodeNameAndType(input) 
-    for t in input[2:] : 
-        [key,val] = splitKeyValue(t)
+
+def _decodeDrift(input):
+    d = _decodeNameAndType(input)
+    for t in input[2:]:
+        [key, val] = _splitKeyValue(t)
         d[key] = val
     return d
 
-def decodeSbend(input) : 
-    d = decodeNameAndType(input) 
-    for t in input[2:] : 
-        [key,val] = splitKeyValue(t)
+
+def _decodeSbend(input):
+    d = _decodeNameAndType(input)
+    for t in input[2:]:
+        [key, val] = _splitKeyValue(t)
         d[key] = val
     return d    
 
-def decodeQuadrupole(input) :
-    d = decodeNameAndType(input) 
-    for t in input[2:] : 
-        [key,val] = splitKeyValue(t)
+
+def _decodeQuadrupole(input):
+    d = _decodeNameAndType(input)
+    for t in input[2:]:
+        [key, val] = _splitKeyValue(t)
         d[key] = val
     return d
 
-def decodeSextupole(input) :
-    d = decodeNameAndType(input) 
-    for t in input[2:] : 
-        [key,val] = splitKeyValue(t)
+
+def _decodeSextupole(input):
+    d = _decodeNameAndType(input)
+    for t in input[2:]:
+        [key, val] = _splitKeyValue(t)
         d[key] = val
     return d
 
-def decodeOctupole(input) :
-    d = decodeNameAndType(input) 
-    for t in input[2:] : 
-        [key,val] = splitKeyValue(t)
+
+def _decodeOctupole(input):
+    d = _decodeNameAndType(input)
+    for t in input[2:]:
+        [key, val] = _splitKeyValue(t)
         d[key] = val
     return d
 
-def decodeDecapole(input) :
-    d = decodeNameAndType(input) 
-    for t in input[2:] : 
-        [key,val] = splitKeyValue(t)
+
+def _decodeDecapole(input):
+    d = _decodeNameAndType(input)
+    for t in input[2:]:
+        [key, val] = _splitKeyValue(t)
         d[key] = val
     return d
 
-def decodeMultipole(input) :
-    d = decodeNameAndType(input) 
-    for t in input[2:] : 
-        [key,val] = splitKeyValue(t)
+
+def _decodeMultipole(input):
+    d = _decodeNameAndType(input)
+    for t in input[2:]:
+        [key, val] = _splitKeyValue(t)
         d[key] = val
     return d
 
-def decodeKicker(input) :
-    d = decodeNameAndType(input) 
-    for t in input[2:] : 
-        [key,val] = splitKeyValue(t)
+
+def _decodeKicker(input):
+    d = _decodeNameAndType(input)
+    for t in input[2:]:
+        [key, val] = _splitKeyValue(t)
         d[key] = val
     return d
 
-def decodeCollimator(input) :
-    d = decodeNameAndType(input) 
-    for t in input[2:] : 
-        [key,val] = splitKeyValue(t)
+
+def _decodeCollimator(input):
+    d = _decodeNameAndType(input)
+    for t in input[2:]:
+        [key, val] = _splitKeyValue(t)
         d[key] = val
     return d
 
-def decodeNameAndType(input) : 
+
+def _decodeNameAndType(input):
     name = input[0].strip(':')
     type = input[1]
     d = dict()
@@ -205,9 +225,10 @@ def decodeNameAndType(input) :
     d['type'] = type
     return d 
 
-def splitKeyValue(t) : 
+
+def _splitKeyValue(t):
     st = t.split('=')
     key   = st[0]
     value = float(st[1])
 
-    return [key,value]
+    return [key, value]

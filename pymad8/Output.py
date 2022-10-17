@@ -17,8 +17,10 @@ class Load:
 	"""
 
 	def __init__(self, filename, filetype='twiss'):
-		"""Take filename for argument, filetype if specified and save them as internal variables
-		Then test for filetype and call the corresponding subfunction"""
+		"""
+		Take filename for argument, filetype if specified and save them as internal variables.
+		Then test for filetype and call the corresponding subfunction
+		"""
 		self.filename = filename
 		self.filetype = filetype
 
@@ -193,7 +195,7 @@ class Load:
 		self.data.at[0, 'E'] = self.data['E'][1]
 
 	##########################################################################################
-	def _readEnvelopeFile(self) :
+	def _readEnvelopeFile(self):
 		"""Read and load a Mad8 envelope file in a DataFrame then save it as internal value 'data' """
 
 		colnames_envelop = ['S11', 'S12', 'S13', 'S14', 'S15', 'S16', 'S21', 'S22', 'S23', 'S24', 'S25', 'S26',
@@ -238,7 +240,7 @@ class Load:
 		self.data.at[0, 'E'] = self.data['E'][1]
 
 	##########################################################################################
-	def _readSurveyFile(self) :
+	def _readSurveyFile(self):
 		"""Read and load a Mad8 survey file in a DataFrame then save it as internal value 'data' """
 
 		colnames_survey = ['X', 'Y', 'Z', 'S', 'THETA', 'PHI', 'PSI']
@@ -303,54 +305,79 @@ class Load:
 
 	####################################################################################
 	def getIndexByNames(self, namelist):
+		"""Return Index or Index list of elements that are in namelist"""
 		return _getValues(self.getRowsByValues(key='NAME', equalValues=namelist).index)
 
 	def getIndexByTypes(self, typelist):
+		"""Return Index or Index list of elements that are in typelist"""
 		return _getValues(self.getRowsByValues(key='TYPE', equalValues=typelist).index)
 
 	def getIndexByValues(self, **args):
+		"""
+		| Return Index or Index list of elements that have certain values for a chosen column
+		| *Same arguments as getRowsByValues*
+		"""
 		return _getValues(self.getRowsByValues(**args).index)
 
 	def getIndexByNearestS(self, s):
+		"""Return Index of the closest element in the beamline"""
 		return _getValues(self.getRowByNearestS(s).index)
 
 	####################################################################################
 	def getNamesByIndex(self, indexlist):
+		"""Return Name or Name list of elements that are in indexlist"""
 		return _getValues(self.getRowsByValues(key=None, equalValues=indexlist)['NAME'])
 
 	def getNamesByTypes(self, typelist):
+		"""Return Name or Name list of elements that are in typelist"""
 		return _getValues(self.getRowsByValues(key='TYPE', equalValues=typelist)['NAME'])
 
 	def getNamesByValues(self, **args):
+		"""
+		| Return Name or Name list of elements that have certain values for a chosen column
+		| *Same arguments as getRowsByValues*
+		"""
 		return _getValues(self.getRowsByValues(**args)['NAME'])
 
 	def getNameByNearestS(self, s):
+		"""Return Name of the closest element in the beamline"""
 		return _getValues(self.getRowByNearestS(s)['NAME'])
 
 	####################################################################################
 	def getTypesByIndex(self, indexlist):
+		"""Return Type or Type list of elements that are in indexlist"""
 		return _getValues(self.getRowsByValues(key=None, equalValues=indexlist)['TYPE'])
 
 	def getTypesByNames(self, namelist):
+		"""Return Type or Type list of elements that are in namelist"""
 		return _getValues(self.getRowsByValues(key='NAME', equalValues=namelist)['TYPE'])
 
 	def getTypesByValues(self, **args):
+		"""
+		| Return Type or Type list of elements that have certain values for a chosen column
+		| *Same arguments as getRowsByValues*
+		"""
 		return _getValues(self.getRowsByValues(**args)['TYPE'])
 
 	def getTypeByNearestS(self, s):
+		"""Return Type of the closest element in the beamline"""
 		return _getValues(self.getRowByNearestS(s)['TYPE'])
 
 	####################################################################################
 	def getRowsByIndex(self, indexlist):
+		"""Return Rows of elements that are in indexlist"""
 		return self.getRowsByValues(equalValues=indexlist)
 
 	def getRowsByNames(self, namelist):
+		"""Return Rows of elements that are in namelist"""
 		return self.getRowsByValues(key='NAME', equalValues=namelist)
 
 	def getRowsByTypes(self, typelist):
+		"""Return Rows of elements that are in typelist"""
 		return self.getRowsByValues(key='TYPE', equalValues=typelist)
 
 	def getRowsByValues(self, key=None, minValue=-_np.inf, maxValue=_np.inf, equalValues=None):
+		"""Return Rows of elements that have certain values for a chosen column"""
 		if key is None:
 			if equalValues is not None:
 				return self.data.loc[equalValues]
@@ -364,6 +391,7 @@ class Load:
 		return self.data.loc[column >= minValue].loc[column <= maxValue]
 
 	def getRowByNearestS(self, s):
+		"""Return Rows of the closest element in the beamline"""
 		S = self.data['S'].tolist()
 		for index in range(self.nrec):
 			if S[index - 1] < s < S[index]:
@@ -374,14 +402,17 @@ class Load:
 		raise ValueError('Closest s value not found')
 
 	def getRowsByFunction(self, f):
+		"""Return a sub-datafarme using a boolean function"""
 		return self.data.loc[f(self.data)]
 
 	####################################################################################
 	def getColumnsByKeys(self, keylist):
+		"""Return Columns that ar in keylist"""
 		return self.data[keylist]
 
 	####################################################################################
 	def getElementByIndex(self, indexlist, keylist):
+		"""Return value of elements given their indices and for chosen columns"""
 		if type(indexlist) != list:
 			indexlist = [indexlist]
 		if type(keylist) != list:
@@ -392,6 +423,7 @@ class Load:
 		return elem
 
 	def getElementByNames(self, namelist, keylist):
+		"""Return value of elements given their names and for chosen columns"""
 		if type(namelist) != list:
 			namelist = [namelist]
 		if type(keylist) != list:
@@ -403,6 +435,10 @@ class Load:
 
 	####################################################################################
 	def getAperture(self, index, defaultAperSize=0.1):
+		"""
+		| Get aperture of an element using corresponding index
+		| If none provided or is 0 : set to a default aperture of 0.1m
+		"""
 		name = self.getNamesByIndex(index)
 		aperture = self.data['APER'][index]
 		if aperture == 0 or aperture == _np.nan:
@@ -419,21 +455,25 @@ class Load:
 		self.data = self.data[start:end]
 
 	def sMin(self):
+		"""Return minimal S value"""
 		return self.data['S'].min()
 
 	def sMax(self):
+		"""Return maximal S value"""
 		return self.data['S'].max()
 
 	def plotXY(self, Xkey, Ykey):
+		"""Quick plot of one colums of our dataframe w.r.t. another"""
 		X = self.getColumnsByKeys(Xkey)
 		Y = self.getColumnsByKeys(Ykey)
 		_plt.plot(X, Y)
 
 	def calcBeamSize(self, EmitX, EmitY, Esprd, BunchLen=0):
-		"""Calculate the beam sizes and beam divergences in both planes for all
+		"""
+		Calculate the beam sizes and beam divergences in both planes for all
 		elements Then the four columns are added at the end of the DataFrame
-		Works only if a twiss file was loaded previously"""
-
+		Works only if a twiss file was loaded previously
+		"""
 		if self.filetype != 'twiss':
 			raise ValueError('The loaded file needs to be a twiss file')
 
@@ -466,6 +506,11 @@ class Load:
 
 
 def _getValues(data):
+	"""
+	| Convert pandas elements of length 1 to regular value types
+	| If given pandas element of length < 1 : returns a list
+	| Otherwise if element is already a string or integer : return unchanged element
+	"""
 	if type(data) == str or type(data) == int:
 		return data
 	values_list = data.tolist()
