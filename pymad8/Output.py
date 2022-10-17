@@ -4,15 +4,17 @@ import pandas as _pd
 import fortranformat as _ff
 
 
-class Output:
-	"""Class to load different Mad8 output files in a Pandas DataFrame
-	twiss = pymad8.OutputPandas('/twiss.tape','twiss')
-	rmat = pymad8.OutputPandas('/rmat.tape','rmat')
-	chrom = pymad8.OutputPandas('/chrom.tape','chrom')
-	envel = pymad8.OutputPandas('/envel.tape','envel')
-	survey = pymad8.OutputPandas('/survey.tape','survey')
+class Load:
+	"""
+	Class to load different Mad8 output files in a Pandas DataFrame
+	>>> twiss = pymad8.Output.Load('/twiss.tape')
+	>>> rmat = pymad8.Output.Load('/rmat.tape','rmat')
+	>>> chrom = pymad8.Output.Load('/chrom.tape','chrom')
+	>>> envel = pymad8.Output.Load('/envel.tape','envel')
+	>>> survey = pymad8.Output.Load('/survey.tape','survey')
 
-	By default the filetype is twiss"""
+	By default the filetype is twiss
+	"""
 
 	def __init__(self, filename, filetype='twiss'):
 		"""Take filename for argument, filetype if specified and save them as internal variables

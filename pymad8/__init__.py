@@ -20,7 +20,7 @@ Copyright Royal Holloway, University of London 2019.
 __version__ = "1.6.0"
 
 from . import Input
-from .Output import *
+from . import Output
 from . import Plot
 # from . import Sim
 #import Track  #not imported by default - can be explicitly imported
