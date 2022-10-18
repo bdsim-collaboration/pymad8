@@ -4,14 +4,14 @@ import pandas as _pd
 import fortranformat as _ff
 
 
-class Load:
+class Output:
 	"""
 	Class to load different Mad8 output files in a Pandas DataFrame
-	>>> twiss = pymad8.Output.Load('/twiss.tape')
-	>>> rmat = pymad8.Output.Load('/rmat.tape','rmat')
-	>>> chrom = pymad8.Output.Load('/chrom.tape','chrom')
-	>>> envel = pymad8.Output.Load('/envel.tape','envel')
-	>>> survey = pymad8.Output.Load('/survey.tape','survey')
+	| >>> twiss = pymad8.Output('/twiss.tape')
+	| >>> rmat = pymad8.Output('/rmat.tape','rmat')
+	| >>> chrom = pymad8.Output('/chrom.tape','chrom')
+	| >>> envel = pymad8.Output('/envel.tape','envel')
+	| >>> survey = pymad8.Output('/survey.tape','survey')
 
 	By default the filetype is twiss
 	"""

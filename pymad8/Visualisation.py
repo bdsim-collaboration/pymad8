@@ -5,14 +5,14 @@ import matplotlib.pyplot as _plt
 
 
 def testOneDim():
-    s = _m8.Output.Load("./test/atf_v5.1/survey.tape", "survey")
+    s = _m8.Output("./test/atf_v5.1/survey.tape", "survey")
     od = OneDim(s, False)
     od.plot()
     return od    
 
 
 def testTwoDim():
-    s = _m8.Output.Load("./test/atf_v5.1/survey.tape", "survey")
+    s = _m8.Output("./test/atf_v5.1/survey.tape", "survey")
     td = TwoDim(s, False, False, True)
     td.plot()
     return td
@@ -58,7 +58,7 @@ def MakeCombinedSurveyPlot(name, QUAD=True, RBEN=True, SBEN=True, MONI=True, MAR
     for file in name:	
         loadname = file
         plotname = str.replace(loadname, "SURVEY_", "")
-        loader = _m8.Output.Load()
+        loader = _m8.Output()
         loader.fileName = loadname
         surveydata = loader.readSurveyFile()
         TwoD = _m8.Visualisation.TwoDim(surveydata)

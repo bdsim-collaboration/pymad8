@@ -4,7 +4,7 @@ import pymad8 as _m8
 
 
 def testTrack(rmatFile, nparticle=10):
-    r = _m8.Output.Load(rmatFile, "rmat")
+    r = _m8.Output(rmatFile, "rmat")
     r.subline('IEX', -1)
     s = Track(r)
     s.trackParticles(nparticle)
