@@ -6,14 +6,14 @@ import fortranformat as _ff
 
 class Output:
 	"""
-	Class to load different Mad8 output files in a Pandas DataFrame
+	| Class to load different Mad8 output files in a Pandas DataFrame
 	| >>> twiss = pymad8.Output('/twiss.tape')
 	| >>> rmat = pymad8.Output('/rmat.tape','rmat')
 	| >>> chrom = pymad8.Output('/chrom.tape','chrom')
 	| >>> envel = pymad8.Output('/envel.tape','envel')
 	| >>> survey = pymad8.Output('/survey.tape','survey')
-
-	By default the filetype is twiss
+	|
+	| By default the filetype is twiss
 	"""
 
 	def __init__(self, filename, filetype='twiss'):
@@ -462,11 +462,13 @@ class Output:
 		"""Return maximal S value"""
 		return self.data['S'].max()
 
-	def plotXY(self, Xkey, Ykey):
+	def plotXY(self, Xkey, Ykey, label=None):
 		"""Quick plot of one colums of our dataframe w.r.t. another"""
 		X = self.getColumnsByKeys(Xkey)
 		Y = self.getColumnsByKeys(Ykey)
-		_plt.plot(X, Y)
+		if label is None:
+			label = Ykey
+		_plt.plot(X, Y, label=label)
 
 	def calcBeamSize(self, EmitX, EmitY, Esprd, BunchLen=0):
 		"""
