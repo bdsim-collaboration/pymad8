@@ -49,7 +49,7 @@ master_doc = 'index'
 # General information about the project.
 project = u'pymad8'
 copyright = u'Royal Holloway, University of London 2020'
-author = u'S Boogert, A Abramov, L Nevay, W Shields, J Snuverink, S Walker'
+author = u'S Boogert, A Abramov, L Nevay, W Shields, J Snuverink, S Walker, M Deniaud'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

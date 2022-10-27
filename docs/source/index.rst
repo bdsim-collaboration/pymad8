@@ -11,8 +11,8 @@ of BDSIM models.
    authorship
    installation
    data
-   convert
    plot
+   convert
    support
    moduledocs
 
