@@ -3,11 +3,16 @@ Installation
 ============
 
 
-Requirements
-------------
+Packages requirements
+---------------------
 
- * pymad8 is developed for Python 3 but should be Python 2 compatible.
- * Requires : fortranformat
+ * numpy
+ * matplotlib
+ * pylab
+ * pandas
+ * fortranformat
+
+pymad8 is developed for Python 3 but should be Python 2 compatible.
 
 Installation
 ------------
