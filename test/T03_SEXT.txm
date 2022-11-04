@@ -1,0 +1,31 @@
+MKR1 : MARKER;
+SF1:  SEXT, L=1, K2=1;
+MKR2 : MARKER;
+
+L1: LINE = (MKR1, SF1, MKR2);
+
+BF0: BETA0, energy= 14.0, &
+            betx = 0.2,  alfx = 0.0,  &
+            bety = 3.0,  alfy = 0.0;
+
+title, "03_sext"
+beam, energy=1
+use, L1
+
+twiss, beta0=BF0, save, couple, tape=t03_sext_twiss, rtape=t03_sext_rmat;
+twiss, beta0=BF0, save, chrom, tape=t03_sext_chrom
+
+survey, tape=t03_sext_survey;
+structure, filename=t03_sext_structure 8
+
+track, onepass
+observe, mkr1, mkr1tab
+observe, mkr2, mkr2tab
+start, x=0, px=0,     y=0, py=0, t=0, deltap=0;
+start, x=0, px=0.001, y=0, py=0, t=0, deltap=0;
+start, x=0.001, px=0.0, y=0, py=0, t=0, deltap=0;
+run, method=transport;
+!tsave, filename=t03_sext_track;
+archive, mkr1tab, filename=t03_sext_track_mkr1
+archive, mkr2tab, filename=t03_sext_track_mkr2
+endtrack

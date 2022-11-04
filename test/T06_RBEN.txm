@@ -1,0 +1,31 @@
+MKR1 : MARKER;
+RB1:  RBEND, L=1, ANGLE=0.1, E1=0.1, E2=0.1, H1=0.1, H2=0.1;
+MKR2 : MARKER;
+
+L1: LINE = (MKR1, RB1, MKR2);
+
+BF0: BETA0, energy= 14.0, &
+            betx = 0.2,  alfx = 0.0,  &
+            bety = 3.0,  alfy = 0.0;
+
+title, "06_rbend"
+beam, energy=1
+use, L1
+
+twiss, beta0=BF0, save, couple, tape=t06_rben_twiss, rtape=t06_rben_rmat;
+twiss, beta0=BF0, save, chrom, tape=t06_rben_chrom
+
+survey, tape=t06_rben_survey;
+structure, filename=t06_rben_structure 8
+
+track, onepass
+observe, mkr1, mkr1tab
+observe, mkr2, mkr2tab
+start, x=0, px=0,     y=0, py=0, t=0, deltap=0;
+start, x=0, px=0.001, y=0, py=0, t=0, deltap=0;
+start, x=0.001, px=0.0, y=0, py=0, t=0, deltap=0;
+run, method=transport;
+!tsave, filename=t06_rben_track;
+archive, mkr1tab, filename=t06_rben_track_mkr1
+archive, mkr2tab, filename=t06_rben_track_mkr2
+endtrack

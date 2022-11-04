@@ -1,0 +1,31 @@
+MKR1 : MARKER;
+OF1:  OCTU, L=1, K3=1;
+MKR2 : MARKER;
+
+L1: LINE = (MKR1, OF1, MKR2);
+
+BF0: BETA0, energy= 14.0, &
+            betx = 0.2,  alfx = 0.0,  &
+            bety = 3.0,  alfy = 0.0;
+
+title, "04_octu"
+beam, energy=1
+use, L1
+
+twiss, beta0=BF0, save, couple, tape=t04_octu_twiss, rtape=t04_octu_rmat;
+twiss, beta0=BF0, save, chrom, tape=t04_octu_chrom
+
+survey, tape=t04_octu_survey;
+structure, filename=t04_octu_structure 8
+
+track, onepass
+observe, mkr1, mkr1tab
+observe, mkr2, mkr2tab
+start, x=0, px=0,     y=0, py=0, t=0, deltap=0;
+start, x=0, px=0.001, y=0, py=0, t=0, deltap=0;
+start, x=0.001, px=0.0, y=0, py=0, t=0, deltap=0;
+run, method=transport;
+!tsave, filename=t04_octu_track;
+archive, mkr1tab, filename=t04_octu_track_mkr1
+archive, mkr2tab, filename=t04_octu_track_mkr2
+endtrack
