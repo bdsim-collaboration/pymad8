@@ -1,5 +1,5 @@
 MKR1 : MARKER;
-QF1:  QUAD, L = 1, K1=1;
+QF1:  QUAD, L=1, K1=1;
 MKR2 : MARKER;
 
 L1: LINE = (MKR1, QF1, MKR2);
@@ -8,7 +8,7 @@ BF0: BETA0, energy= 14.0, &
             betx = 0.2,  alfx = 0.0,  &
             bety = 3.0,  alfy = 0.0;
 
-title, "02 quad"
+title, "02_quad"
 beam, energy=1
 use, L1
 
@@ -25,7 +25,7 @@ start, x=0, px=0,     y=0, py=0, t=0, deltap=0;
 start, x=0, px=0.001, y=0, py=0, t=0, deltap=0;
 start, x=0.001, px=0.0, y=0, py=0, t=0, deltap=0;
 run, method=transport;
-tsave, filename=t02_quad_track;
+!tsave, filename=t02_quad_track;
 archive, mkr1tab, filename=t02_quad_track_mkr1
 archive, mkr2tab, filename=t02_quad_track_mkr2
 endtrack

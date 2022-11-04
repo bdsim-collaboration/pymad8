@@ -1,5 +1,5 @@
 MKR1 : MARKER;
-D1:  DRIFT, L = 1;
+D1:  DRIFT, L=1;
 MKR2 : MARKER;
 
 L1: LINE = (MKR1, D1, MKR2);
@@ -8,12 +8,19 @@ BF0: BETA0, energy= 14.0, &
             betx = 0.2,  alfx = 0.0,  &
             bety = 3.0,  alfy = 0.0;
 
-title, "01 drift"
+title, "01_drift"
 beam, energy=1
 use, L1
 
 twiss, beta0=BF0, save, couple, tape=t01_drift_twiss, rtape=t01_drift_rmat;
 twiss, beta0=BF0, save, chrom, tape=t01_drift_chrom
+
+select, optics, full
+optics, beta0=BF0, filename=t01_drift_optics, &
+column=KEYWORD,NAME,L,ANGLE,K0L,K1L,K2L,K3L,K4L,K5L,K6L,K7L,K8L,K9L,KS, &
+T0,T1,T2,T3,TILT,E1,E2,H1,H2,APER,E,FREQ,VOLT,LAG,EFIELD, &
+HKIC,VKIC,XSIZE,YSIZE,RADLOSS, &
+ALFX,ALFY,BETX,BETY,MUX,MUY,DX,DY,DPX,DPY,X,Y,PX,PY,S
 
 survey, tape=t01_drift_survey;
 structure, filename=t01_drift_structure 8
@@ -25,7 +32,7 @@ start, x=0, px=0,     y=0, py=0, t=0, deltap=0;
 start, x=0, px=0.001, y=0, py=0, t=0, deltap=0;
 start, x=0.001, px=0.0, y=0, py=0, t=0, deltap=0;
 run, method=transport;
-tsave, filename=t01_drift_track;
+!tsave, filename=t01_drift_track;
 archive, mkr1tab, filename=t01_drift_track_mkr1
 archive, mkr2tab, filename=t01_drift_track_mkr2
 endtrack
