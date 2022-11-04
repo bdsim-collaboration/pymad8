@@ -155,7 +155,7 @@ class Optics:
     """
     | Class to load pymad8 DataFrames and make optics plots
     | >>> plot_data = pymad8.Plot.Optics('/mad8_twiss_tape')
-    | >>> plot_data.plotBetas()
+    | >>> plot_data.Betas()
     |
     | Plot avaliable are plotBetas, plotAlphas, plotMus, plotDisp and plotSigmas
     """
