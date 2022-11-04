@@ -12,6 +12,9 @@ class Output:
 	| >>> chrom = pymad8.Output('/chrom.tape','chrom')
 	| >>> envel = pymad8.Output('/envel.tape','envel')
 	| >>> survey = pymad8.Output('/survey.tape','survey')
+	| >>> struct = pymad8.Output('/struct.tape','struct')
+	| >>> track = pymad8.Output('/track.tape','track')
+	| >>> optics = pymad8.Output('/optics.tape','optics')
 	|
 	| By default the filetype is twiss
 	"""
@@ -68,6 +71,12 @@ class Output:
 			self._readEnvelopeFile()
 		if filetype == 'survey':
 			self._readSurveyFile()
+		if filetype == 'struct':
+			self._readStructureFile()
+		if filetype == 'track':
+			self._readTrackFile()
+		if filetype == 'optics':
+			self._readOpticsFile()
 
 	##########################################################################################
 	def _readTwissFile(self):
@@ -112,9 +121,12 @@ class Output:
 	def _readRmatFile(self):
 		"""Read and load a Mad8 rmat file in a DataFrame then save it as internal value 'data' """
 
-		colnames_rmat = ['R11', 'R12', 'R13', 'R14', 'R15', 'R16', 'R21', 'R22', 'R23', 'R24', 'R25', 'R26',
-						 'R31', 'R32', 'R33', 'R34', 'R35', 'R36', 'R41', 'R42', 'R43', 'R44', 'R45', 'R46',
-						 'R51', 'R52', 'R53', 'R54', 'R55', 'R56', 'R61', 'R62', 'R63', 'R64', 'R65', 'R66', 'S']
+		colnames_rmat = ['R11', 'R12', 'R13', 'R14', 'R15', 'R16',
+						 'R21', 'R22', 'R23', 'R24', 'R25', 'R26',
+						 'R31', 'R32', 'R33', 'R34', 'R35', 'R36',
+						 'R41', 'R42', 'R43', 'R44', 'R45', 'R46',
+						 'R51', 'R52', 'R53', 'R54', 'R55', 'R56',
+						 'R61', 'R62', 'R63', 'R64', 'R65', 'R66', 'S']
 		colnames = self.colnames_common + colnames_rmat
 		self.data = _pd.DataFrame(columns=colnames)
 
@@ -198,9 +210,12 @@ class Output:
 	def _readEnvelopeFile(self):
 		"""Read and load a Mad8 envelope file in a DataFrame then save it as internal value 'data' """
 
-		colnames_envelop = ['S11', 'S12', 'S13', 'S14', 'S15', 'S16', 'S21', 'S22', 'S23', 'S24', 'S25', 'S26',
-				    		'S31', 'S32', 'S33', 'S34', 'S35', 'S36', 'S41', 'S42', 'S43', 'S44', 'S45', 'S46',
-				    		'S51', 'S52', 'S53', 'S54', 'S55', 'S56', 'S61', 'S62', 'S63', 'S64', 'S65', 'S66', 'S']
+		colnames_envelop = ['S11', 'S12', 'S13', 'S14', 'S15', 'S16',
+							'S21', 'S22', 'S23', 'S24', 'S25', 'S26',
+				    		'S31', 'S32', 'S33', 'S34', 'S35', 'S36',
+							'S41', 'S42', 'S43', 'S44', 'S45', 'S46',
+				    		'S51', 'S52', 'S53', 'S54', 'S55', 'S56',
+							'S61', 'S62', 'S63', 'S64', 'S65', 'S66', 'S']
 		colnames = self.colnames_common + colnames_envelop
 		self.data = _pd.DataFrame(columns=colnames)
 
@@ -243,7 +258,8 @@ class Output:
 	def _readSurveyFile(self):
 		"""Read and load a Mad8 survey file in a DataFrame then save it as internal value 'data' """
 
-		colnames_survey = ['X', 'Y', 'Z', 'S', 'THETA', 'PHI', 'PSI']
+		colnames_survey = ['X', 'Y', 'Z', 'S',
+						   'THETA', 'PHI', 'PSI']
 		colnames = self.colnames_common + colnames_survey
 		self.data = _pd.DataFrame(columns=colnames)
 
@@ -279,14 +295,100 @@ class Output:
 		self.data.at[0, 'E'] = self.data['E'][1]
 
 	##########################################################################################
+	def _readStructureFile(self):
+		"""Read and load a Mad8 structure file in a DataFrame then save it as internal value 'data' """
+
+		colnames_survey = ['X', 'Y', 'Z', 'S',
+						   'THETA', 'PHI', 'PSI']
+		colnames = self.colnames_common + colnames_survey
+		self.data = _pd.DataFrame(columns=colnames)
+
+		f = open(self.filename, 'r')
+
+		self.nrec = self._findNelemInFF(f)
+		print('Mad8.readSurveyFile> nrec=' + str(self.nrec))
+
+		ffe1 = _ff.FortranRecordReader('(A4,A16,F12.6,4E16.9,A19,E16.9)')
+		ffe2 = _ff.FortranRecordReader('(5E16.9)')
+		ffe3 = _ff.FortranRecordReader('(4E16.9)')
+		ffe4 = _ff.FortranRecordReader('(3E16.9)')
+
+		# loop over entries
+		dList = []
+		for i in range(0, self.nrec, 1):
+			l1 = ffe1.read(f.readline())
+			l2 = ffe2.read(f.readline())
+			l3 = ffe3.read(f.readline())
+			l4 = ffe4.read(f.readline())
+			l_common = l1[0:6] + l2 + l1[6:9]
+			l_survey = l3 + l4
+
+			d = {'TYPE': l_common[0], 'NAME': l_common[1].strip()}
+			kt = self.keys_dict[d['TYPE']]
+			for k in kt.keys():
+				d[k] = l_common[kt[k]]
+			for j in range(len(colnames_survey)):
+				d[colnames_survey[j]] = l_survey[j]
+			dList.append(d)
+		f.close()
+		self.data = _pd.DataFrame(dList, columns=colnames)
+		self.data.at[0, 'E'] = self.data['E'][1]
+
+	##########################################################################################
+	def _readTrackFile(self):
+		"""Read and load a Mad8 track file in a DataFrame then save it as internal value 'data' """
+
+		f = open(self.filename, 'r')
+
+		colnames, ffe1 = self._readColumns(f)
+		self.header, line = self._readHeader(f)
+		ffhr2 = _ff.FortranRecordReader('(A8,3I8)')
+		self.nrec = ffhr2.read(line)[-1]
+		print('Mad8.readTrackFile> nrec=' + str(self.nrec))
+
+		# loop over entries
+		dList = []
+		for i in range(0, self.nrec, 1):
+			ff_line = ffe1.read(f.readline())
+			d = {}
+			for j in range(len(colnames)):
+				d[colnames[j]] = ff_line[j+1]
+			dList.append(d)
+		f.close()
+		self.data = _pd.DataFrame(dList, columns=colnames)
+
+	##########################################################################################
+	def _readOpticsFile(self):
+		"""Read and load a Mad8 optics file in a DataFrame then save it as internal value 'data' """
+
+		f = open(self.filename, 'r')
+
+		colnames, ffe1 = self._readColumns(f)
+		self.header, line = self._readHeader(f)
+
+		dList = []
+		nrec = 0
+		# loop over entries
+		while line:
+			ff_line = ffe1.read(line)
+			d = {}
+			for j in range(len(colnames)):
+				if type(ff_line[j+1]) == str:
+					d[colnames[j]] = ff_line[j+1].split()[0].replace('"', '')
+				else:
+					d[colnames[j]] = ff_line[j+1]
+			dList.append(d)
+
+			nrec += 1
+			line = f.readline()
+		f.close()
+		self.nrec = nrec
+		self.data = _pd.DataFrame(dList, columns=colnames)
+		print('Mad8.readOpticFile> nrec=' + str(self.nrec))
+
+	##########################################################################################
 	def _findNelemInFF(self, openfile):
 		"""Read the beginig of an opened fortran file and return the number of elements"""
-		if self.filetype == 'chrom':
-			pass
-			# 3 random lines at the end of chrom tape
-			#openfile.readline()
-			#openfile.readline()
-			#openfile.readline()
 
 		# Standard header definition
 		ffhr1 = _ff.FortranRecordReader('(5A8,I8,L8,I8)')
@@ -297,7 +399,42 @@ class Output:
 		# number of records
 		nrec = h1[7]
 
+		if self.filetype == 'chrom':
+			# skip the twiss part at the begining
+			for i in range(nrec*5+5):
+				openfile.readline()
+
 		return nrec
+
+	def _readHeader(self, openfile):
+		header = {}
+		ffhr3 = _ff.FortranRecordReader('(A2,A17,A5,A20)')
+		ffhr4 = _ff.FortranRecordReader('(A2,A17,A5,E16.9)')
+		line = openfile.readline()
+		while line[0] == '@':
+			if line.split()[2] in ['%08s', '%16s']:
+				h3 = ffhr3.read(line)
+				header[h3[1].strip()] = h3[3].split()[0].replace('"', '')
+			elif line.split()[2] in ['%e', '%le']:
+				h4 = ffhr4.read(line)
+				header[h4[1].strip()] = h4[3]
+			line = openfile.readline()
+		return header, line
+
+	def _readColumns(self, openfile):
+		colnames = openfile.readline().replace('*', '').split()
+		colformat = openfile.readline().replace('$', '').split()
+		ff_reader_str = '(A1,'
+		for form in colformat:
+			if form == '%16s':
+				ff_reader_str += 'A20,'
+			elif form == '%e':
+				ff_reader_str += 'E15.9,'
+			elif form == '%hd':
+				ff_reader_str += 'I9,'
+		ff_reader_str += ')'
+		ffer = _ff.FortranRecordReader(ff_reader_str)
+		return colnames, ffer
 
 	def Clear(self):
 		"""Empties all data structures in this instance"""
@@ -394,7 +531,7 @@ class Output:
 		"""Return Rows of the closest element in the beamline"""
 		S = self.data['S'].tolist()
 		for index in range(self.nrec):
-			if S[index - 1] < s < S[index]:
+			if S[index - 1] <= s < S[index]:
 				if s - S[index-1] < S[index] - s:
 					return self.data.loc[[index-1]]
 				else:
