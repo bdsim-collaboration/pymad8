@@ -30,7 +30,7 @@ Loading
 MAD8 files can be of different types.
 Twiss files are the main ones but we can also load Rmat files, Chrom files, Envelope files or Survey files
 
-A file may be loading by constructing a Output instance from a file name :
+A file may be loading by constructing an Output instance from a file name :
 
 >>> import pymad8
 >>> t = pymad8.Output("myTwissFile")

@@ -27,6 +27,10 @@ A colour diagram representing the machine is also produced above the graph as sh
 
 Other than beta, other optics plots can be made using `Alpha()`, `Mu()`, `Disp()` or `Sigma()`.
 These functions are provided as a quick utility and not the ultimate plotting script.
+
+Machine lattice
+---------------
+
 The user can make their own plot and then append a machine diagram at the end if they wish : ::
 
   f = matplotlib.pyplot.figure()                                                                          

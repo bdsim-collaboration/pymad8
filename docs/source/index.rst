@@ -1,5 +1,5 @@
 pymad8 documentation
-=====================
+====================
 
 pymad8 is a Python package to aid in the preparation, running and validation
 of BDSIM models.
@@ -13,6 +13,7 @@ of BDSIM models.
    data
    plot
    convert
+   simulation
    support
    moduledocs
 
