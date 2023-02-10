@@ -25,7 +25,29 @@ def testTrack(twissfile, rmatfile):
     return T
 
 
-def setTrackCollection(nb_part, energy):
+def _printProgressBar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█', printEnd="\r"):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length      - Optional  : character length of bar (Int)
+        fill        - Optional  : bar fill character (Str)
+        printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
+    """
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + '-' * (length - filledLength)
+    print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end = printEnd)
+    # Print New Line on Complete
+    if iteration == total:
+        print()
+
+
+def setTrackCollection(nb_part, energy, paramdict):
     T_C = _m8.Sim.Track_Collection(energy)
 
     T_C.AddTrack(0, 0, 0, 0, 0, 0)
@@ -47,6 +69,16 @@ def setSamplersAndTrack(twissfile, rmatfile, nb_sampl):
     T.AddSamplers('IP.LUXE.T20', select='name')
 
     return T
+
+
+def CheckUnits(coord):
+    if coord in ['X', 'Y', 'T']:
+        unit = 'm'
+    elif coord in ['PX', 'PY', 'PT']:
+        unit = 'rad'
+    else:
+        raise ValueError("Unknown coordinate : {}".format(coord))
+    return unit
 
 
 class Track_Collection:
@@ -221,7 +253,7 @@ class Tracking:
     def LoadMad8Track(self, inputfilename):
         """
         | Load the Mad8 track files and store it in a structure similar to the pymad8 generated data
-        | /!\ NOT WORKING /!\
+        | /!/ NOT WORKING /!/
         """
         filelist = _gl.glob(inputfilename)
         particle_df_dict = {}
@@ -252,8 +284,9 @@ class Tracking:
             particle_df_dict[track] = _pd.DataFrame(particle_data, columns=['SAMPLER', 'PARTICLE', 'S', 'X', 'PX', 'Y', 'PY'])
         self.bdsim_df = _pd.concat(particle_df_dict, axis=0)
 
-    # PLOTS
-
+    #########
+    # PLOTS #
+    #########
     def PlotHist(self, S, coord):
         """
         | Plot histogram for a given coordinate at the closest sampler from given S
@@ -364,6 +397,16 @@ class Tracking:
         _plt.xlabel("S [m]")
         _plt.ylabel("{} [{}]".format(coord, unit))
         _plt.legend()
+
+    def reduceDFbyIndex(self, index):
+        row = self.twiss.getRowsByIndex(index)
+        name = row['NAME']
+        S = row['S']
+        reduced_df = self.pymad8_df.loc[self.pymad8_df['S'] == S]
+        reduced_df = reduced_df[reduced_df['SAMPLER'] == name]
+        if reduced_df.empty:
+            raise ValueError("Element of index {} is not registered as a sampler".format(index))
+        return name, S, reduced_df
 
 
 # BELOW IS OLD
