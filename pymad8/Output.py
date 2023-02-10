@@ -599,13 +599,13 @@ class Output:
 		"""Return maximal S value"""
 		return self.data['S'].max()
 
-	def plotXY(self, Xkey, Ykey, label=None):
+	def plotXY(self, Xkey, Ykey, color=None, label=None):
 		"""Quick plot of one colums of our dataframe w.r.t. another"""
 		X = self.getColumnsByKeys(Xkey)
 		Y = self.getColumnsByKeys(Ykey)
 		if label is None:
 			label = Ykey
-		_plt.plot(X, Y, label=label)
+		_plt.plot(X, Y, color=color, label=label)
 
 	def calcBeamSize(self, EmitX, EmitY, Esprd, BunchLen=0):
 		"""
