@@ -530,12 +530,16 @@ class Output:
 	def getRowByNearestS(self, s):
 		"""Return Rows of the closest element in the beamline"""
 		S = self.data['S'].tolist()
-		for index in range(self.nrec):
-			if S[index - 1] <= s < S[index]:
-				if s - S[index-1] < S[index] - s:
-					return self.data.loc[[index-1]]
+		if s <= S[0]:
+			return self.data.iloc[[0]]
+		if s >= S[-1]:
+			return self.data.iloc[[-1]]
+		for index in range(self.nrec - 1):
+			if S[index] <= s < S[index + 1]:
+				if s - S[index] < S[index + 1] - s:
+					return self.data.iloc[[index]]
 				else:
-					return self.data.loc[[index]]
+					return self.data.iloc[[index + 1]]
 		raise ValueError('Closest s value not found')
 
 	def getRowsByFunction(self, f):
@@ -566,6 +570,16 @@ class Output:
 		if type(keylist) != list:
 			keylist = [keylist]
 		elem = self.data.loc[self.data['NAME'].isin(namelist), keylist]
+		if elem.shape == (1, 1):
+			return elem.values[0][0]
+		return elem
+
+	def getElementByNearestS(self, s, keylist):
+		"""Return value of elements at a given s position and for chosen columns"""
+		if type(keylist) != list:
+			keylist = [keylist]
+		row = self.getRowByNearestS(s)
+		elem = row[keylist]
 		if elem.shape == (1, 1):
 			return elem.values[0][0]
 		return elem
