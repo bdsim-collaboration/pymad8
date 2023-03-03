@@ -155,6 +155,269 @@ class Track_Collection:
         f.close()
 
 
+class Tracking_data:
+    """
+    | Class that stores tracking data from Mad8 or from BDSIM
+    | Comes with a bunch of useful function to extrat data
+    """
+    def __init__(self, dataframe):
+        """
+        | Stores the tracking dataframe as well as the number of particle,
+        | number of samplers and the list of samplers
+        """
+        self.data = dataframe
+        self.sampler_list = self.data[self.data['PARTICLE'] == 1]['SAMPLER'].to_list()
+        self.nb_sampler = len(self.sampler_list)
+        self.nb_particle = len(self.data['PARTICLE'].unique())
+
+    def _getValues(self, data):
+        """
+        | Convert pandas elements of length 1 to regular value types
+        | If given pandas element of length < 1 : returns a numpy array
+        | Otherwise if element is already a string or integer : return unchanged element
+        """
+        if type(data) == str or type(data) == int:
+            return data
+        values_list = data.to_numpy()
+        if len(values_list) == 1 and type(values_list) == list:
+            return values_list[0]
+        return values_list
+
+    def getColumnsByKeys(self, keylist):
+        """Return Columns that ar in keylist"""
+        return self.data[keylist]
+
+    def getRowsByValues(self, key=None, minValue=-_np.inf, maxValue=_np.inf, equalValues=None):
+        """Return Rows of elements that have certain values for a chosen column"""
+        if key is None:
+            if equalValues is not None:
+                return self.data.loc[equalValues]
+            return self.data.loc[minValue:maxValue]
+
+        column = self.getColumnsByKeys(key)
+        if equalValues is not None:
+            if type(equalValues) == list:
+                return self.data[column.isin(equalValues)]
+            return self.data[column == equalValues]
+        return self.data[(column >= minValue) & (column <= maxValue)]
+
+    def getRowsByNearestS(self, s):
+        """Return Rows of the closest element in the beamline"""
+        S_serie = self.data[self.data['PARTICLE'] == 1]['S'].to_numpy()
+        if s < S_serie[0]:
+            return self.getRowsByS(S_serie[0])
+        if s >= S_serie[-1]:
+            return self.getRowsByS(S_serie[-1])
+        for i in range(len(S_serie)):
+            if S_serie[i] <= s < S_serie[i+1]:
+                if s - S_serie[i] < S_serie[i+1] - s:
+                    return self.getRowsByS(S_serie[i])
+                else:
+                    return self.getRowsByS(S_serie[i+1])
+        raise ValueError('Closest s value not found')
+
+    def getSByNearestS(self, s):
+        """Return the s position of the closest element in the beamline"""
+        row = self.getRowsByNearestS(s)
+        S = self._getValues(row['S'])
+        if type(S) in [list, _np.ndarray]:
+            return S[0]
+        return S
+
+    ####################################################################################
+
+    def getRowsBySamplers(self, sampler):
+        """Return Rows of elements with the correspondig sampler name"""
+        return self.getRowsByValues(key='SAMPLER', equalValues=sampler)
+
+    def getRowsByParticles(self, particle):
+        """Return Rows of a given partcile"""
+        return self.getRowsByValues(key='PARTICLE', equalValues=particle)
+
+    def getRowsByS(self, s):
+        """Return Rows of elements with the correspondig s position"""
+        return self.getRowsByValues(key='S', equalValues=s)
+
+    def getRowsBySamplerAndS(self, sampler, s):
+        """Return Rows of elements with the corresponding sampler name and s position"""
+        return self.data[(self.data['SAMPLER'] == sampler) & (self.data['S'] == s)]
+
+    def getRowsBySamplerAndNearestS(self, sampler, s):
+        """Return Rows of elements with the corresponding sampler name and closest s position"""
+        S = self.getSByNearestS(s)
+        return self.getRowsBySamplerAndS(sampler, S)
+
+    ####################################################################################
+
+    def getVectsByParticle(self, keys, particle):
+        """Return vector of a given column and for a given particle"""
+        row = self.getRowsByParticles(particle)
+        return self._getValues(row[keys])
+
+    def getVectsBySampler(self, keys, sampler):
+        """Return vector of a given column and for a given sampler name"""
+        row = self.getRowsBySamplers(sampler)
+        return self._getValues(row[keys])
+
+    def getVectsByS(self, keys, s):
+        """Return vector of a given column and for a given s"""
+        row = self.getRowsByS(s)
+        return self._getValues(row[keys])
+
+    def getVectsByNearestS(self, keys, s):
+        """Return vector of a given column and for the closest s"""
+        S = self.getSByNearestS(s)
+        return self.getVectsByS(keys, S)
+
+    def getVectsBySamplerAndS(self, keys, sampler, s):
+        """Return vector of a given column for a given sampler name and for a given s"""
+        row = self.getRowsBySamplerAndNearestS(sampler, s)
+        return self._getValues(row[keys])
+
+    def getVectsBySamplerAndNearestS(self, keys, sampler, s):
+        """Return vector of a given column for a given sampler name and for the closest s"""
+        S = self.getSByNearestS(s)
+        return self.getVectsBySamplerAndS(keys, sampler, S)
+
+    ####################################################################################
+
+    def getSamplersByS(self, s):
+        """Return the list of sampler name that correspond to a given s"""
+        sampler = _np.unique(self.getVectsByS('SAMPLER', s))
+        if len(sampler) == 1:
+            return sampler[0]
+        return sampler
+
+    def getSamplersByNearestS(self, s):
+        """Return the list of sampler name that correspond to the closest s"""
+        S = self.getSByNearestS(s)
+        return self.getSamplersByS(S)
+
+    def getFirstSamplerByNearestS(self, s):
+        """Return the first sampler name that correspond to the closest s"""
+        sampler = self.getSamplersByNearestS(s)
+        if type(sampler) in [list, _np.ndarray]:
+            return sampler[0]
+        return sampler
+
+    def getSBySamplers(self, sampler):
+        """Retrun the list of s positions that correspond to a given sampler name"""
+        S = _np.unique(self.getVectsBySampler('S', sampler))
+        if len(S) == 1:
+            return S[0]
+        return S
+
+    ####################################################################################
+
+    def sMin(self):
+        """Return minimal S value"""
+        return self.data['S'].min()
+
+    def sMax(self):
+        """Return maximal S value"""
+        return self.data['S'].max()
+
+    ####################################################################################
+
+    def CalcCorrelChi2(self, S, coord, ref_S, ref_coord, partlimit=200):
+        """Calculate the chi2, slope and intercept of the correlation fit between two positions and two coordinates"""
+        sampler_name = self.getFirstSamplerByNearestS(S)
+        ref_sampler_name = self.getFirstSamplerByNearestS(ref_S)
+
+        V = self.getVectsBySamplerAndNearestS(coord, sampler_name, S)[:partlimit]
+        ref_V = self.getVectsBySamplerAndNearestS(ref_coord, ref_sampler_name, ref_S)[:partlimit]
+
+        def linear(x, a, b):
+            return a * x + b
+
+        popt, pcov = curve_fit(linear, V, ref_V)
+        slope, cst = popt
+        err = sum((ref_V - slope * V - cst) ** 2)
+
+        # cov_err = _np.sqrt(_np.diag(pcov))[0]
+        return err, slope, cst
+
+    def getChi2(self, coord, ref_S, ref_coord):
+        """Return the chi2 vector along the lattice"""
+        S = _np.unique(self.getVectsByParticle('S', 1))[1::2]
+
+        Vect_Chi2 = _np.array([])
+        for s in S:
+            Vect_Chi2 = _np.append(Vect_Chi2, self.CalcCorrelChi2(s, coord, ref_S, ref_coord)[0])
+
+        Curve_Chi2 = interp1d(S, Vect_Chi2, fill_value="extrapolate")
+        return Curve_Chi2
+
+    def buildBPMmatrix(self, ref_S, ref_coord, BPM_list=None, BPM_list_type='pos', s_range=[-_np.inf, _np.inf], noise=None, mean_sub=False):
+        """Build the BPM matrix M with respect to a given list of BPMs"""
+        ref_real_S = self.getSByNearestS(ref_S)
+        ref_name = self.getFirstSamplerByNearestS(ref_S)
+        ref_Vect = self.getVectsBySamplerAndNearestS(ref_coord, ref_name, ref_S)
+
+        if BPM_list is not None:
+            if BPM_list_type == 'pos':
+                name_list = []
+                s_list = []
+                for s in BPM_list:
+                    name_list.append(self.getFirstSamplerByNearestS(s))
+                    s_list.append(self.getSByNearestS(s))
+                reduced_df = self.data[(self.data['S'].isin(s_list)) & (self.data['SAMPLER'].isin(name_list))]
+            if BPM_list_type == 'type':
+                reduced_df = self.data.loc[self.data['TYPE'].isin(BPM_list)]
+        else:
+            reduced_df = self.data
+
+        reduced_df = reduced_df[(reduced_df['S'] >= s_range[0]) & (reduced_df['S'] <= s_range[1])]
+        reduced_df = reduced_df.drop(reduced_df.index[reduced_df['S'] == ref_real_S])
+
+        M_X = reduced_df['X'].to_numpy().reshape((-1, self.nb_particle)).transpose()
+        M_Y = reduced_df['Y'].to_numpy().reshape((-1, self.nb_particle)).transpose()
+        S_Vect = reduced_df[reduced_df.index.get_level_values(1) == 0]['S'].to_numpy()
+        M = _np.concatenate((M_X, M_Y), axis=1)
+
+        if noise is not None:
+            M_noise = _np.random.normal(0, noise, M.shape)
+            M = M + M_noise
+        if mean_sub:
+            V_mean = M.mean(0)
+            M = M - V_mean
+
+        return M, ref_Vect, S_Vect
+
+    def SVD(self, M, ref_Vect):
+        """Return the correlation coefficients from a given matrix M using a Singular Value Decomposition method"""
+        U, d, V_t = _np.linalg.svd(M, full_matrices=False)
+        D = _np.diag(d)
+
+        D_i = _np.linalg.inv(D)
+        U_t = U.transpose()
+        V = V_t.transpose()
+
+        C = _np.dot(_np.dot(V, _np.dot(D_i, U_t)), ref_Vect)
+        return C
+
+    def CalcResolution(self, ref_coord, ref_S, BPM_list, noise=10e-6):
+        """"""
+        M, Real_vect, S_vect = self.buildBPMmatrix(ref_S, ref_coord, BPM_list=BPM_list, noise=noise)
+        C_vect = self.SVD(M, Real_vect)
+
+        Meas_vect = _np.dot(M, C_vect)
+        Res_array = Meas_vect - Real_vect
+        return Res_array
+
+    def SortCoeff(self, ref_coord, ref_S, BPM_list, noise=10e-6):
+        M, Real_vect, S_vect = self.buildBPMmatrix(ref_S, ref_coord, BPM_list=BPM_list, noise=noise)
+
+        C_vect = self.SVD(M, Real_vect)
+        C1, C2 = _np.split(C_vect, 2)
+        if ref_coord in ['X', 'PX']:
+            return BPM_list[_np.argsort(C1)]
+        elif ref_coord in ['Y', 'PY']:
+            return BPM_list[_np.argsort(C2)]
+        else:
+            raise ValueError('Input ref_coord should be X, Y, PX or PY')
+
+
 class Tracking:
     """
     | Class to run tracking for a given track collection using Mad8 Rmat files
