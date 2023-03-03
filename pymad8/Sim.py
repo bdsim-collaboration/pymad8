@@ -3,6 +3,7 @@ import numpy as _np
 import matplotlib.pyplot as _plt
 from scipy.interpolate import interp1d
 from scipy.optimize import curve_fit
+from scipy.optimize import fsolve
 import pandas as _pd
 import glob as _gl
 import pybdsim as _bd
@@ -526,10 +527,8 @@ class Tracking:
             self._MakeNturns(turns)
 
         particle_df_dict = {}
-        self.nb_mad8_sampler = 0
         for sampler_index in self.sampler_list:
-            self.nb_mad8_sampler += 1
-            sampler_name = self.sampler_list[sampler_index]['name']
+            sampler_name = self.sampler_list[sampler_index]['name'].replace('.', '')
             sampler_type = self.sampler_list[sampler_index]['type']
             sampler_matrix = self.sampler_list[sampler_index]['matrix']
             S = self.rmat.data['S'][sampler_index]
@@ -540,7 +539,8 @@ class Tracking:
                 final_vector = [turns, sampler_name, sampler_type, track, S] + list(_np.matmul(sampler_matrix, initial_vector))
                 particle_data.append(final_vector)
             particle_df_dict[sampler_index] = _pd.DataFrame(particle_data, columns=['TURNS', 'SAMPLER', 'TYPE', 'PARTICLE', 'S', 'X', 'PX', 'Y', 'PY', 'T', 'PT'])
-        self.pymad8_df = _pd.concat(particle_df_dict, axis=0)
+        pymad8_df = _pd.concat(particle_df_dict, axis=0)
+        self.pymad8 = Tracking_data(pymad8_df)
 
     def LoadMad8Track(self, inputfilename):
         """
@@ -557,234 +557,231 @@ class Tracking:
         | Load Bdsim root file and generate orbit files for each particle in the track collection
         | Then store the data in a structure similar to the pymad8 generated one
         """
-        bdsim = _bd.Data.Load(inputfilename)
-        samplers = bdsim.GetSamplerNames()
-        self.nb_bdsim_sampler = samplers.size()
-        self.bdsim_sampler_list = {}
-        particle_df_dict = {}
-        for sampler_index, sampler_name in enumerate(samplers):
-            _printProgressBar(sampler_index, samplers.size(),
-                              prefix='Loading file {}. Track {} particles at {} samplers:'.format(inputfilename, len(self.initial_dict), samplers.size()),
-                              suffix='Complete', length=50)
-            self.bdsim_sampler_list[sampler_index] = {'name': sampler_name}
-            sampler_data = _bd.Data.SamplerData(bdsim, samplerIndexOrName=samplers[sampler_index])
-            S = sampler_data.data['S']
-            X = sampler_data.data['x']
-            Y = sampler_data.data['y']
-            XP = sampler_data.data['xp']
-            YP = sampler_data.data['yp']
-            if len(self.initial_dict) != len(S):
-                raise ValueError("Inconsisstant number of particles between Mad8 and Bdsim")
+        data = _bd.Data.Load(inputfilename)
+        e = data.GetEvent()
+        et = data.GetEventTree()
+        npart = et.GetEntries()
+        if npart != len(self.initial_dict):
+            raise ValueError("Inconsisstant number of particles between Mad8 and Bdsim")
 
-            particle_data = []
-            for i_track, track in enumerate(self.initial_dict):
-                s = S[i_track]
-                x = X[i_track]
-                y = Y[i_track]
-                xp = XP[i_track]
-                yp = YP[i_track]
-                vector = [sampler_name, track, s, x, xp, y, yp]
-                particle_data.append(vector)
-            particle_df_dict[sampler_index] = _pd.DataFrame(particle_data, columns=['SAMPLER', 'PARTICLE', 'S', 'X', 'PX', 'Y', 'PY'])
-        _printProgressBar(samplers.size(), samplers.size(),
-                          prefix='Loading file {}. Track {} particles at {} samplers:'.format(inputfilename, len(self.initial_dict), samplers.size()),
-                          suffix='Complete', length=50)
-        self.bdsim_df = _pd.concat(particle_df_dict, axis=0)
+        sampler_names = e.GetSamplerNames()
+        particle_df_dict = {}
+        for particle in range(npart):
+            _printProgressBar(particle+1, npart,
+                              prefix='Loading file {}. Track {} particles at {} samplers:'.format(inputfilename, npart, sampler_names.size()),
+                              suffix='Complete', length=50)
+            et.GetEntry(particle)
+            sampler_dict = {'S': [], 'X': [], 'Y': [], 'PX': [], 'PY': [], 'SAMPLER': [], 'PARTICLE': []}
+            for i_sampler, sampler in enumerate(sampler_names):
+                sampler_data = e.GetSampler(sampler)
+                sampler = str(sampler).replace('.', '').split('_')[0]
+                sampler_dict['S'].append(sampler_data.S)
+                sampler_dict['X'].append(sampler_data.x[0])
+                sampler_dict['Y'].append(sampler_data.y[0])
+                sampler_dict['PX'].append(sampler_data.xp[0])
+                sampler_dict['PY'].append(sampler_data.yp[0])
+                sampler_dict['SAMPLER'].append(sampler)
+                sampler_dict['PARTICLE'].append(particle + 1)
+            particle_df_dict[particle] = _pd.DataFrame(sampler_dict, columns=['SAMPLER', 'PARTICLE', 'S', 'X', 'PX', 'Y', 'PY'])
+        bdsim_df = _pd.concat(particle_df_dict, axis=0, join='inner').reorder_levels([1, 0]).sort_index(level=0)
+        self.bdsim = Tracking_data(bdsim_df)
+
+    def getPlaneCoord(self, coord):
+        if coord in ['X', 'Y']:
+            return coord
+        elif coord == 'PX':
+            return 'X'
+        elif coord == 'PY':
+            return 'Y'
+        else:
+            raise ValueError('Input coord should be X, Y, PX or PY')
+
+    def getTheoryAndFit(self, coord, ref_S, ref_coord, initial_fit):
+        plane_coord = self.getPlaneCoord(coord)
+        plane_ref_coord = self.getPlaneCoord(ref_coord)
+        ref_mu = self.twiss.getElementByNearestS(ref_S, 'MU{}'.format(plane_ref_coord))
+
+        def calcTheory(mu):
+            if ref_coord in ['PX', 'PY']:
+                ref_alpha = self.twiss.getElementByNearestS(ref_S, 'ALPH{}'.format(plane_coord))
+                return _np.sin(2 * _np.pi * (ref_mu - mu) + _np.arctan(-1 / ref_alpha))
+            return _np.sin(2 * _np.pi * (ref_mu - mu))
+
+        mu_vect = self.twiss.data['MU{}'.format(plane_coord)].to_numpy()
+
+        S = self.twiss.getColumnsByKeys('S').to_numpy()
+        Vect_Theory = calcTheory(mu_vect)
+        Curve_Theory = interp1d(S, Vect_Theory, fill_value="extrapolate")
+
+        S_Fit_list = fsolve(Curve_Theory, initial_fit)
+
+        return Curve_Theory, S_Fit_list
 
     #########
     # PLOTS #
     #########
-    def PlotHist(self, S, coord):
+    def PlotHist(self, S, coord, bins=50, bdsimCompare=False):
         """
         | Plot histogram for a given coordinate at the closest sampler from given S
         """
-        sampler_index = self.twiss.getIndexByNearestS(S)
-        sampler_name = self.twiss.getNameByNearestS(S)
-        sampler_S = self.twiss.data['S'][sampler_index]
-        pymad8_df = self.pymad8_df.loc[self.pymad8_df['S'] == sampler_S]
-        title = "Beam profile in {} for sampler {} (S={}m)".format(coord, sampler_name, sampler_S)
-
+        _plt.rcParams['font.size'] = 15
         unit = CheckUnits(coord)
-        V_pymad8 = pymad8_df[coord].tolist()
 
-        _plt.hist(V_pymad8, bins=15)
+        sampler_S = self.pymad8.getSByNearestS(S)
+        sampler_name = self.pymad8.getFirstSamplerByNearestS(S)
+
+        V_pymad8 = self.pymad8.getVectsBySamplerAndNearestS(coord, sampler_name, S)
+        _plt.hist(V_pymad8, bins=bins, histtype='step', color='C0', label='Mad8')
+
+        if bdsimCompare:
+            V_pymad8 = self.bdsim.getVectsBySamplerAndNearestS(coord, sampler_name, S)
+            _plt.hist(V_pymad8, bins=bins, histtype='step', color='C3', label='BDSIM')
+
+        _plt.ticklabel_format(axis="x", style="sci", scilimits=(0, 0))
         _plt.xlabel("{} [{}]".format(coord, unit))
         _plt.ylabel("Number of entries")
-        _plt.title(title)
+        _plt.legend()
+        _plt.title("Beam profile in {} \n for sampler {} (S={}m)".format(coord, sampler_name, round(sampler_S, 2)))
 
-    def PlotCorrelation(self, index, coord, ref_index, ref_coord, linFit=False, noPlots=False):
+    def PlotCorrelation(self, S, coord, ref_S, ref_coord, linFit=False, partlimit=200, bdsimCompare=False):
         """
         | Correlation plot for a given coordinate at the closest sampler from given S
         | By default the reference sampler is LUXE IP
         """
-        sampler_name, sampler_S, sampler_df = self.reduceDFbyIndex(index)
-        ref_sampler_name, ref_sampler_S, ref_sampler_df = self.reduceDFbyIndex(ref_index)
-
-        title = "Correlation between :\n{} at {} (S~{} m)  &  {} at {} (S~{} m)".format(coord, sampler_name, round(sampler_S, 2),
-                                                                                  ref_coord, ref_sampler_name, round(ref_sampler_S, 2))
-
+        _plt.rcParams['font.size'] = 15
         unit = CheckUnits(coord)
         ref_unit = CheckUnits(ref_coord)
 
-        V = sampler_df[coord].tolist()
-        V_ref = ref_sampler_df[ref_coord].tolist()
+        sampler_S = self.pymad8.getSByNearestS(S)
+        sampler_name = self.pymad8.getFirstSamplerByNearestS(S)
+        ref_sampler_S = self.pymad8.getSByNearestS(ref_S)
+        ref_sampler_name = self.pymad8.getFirstSamplerByNearestS(ref_S)
+        V_pymad8 = self.pymad8.getVectsBySamplerAndNearestS(coord, sampler_name, S)
+        ref_V_pymad8 = self.pymad8.getVectsBySamplerAndNearestS(ref_coord, ref_sampler_name, ref_S)
+        _plt.plot(V_pymad8[:partlimit], ref_V_pymad8[:partlimit], ls='', marker='+', color='C0', label='Mad8 data')
 
         if linFit:
-            def linear(x, a, b):
-                return a * x + b
-            popt, pcov = curve_fit(linear, V, V_ref)
-            slope = popt[0]
-            cst = popt[1]
-            err = 0
-            for x, y in zip(V, V_ref):
-                err += (y - slope*x - cst)**2
+            err, slope, cst = self.pymad8.CalcCorrelChi2(S, coord, ref_S, ref_coord)
+            _plt.plot(V_pymad8, slope * V_pymad8 + cst, color='C2', label='Fit: {}_ref = {:1.2e} * {} + {:1.2e}'
+                      .format(ref_coord, slope, coord, cst))
+        if bdsimCompare:
+            sampler_name_bdsim = self.bdsim.getFirstSamplerByNearestS(S)
+            ref_sampler_name_bdsim = self.bdsim.getFirstSamplerByNearestS(ref_S)
+            V_bdsim = self.bdsim.getVectsBySamplerAndNearestS(coord, sampler_name_bdsim, S)
+            ref_V_bdsim = self.bdsim.getVectsBySamplerAndNearestS(ref_coord, ref_sampler_name_bdsim, ref_S)
+            _plt.plot(V_bdsim[:partlimit], ref_V_bdsim[:partlimit], ls='', marker='o', color='C3', markerfacecolor='None', label='BDSIM data')
 
-            cov_err = _np.sqrt(_np.diag(pcov))[0]
-            if noPlots:
-                return slope, err, cov_err
-            _plt.plot(V, linear(_np.array(V), *popt), color='green', label='Fit: {}_ref = {} * {} + {}'.format(ref_coord, slope, coord, cst))
-
-        _plt.scatter(V, V_ref, facecolors='none', edgecolors='r', label='Mad8')
+        _plt.ticklabel_format(axis="x", style="sci", scilimits=(0, 0))
         _plt.xlabel("{} [{}]".format(coord, unit))
         _plt.ylabel("{}_ref [{}]".format(ref_coord, ref_unit))
-        _plt.title(title)
         _plt.legend()
+        _plt.title("Correlation between :\n{} at {} (S~{} m)  & \n  {} at {} (S~{} m)"
+                   .format(coord, sampler_name, round(sampler_S, 2), ref_coord, ref_sampler_name, round(ref_sampler_S, 2)))
 
-    def PlotPhaseSpace(self, S, coord, linFit=False):
+    def PlotPhaseSpace(self, S, coord, linFit=False, partlimit=200, bdsimCompare=False):
         """
         | Phase space plot for a given coordinate at the closest sampler from given S
         """
-        sampler_index = self.twiss.getIndexByNearestS(S)
-        sampler_name = self.twiss.getNameByNearestS(S)
-        sampler_S = self.twiss.data['S'][sampler_index]
-        pymad8_df = self.pymad8_df.loc[self.pymad8_df['S'] == sampler_S]
-        title = "Phase space in {} for sampler {} (S={}m)".format(coord, sampler_name, sampler_S)
-
+        _plt.rcParams['font.size'] = 15
         if coord in ['X', 'Y', 'T']:
-            V_pymad8 = pymad8_df[coord].tolist()
-            PV_pymad8 = pymad8_df['P{}'.format(coord)].tolist()
+            other_coord = 'P{}'.format(coord)
         else:
             raise ValueError("Unknown coordinate : {}".format(coord))
 
+        sampler_S = self.pymad8.getSByNearestS(S)
+        sampler_name = self.pymad8.getFirstSamplerByNearestS(S)
+
+        V_pymad8 = self.pymad8.getVectsBySamplerAndNearestS(coord, sampler_name, S)
+        PV_pymad8 = self.pymad8.getVectsBySamplerAndNearestS(other_coord, sampler_name, S)
+        _plt.plot(V_pymad8[:partlimit], PV_pymad8[:partlimit], ls='', marker='+', color='C0', label='Mad8 data')
+
         if linFit:
-            slope, b = _np.polyfit(V_pymad8, PV_pymad8, 1)
-            _plt.plot(V_pymad8, slope * _np.array(V_pymad8) + b, color='green', label='Fit: slope = {}'.format(slope))
+            slope, cst = _np.polyfit(V_pymad8, PV_pymad8, 1)
+            _plt.plot(V_pymad8, slope * _np.array(V_pymad8) + cst, color='C2', label='Fit: slope = {:1.3e}'.format(slope))
+        if bdsimCompare:
+            V_bdsim = self.bdsim.getVectsBySamplerAndNearestS(coord, sampler_name, S)
+            PV_bdsim = self.bdsim.getVectsBySamplerAndNearestS(other_coord, sampler_name, S)
+            _plt.plot(V_bdsim[:partlimit], PV_bdsim[:partlimit], ls='', marker='o', color='C3', markerfacecolor='None', label='BDSIM data')
 
-        _plt.scatter(V_pymad8, PV_pymad8, facecolors='none', edgecolors='r', label='Mad8')
+        _plt.ticklabel_format(axis="x", style="sci", scilimits=(0, 0))
+        _plt.ticklabel_format(axis="y", style="sci", scilimits=(0, 0))
         _plt.xlabel("{} [m]".format(coord))
-        _plt.ylabel("P{} [rad]".format(coord))
-        _plt.title(title)
+        _plt.ylabel("{} [rad]".format(other_coord))
         _plt.legend()
+        _plt.title("Phase space in {} \n for sampler {} (S={}m)".format(coord, sampler_name, round(sampler_S, 2)))
 
-    def PlotTrajectory(self, particle, coord, bdsimCompare=False, relativePlots=False):
+    def PlotTrajectory(self, particle, coord, plotLegend=True, bdsimCompare=False):
         """
         | Trajectory plot for a given coordinate and for a given particle number
         """
-        pymad8_df = self.pymad8_df[self.pymad8_df['PARTICLE'] == particle]
-        pymad8_df = pymad8_df.sort_values('S')
-        S_pymad8 = pymad8_df['S'].tolist()
-
+        _plt.rcParams['font.size'] = 15
         unit  = CheckUnits(coord)
-        V_pymad8 = pymad8_df[coord].tolist()
+        S_pymad8 = self.pymad8.getVectsByParticle('S', particle)
+        V_pymad8 = self.pymad8.getVectsByParticle(coord, particle)
+        _plt.plot(S_pymad8, V_pymad8, ls='', marker='+', label='Mad8 data')
 
         if bdsimCompare:
-            if hasattr(self, 'bdsim_df'):
-                bdsim_df = self.bdsim_df[self.bdsim_df['PARTICLE'] == particle]
-                bdsim_df = bdsim_df.sort_values('S')
-                S_bdsim = bdsim_df['S'].tolist()
-                V_bdsim = bdsim_df[coord].tolist()
-            else:
-                raise AttributeError("No bdsim data found in track class")
+            S_bdsim = self.bdsim.getVectsByParticle('S', particle)
+            V_bdsim = self.bdsim.getVectsByParticle(coord, particle)
+            _plt.plot(S_bdsim, V_bdsim, ls='', marker='o', color='C3', markerfacecolor='None', label='BDSIM data')
 
-        if not relativePlots:
-            if bdsimCompare:
-                _plt.scatter(S_pymad8, V_pymad8, facecolors='none', edgecolors='r', label='Mad8')
-                _plt.plot(S_bdsim, V_bdsim, ls='', marker='+', label='BDSIM')
-            else:
-                _plt.plot(S_pymad8, V_pymad8, label='Mad8 particle {}'.format(particle))
-            _plt.ylabel("{} [{}]".format(coord, unit))
+        _plt.ticklabel_format(axis="y", style="sci", scilimits=(0, 0))
+        _plt.ylabel("{} [{}]".format(coord, unit))
+        _plt.xlabel("S [m]")
+        if plotLegend:
+            _plt.legend()
 
-        if relativePlots and bdsimCompare:
-            f_pymad8 = interp1d(S_pymad8, V_pymad8, fill_value="extrapolate")
-            f_bdsim = interp1d(S_bdsim, V_bdsim, fill_value="extrapolate")
-            if coord in ['X', 'Y']:
-                _plt.ylabel("X/Y [m]")
-            if coord in ['PX', 'PY']:
-                _plt.ylabel("PX/PY [rad]")
+    def PlotRelatTrajectory(self, particle, coord):
+        """
+        | Trajectory difference plot between Mad8 and BDSIM for a given coordinate and for a given particle number
+        """
+        _plt.rcParams['font.size'] = 15
+        unit = CheckUnits(coord)
 
-            def f_relat(s):
-                return f_bdsim(s) - f_pymad8(s)
+        S_pymad8 = self.pymad8.getVectsByParticle('S', particle)
+        V_pymad8 = self.pymad8.getVectsByParticle(coord, particle)
+        f_pymad8 = interp1d(S_pymad8, V_pymad8, fill_value="extrapolate")
 
-            V_relat = f_relat(S_bdsim)
-            _plt.plot(S_bdsim, V_relat, ls='-', marker='', label='BDSIM-Mad8 in {} : std = {}'.format(coord, _np.std(V_relat)))
+        S_bdsim = self.bdsim.getVectsByParticle('S', particle)
+        V_bdsim = self.bdsim.getVectsByParticle(coord, particle)
+        f_bdsim = interp1d(S_bdsim, V_bdsim, fill_value="extrapolate")
 
+        if coord in ['X', 'Y']:
+            _plt.ylabel("X/Y [m]")
+        if coord in ['PX', 'PY']:
+            _plt.ylabel("PX/PY [rad]")
+
+        def f_relat(s):
+            return f_bdsim(s) - f_pymad8(s)
+
+        V_relat = f_relat(S_bdsim)
+        _plt.ticklabel_format(axis="y", style="sci", scilimits=(0, 0))
+        _plt.plot(S_bdsim, V_relat, ls='-', marker='', label='BDSIM-Mad8 in {} : std = {:1.3e}'.format(coord, _np.std(V_relat)))
         _plt.xlabel("S [m]")
         _plt.legend()
 
-    def reduceDFbyIndex(self, index):
-        row = self.twiss.getRowsByIndex(index)
-        name = row['NAME']
-        S = row['S']
-        reduced_df = self.pymad8_df.loc[self.pymad8_df['S'] == S]
-        reduced_df = reduced_df[reduced_df['SAMPLER'] == name]
-        if reduced_df.empty:
-            raise ValueError("Element of index {} is not registered as a sampler".format(index))
-        return name, S, reduced_df
+    def PlotRelatTrajSTD(self, coord):
+        """
+        | STD Trajectory difference plot between Mad8 and BDSIM for a given coordinate
+        """
+        _plt.rcParams['font.size'] = 15
+        unit = CheckUnits(coord)
 
+        S = range(1, int(min(self.pymad8.sMax(), self.pymad8.sMax())), 1)
+        relat_std = _np.array([])
+        for s in S:
+            sampler_pymad8 = self.pymad8.getFirstSamplerByNearestS(s)
+            sampler_bdsim = self.bdsim.getFirstSamplerByNearestS(s)
+            V_pymad8 = self.pymad8.getVectsBySamplerAndNearestS(coord, sampler_pymad8, s)
+            V_bdsim = self.bdsim.getVectsBySamplerAndNearestS(coord, sampler_bdsim, s)
+            relat_std = _np.append(relat_std, _np.std(V_bdsim-V_pymad8))
 
-# BELOW IS OLD
-# ============================================
+        _plt.plot(S, relat_std, ls='-', marker='', label='std(BDSIM-Mad8) in {}'.format(coord))
 
-def _testTrackOld(rmatFile, nparticle=10):
-    r = _m8.Output(rmatFile, "rmat")
-    r.subline('IEX', -1)
-    s = _Track(r)
-    s.trackParticles(nparticle)
-    return s
+        if coord in ['X', 'Y']:
+            _plt.ylabel("X/Y [m]")
+        if coord in ['PX', 'PY']:
+            _plt.ylabel("PX/PY [rad]")
 
-
-class _Track:
-    def __init__(self, rmat):
-        self.rmat       = rmat
-        self.nelement   = rmat.nrec
-        # Turn rmat data into matrix
-        self.rmatMatrix = _np.reshape(rmat.data[:, 0:36], (self.nelement, 6, 6))
-
-    def trackParticles(self, nparticle):
-        # store the number of particles tracked 
-        self.nparticle = nparticle
-        
-        # Nparticle, Nelement phase space storage
-        self.psVector = _np.zeros((nparticle, self.nelement, 6))
-
-        # loop over particles
-        for i in range(0, nparticle):
-            print('Track.Simple.track> particle ', i)
-            p = self.generate() 
-            psv = self.trackParticle(p)
-            self.psVector[i] = psv
-    
-    def generate(self):
-        return _np.array([0.0,
-                         0.0,
-                         _pl.normal(0, 1e-6),
-                         0.0,
-                         0.0,
-                         0.0], dtype=_np.double)
-
-    def trackParticle(self, p):
-        # Tracking vector 
-        psVector   = _np.zeros((self.rmatMatrix.shape[0], 6))
-
-        # Set first element
-        i = 1 
-        psVector[0] = p 
-                
-        # loop over all elements from start to end 
-        for m in self.rmatMatrix[1:]:
-            # psVector[i] = np.dot(m,psVector[i-1])
-            psVector[i] = _np.dot(m, p)
-            i = i+1
-
-        return psVector
-
+        _plt.xlabel("S [m]")
+        _plt.legend()
