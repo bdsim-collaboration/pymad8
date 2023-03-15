@@ -631,7 +631,7 @@ class Tracking:
         sampler_name = self.pymad8.getFirstSamplerByNearestS(S)
 
         V_pymad8 = self.pymad8.getVectsBySamplerAndNearestS(coord, sampler_name, S)
-        _plt.hist(V_pymad8, bins=bins, histtype='step', color='C0', label='Mad8')
+        _plt.hist(V_pymad8, bins=bins, histtype='step', label='Mad8')
 
         if bdsimCompare:
             V_pymad8 = self.bdsim.getVectsBySamplerAndNearestS(coord, sampler_name, S)
@@ -727,7 +727,7 @@ class Tracking:
 
         _plt.ticklabel_format(axis="y", style="sci", scilimits=(0, 0))
         _plt.ylabel("{} [{}]".format(coord, unit))
-        _plt.xlabel("S [m]")
+        _plt.xlabel("$s$ [m]")
         if plotLegend:
             _plt.legend()
 
@@ -757,7 +757,7 @@ class Tracking:
         V_relat = f_relat(S_bdsim)
         _plt.ticklabel_format(axis="y", style="sci", scilimits=(0, 0))
         _plt.plot(S_bdsim, V_relat, ls='-', marker='', label='BDSIM-Mad8 in {} : std = {:1.3e}'.format(coord, _np.std(V_relat)))
-        _plt.xlabel("S [m]")
+        _plt.xlabel("$s$ [m]")
         _plt.legend()
 
     def PlotRelatTrajSTD(self, coord):
@@ -779,9 +779,9 @@ class Tracking:
         _plt.plot(S, relat_std, ls='-', marker='', label='std(BDSIM-Mad8) in {}'.format(coord))
 
         if coord in ['X', 'Y']:
-            _plt.ylabel("X/Y [m]")
+            _plt.ylabel("$x$/$y$ [m]")
         if coord in ['PX', 'PY']:
-            _plt.ylabel("PX/PY [rad]")
+            _plt.ylabel("$x'$/$y'$ [rad]")
 
-        _plt.xlabel("S [m]")
+        _plt.xlabel("$s$ [m]")
         _plt.legend()
