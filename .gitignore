@@ -1,3 +1,4 @@
+dist*
 *.pyc
 *~
 *.idea/
@@ -6,3 +7,4 @@
 build
 pymad8.egg-info/
 *.swp
+src/pymad8/_version.py
