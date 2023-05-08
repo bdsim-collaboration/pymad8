@@ -2,8 +2,9 @@
 
 ## Authors ##
 
-L. Nevay
+M. Deniaud
 S. Boogert
+L. Nevay
 
 ## Setup ##
 

@@ -16,6 +16,7 @@ of BDSIM models.
    simulation
    support
    moduledocs
+   version_history
 
 Indices and tables
 ==================
