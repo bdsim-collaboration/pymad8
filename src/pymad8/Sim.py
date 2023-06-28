@@ -620,7 +620,7 @@ class Tracking:
     #########
     # PLOTS #
     #########
-    def PlotHist(self, S, coord, bins=50, bdsimCompare=False):
+    def PlotHist(self, S, coord, bins=50, calcSigma=False, bdsimCompare=False):
         """
         | Plot histogram for a given coordinate at the closest sampler from given S
         """
@@ -631,11 +631,19 @@ class Tracking:
         sampler_name = self.pymad8.getFirstSamplerByNearestS(S)
 
         V_pymad8 = self.pymad8.getVectsBySamplerAndNearestS(coord, sampler_name, S)
-        _plt.hist(V_pymad8, bins=bins, histtype='step', label='Mad8')
+        if calcSigma:
+            sigma_string_pymad8 = ": $\sigma = {}$".format(_np.std(V_pymad8))
+        else:
+            sigma_string_pymad8 = ''
+        _plt.hist(V_pymad8, bins=bins, histtype='step', label='Mad8'+sigma_string_pymad8)
 
         if bdsimCompare:
-            V_pymad8 = self.bdsim.getVectsBySamplerAndNearestS(coord, sampler_name, S)
-            _plt.hist(V_pymad8, bins=bins, histtype='step', color='C3', label='BDSIM')
+            V_bdsim = self.bdsim.getVectsBySamplerAndNearestS(coord, sampler_name, S)
+            if calcSigma:
+                sigma_string_bdsim = ": $\sigma = {}$".format(_np.std(V_bdsim))
+            else:
+                sigma_string_bdsim = ''
+            _plt.hist(V_bdsim, bins=bins, histtype='step', color='C3', label='BDSIM'+sigma_string_bdsim)
 
         _plt.ticklabel_format(axis="x", style="sci", scilimits=(0, 0))
         _plt.xlabel("{} [{}]".format(coord, unit))
