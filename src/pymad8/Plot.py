@@ -45,7 +45,7 @@ def AddMachineLatticeToFigure(figure, mad8opt, tightLayout=True):
     def Click(a):
         if a.button == 3:
             try:
-                print(a.xdata, mad8opt['twiss'].getNameByNearestS(a.xdata))
+                print(a.xdata, mad8opt.getNameByNearestS(a.xdata))
             except ValueError:
                 pass  # don't complain if the S is out of bounds
 
