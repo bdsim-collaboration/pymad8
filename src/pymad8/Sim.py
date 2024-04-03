@@ -632,7 +632,7 @@ class Tracking:
 
         V_pymad8 = self.pymad8.getVectsBySamplerAndNearestS(coord, sampler_name, S)
         if calcSigma:
-            sigma_string_pymad8 = ": $\sigma = {:1.2e}$".format(_np.std(V_pymad8))
+            sigma_string_pymad8 = ": $\\sigma = {}$".format(_np.std(V_pymad8))
         else:
             sigma_string_pymad8 = ''
         _plt.hist(V_pymad8, bins=bins, histtype='step', label='Mad8'+sigma_string_pymad8)
@@ -640,7 +640,7 @@ class Tracking:
         if bdsimCompare:
             V_bdsim = self.bdsim.getVectsBySamplerAndNearestS(coord, sampler_name, S)
             if calcSigma:
-                sigma_string_bdsim = ": $\sigma = {:1.2e}$".format(_np.std(V_bdsim))
+                sigma_string_bdsim = ": $\\sigma = {}$".format(_np.std(V_bdsim))
             else:
                 sigma_string_bdsim = ''
             _plt.hist(V_bdsim, bins=bins, histtype='step', color='C3', label='BDSIM'+sigma_string_bdsim)

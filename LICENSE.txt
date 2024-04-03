@@ -1,4 +1,4 @@
-pymad8 Copyright (C) Royal Holloway, University of London 2020
+pymad8 Copyright (C) Royal Holloway, University of London 2024.
 
 pymad8 is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published
