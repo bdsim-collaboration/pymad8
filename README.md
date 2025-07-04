@@ -1,4 +1,4 @@
-#pymad8#
+# pymad8
 
 ## Authors ##
 
@@ -10,8 +10,10 @@ L. Nevay
 
 From within the pymad8 root directory:
 
-$ make install
+`pip install -e .`
+
+`$ make install`
 
 or for development:
 
-$ make develop
+`$ make develop`
