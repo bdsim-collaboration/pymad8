@@ -1,0 +1,257 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MAD8 File Loading &amp; Manipulation &mdash; pymad8 0.1.dev1+ga5a75ef documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=25bda9d2"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Plotting" href="plot.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pymad8
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="licence.html">Licence &amp; Disclaimer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authorship.html">Authorship</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">MAD8 File Loading &amp; Manipulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#output-class-features">Output Class Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#loading">Loading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#querying">Querying</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-information">Basic Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#indexing-and-slicing">Indexing and Slicing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rows-and-columns">Rows and Columns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#beam-sizes">Beam Sizes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="plot.html">Plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="convert.html">Converting Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simulation.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="moduledocs.html">Module Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="version_history.html">Version History</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pymad8</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">MAD8 File Loading &amp; Manipulation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/data.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mad8-file-loading-manipulation">
+<h1>MAD8 File Loading &amp; Manipulation<a class="headerlink" href="#mad8-file-loading-manipulation" title="Link to this heading"></a></h1>
+<p>MAD8 outputs Twiss information in their own file format.
+pymad8 includes a class called Output for the purpose of loading and manipulating this data.</p>
+<p>The MAD8 format is described in the manual available from <a class="reference external" href="http://mad8.web.cern.ch">the mad8 website</a>.
+The format is roughly described as a text file.
+The MAD8 files contain first a few lines that indicate when the file was generated and other general informations.
+After this, each segment of 5 lines typically represents the values of the lattice for a particular element with each new segment containing the values at a subsequent element in the lattice.</p>
+<section id="output-class-features">
+<h2>Output Class Features<a class="headerlink" href="#output-class-features" title="Link to this heading"></a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p>Loading different types of MAD8 files.</p></li>
+<li><p>Get a particular column.</p></li>
+<li><p>Get a particular row.</p></li>
+<li><p>Get elements of a particular type.</p></li>
+<li><p>Get a numerical index from the name of the element.</p></li>
+<li><p>Find the curvilinear S coordinate of an element by name.</p></li>
+<li><p>Find the name of the nearest element at a given S coordinate.</p></li>
+<li><p>Plot an optics diagram.</p></li>
+<li><p>Calculate a beam size given the Twiss parameters, dispersion and emittance.</p></li>
+<li><p>Make a slice of the initial lattice</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="loading">
+<h2>Loading<a class="headerlink" href="#loading" title="Link to this heading"></a></h2>
+<p>MAD8 files can be of different types.
+Twiss files are the main ones but we can also load Rmat files, Chrom files, Envelope files or Survey files</p>
+<p>A file may be loading by constructing an Output instance from a file name :</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pymad8</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">pymad8</span><span class="o">.</span><span class="n">Output</span><span class="p">(</span><span class="s2">&quot;myTwissFile&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">pymad8</span><span class="o">.</span><span class="n">Output</span><span class="p">(</span><span class="s2">&quot;myRmatFile&quot;</span><span class="p">,</span> <span class="s2">&quot;rmat&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">pymad8</span><span class="o">.</span><span class="n">Output</span><span class="p">(</span><span class="s2">&quot;myChromFile&quot;</span><span class="p">,</span> <span class="s2">&quot;chrom&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">pymad8</span><span class="o">.</span><span class="n">Output</span><span class="p">(</span><span class="s2">&quot;myEnvelopeFile&quot;</span><span class="p">,</span> <span class="s2">&quot;envel&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">pymad8</span><span class="o">.</span><span class="n">Output</span><span class="p">(</span><span class="s2">&quot;mySurveyFile&quot;</span><span class="p">,</span> <span class="s2">&quot;survey&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The import will be assumed from now on in examples.</p>
+</div>
+</section>
+<section id="querying">
+<h2>Querying<a class="headerlink" href="#querying" title="Link to this heading"></a></h2>
+<p>The Output class can be used to query the data in various ways.</p>
+<section id="basic-information">
+<h3>Basic Information<a class="headerlink" href="#basic-information" title="Link to this heading"></a></h3>
+<blockquote>
+<div><ul class="simple">
+<li><p>All data is stored in the <strong>data</strong> object inside the class</p></li>
+<li><p>The number of elements is stored in <strong>nrec</strong>.</p></li>
+<li><p>The file name is stored in <strong>filename</strong>.</p></li>
+<li><p>The file type is stored in <strong>filetype</strong>.</p></li>
+<li><p>A dict of each element type and corresponding properties is stored in <strong>keys_dict</strong></p></li>
+<li><p>The names of columns common to all file types is stored in <strong>colnames_common</strong>.</p></li>
+</ul>
+</div></blockquote>
+<p>The <strong>data</strong> object is a pandas dataframe that can be displayed as follow :</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">pymad8</span><span class="o">.</span><span class="n">Output</span><span class="p">(</span><span class="s2">&quot;myTwissFile&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">data</span>
+</pre></div>
+</div>
+</section>
+<section id="indexing-and-slicing">
+<h3>Indexing and Slicing<a class="headerlink" href="#indexing-and-slicing" title="Link to this heading"></a></h3>
+<p>The information stored in the dataframe is accessible using regular pandas syntax :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>                      <span class="c1"># 4th element in sequence (Pandas.Series returned)</span>
+<span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span> <span class="mi">10</span><span class="p">]</span>                  <span class="c1"># 4th to 11th elements (Pandas.Dataframe returned)</span>
+<span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]]</span>             <span class="c1"># 4th, 6th and 11th elements (Dataframe)</span>
+<span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">]</span>                         <span class="c1"># column named exactly S (Series)</span>
+<span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="p">[[</span><span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">]]</span>                  <span class="c1"># columns named exactly S and L (Dataframe)</span>
+<span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span>                      <span class="c1"># value of the 4th element in the column S</span>
+<span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;NAME&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;INITIAL&#39;</span><span class="p">]</span> <span class="c1"># Row of the element with this exact name (Dataframe)</span>
+</pre></div>
+</div>
+<p>But you can also find information about elements usind built-in functions.</p>
+<p>To get index for example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">t</span><span class="o">.</span><span class="n">getIndexByNames</span><span class="p">(</span><span class="s1">&#39;INITIAL&#39;</span><span class="p">)</span>              <span class="c1"># can have a list of names as input</span>
+<span class="n">t</span><span class="o">.</span><span class="n">getIndexByTypes</span><span class="p">(</span><span class="s1">&#39;QUAD&#39;</span><span class="p">)</span>                 <span class="c1"># can have a list of types as input</span>
+<span class="n">t</span><span class="o">.</span><span class="n">getIndexByValues</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="n">minValue</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span> <span class="c1"># indices of elements with S value above 200</span>
+<span class="n">t</span><span class="o">.</span><span class="n">getIndexByNearestS</span><span class="p">(</span><span class="mi">150</span><span class="p">)</span>                 <span class="c1"># index of element with S value closest to 150</span>
+</pre></div>
+</div>
+<p>The results are returned in the form of one value or a list of values, depending on the input given.
+In the case of the getIndex function, we get either an integer or a list of integers</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Similar functions are avaliable to find names and types of lattice elements</p>
+</div>
+</section>
+<section id="rows-and-columns">
+<h3>Rows and Columns<a class="headerlink" href="#rows-and-columns" title="Link to this heading"></a></h3>
+<p>A row of data is an entry for a particular element. The Output class is conceptually a list of
+elements. Each element is represented by a row in the pandas dataframe that has a key for each column.
+The list of acceptable keys (i.e. names of columns) can be found in the member named ‘colums’ :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="c1">#prints out list of column names</span>
+</pre></div>
+</div>
+<p>A specific row or set of rows can be accessed using similar functions as those previously shown :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">t</span><span class="o">.</span><span class="n">getRowsByIndex</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>                      <span class="c1"># can have a list of indices as input</span>
+<span class="n">t</span><span class="o">.</span><span class="n">getRowsByNames</span><span class="p">(</span><span class="s1">&#39;INITIAL&#39;</span><span class="p">)</span>              <span class="c1"># can have a list of names as input</span>
+<span class="n">t</span><span class="o">.</span><span class="n">getRowsByTypes</span><span class="p">(</span><span class="s1">&#39;QUAD&#39;</span><span class="p">)</span>                 <span class="c1"># can have a list of types as input</span>
+<span class="n">t</span><span class="o">.</span><span class="n">getRowsByValues</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="n">minValue</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span> <span class="c1"># rows of elements with S value above 200</span>
+<span class="n">t</span><span class="o">.</span><span class="n">getRowByNearestS</span><span class="p">(</span><span class="mi">150</span><span class="p">)</span>                  <span class="c1"># row of element with S value closest to 150</span>
+</pre></div>
+</div>
+<p>The results are return either in the form of a dataframe or serie (which is equivalent to a dataframe with only one row), depending on the input given.</p>
+<p>A specific column or set of columns can be accessed using its keys (i.e. its names) :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">t</span><span class="o">.</span><span class="n">getColumnsByKeys</span><span class="p">([</span><span class="s1">&#39;S&#39;</span><span class="p">,</span><span class="s1">&#39;L&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="beam-sizes">
+<h2>Beam Sizes<a class="headerlink" href="#beam-sizes" title="Link to this heading"></a></h2>
+<p>For convenience the beam size is calculated from the Beta amplitude functions, the emittance, dispersion  and enegy spread using <cite>calcBeamSize()</cite>.
+The emittance is defined by ‘EmitX’ and ‘EmitY’ and the energy spread by ‘Esprd’.
+Those three parameters aren’t provided by MAD8 and must be manualy given to the function :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">EmitX</span> <span class="o">=</span> <span class="mf">3e-11</span>
+<span class="n">EmitY</span> <span class="o">=</span> <span class="mf">3e-11</span>
+<span class="n">Esprd</span> <span class="o">=</span> <span class="mf">1e-6</span>
+<span class="n">t</span><span class="o">.</span><span class="n">calcBeamSize</span><span class="p">(</span><span class="n">EmitX</span><span class="p">,</span> <span class="n">EmitY</span><span class="p">,</span> <span class="n">Esprd</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this function, the beam sizes are calculated according to :</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\sigma_x &amp;= \sqrt{ \beta_x \epsilon_x + D(S)^2 \frac{\sigma_{E}^{2}}{E_{0}^{2}}} \\
+\sigma_y &amp;= \sqrt{ \beta_y \epsilon_y + D(S)^2 \frac{\sigma_{E}^{2}}{E_{0}^{2}}}\end{split}\]</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="plot.html" class="btn btn-neutral float-right" title="Plotting" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Royal Holloway, University of London 2024.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

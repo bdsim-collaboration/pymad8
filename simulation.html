@@ -1,0 +1,212 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulations &mdash; pymad8 0.1.dev1+ga5a75ef documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=25bda9d2"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Support" href="support.html" />
+    <link rel="prev" title="Converting Models" href="convert.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pymad8
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="licence.html">Licence &amp; Disclaimer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authorship.html">Authorship</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">MAD8 File Loading &amp; Manipulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plot.html">Plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="convert.html">Converting Models</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Simulations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#simulation-features">Simulation features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tracking">Tracking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#building-tracking-classes">Building tracking classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#write-track-collection">Write track collection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#run-tracking">Run tracking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plotting">Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#loading-external-tracking-data">Loading external tracking data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="moduledocs.html">Module Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="version_history.html">Version History</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pymad8</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Simulations</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/simulation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="simulations">
+<h1>Simulations<a class="headerlink" href="#simulations" title="Link to this heading"></a></h1>
+<p>The <cite>pymad8.Sim</cite> module provides various simulation utilities</p>
+<section id="simulation-features">
+<h2>Simulation features<a class="headerlink" href="#simulation-features" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Particle tracking using Mad8 rmat files</p></li>
+</ul>
+</section>
+<section id="tracking">
+<h2>Tracking<a class="headerlink" href="#tracking" title="Link to this heading"></a></h2>
+<p>There is two tracking related classes in this module : <cite>Track_Collection</cite> and <cite>Tracking</cite>.
+These classes features are the following :</p>
+<ul class="simple">
+<li><p>Set the different particles we want to track</p></li>
+<li><p>Write the track collection as Mad8 or Bdsim inputs</p></li>
+<li><p>Set the different sampler at which we want to observe the particles</p></li>
+<li><p>Run the tracking using Rmatrices generated by Mad8</p></li>
+<li><p>Plot various results such as trajectory, phase space …</p></li>
+<li><p>Load tracking data generated by BDSIM and compare with pymad8 trajectory</p></li>
+</ul>
+<section id="building-tracking-classes">
+<h3>Building tracking classes<a class="headerlink" href="#building-tracking-classes" title="Link to this heading"></a></h3>
+<p>A collection of tracks can by setup by constructing a Track_Collection instance for a given reference energy in GeV :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">track_collection</span> <span class="o">=</span> <span class="n">pymad8</span><span class="o">.</span><span class="n">Sim</span><span class="o">.</span><span class="n">Track_Collection</span><span class="p">(</span><span class="n">E_0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>At first there is no tracks in the collection. We can add each individual track by giving the starting position, angle, and energy difference with respect to the reference :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">track_collection</span><span class="o">.</span><span class="n">AddTrack</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">xp</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yp</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">DE</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The Tracking instance is generated from Mad8 twiss and rmat files :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tracking</span> <span class="o">=</span> <span class="n">pymad8</span><span class="o">.</span><span class="n">Sim</span><span class="o">.</span><span class="n">Tracking</span><span class="p">(</span><span class="s1">&#39;twiss_tape&#39;</span><span class="p">,</span> <span class="s1">&#39;rmat_tape&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then we can add the samplers at which we want to observe the particles.
+Multiples samplers can be added at once and we can either find them by index, name or type:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tracking</span><span class="o">.</span><span class="n">AddSampler</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>                       <span class="c1"># Add element with index 10 as sampler</span>
+<span class="n">tracking</span><span class="o">.</span><span class="n">AddSampler</span><span class="p">(</span><span class="s1">&#39;INITIAL&#39;</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="s1">&#39;name&#39;</span><span class="p">)</span> <span class="c1"># Add element named &#39;INITIAL&#39; as sampler</span>
+<span class="n">tracking</span><span class="o">.</span><span class="n">AddSampler</span><span class="p">(</span><span class="s1">&#39;QUAD&#39;</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="s1">&#39;type&#39;</span><span class="p">)</span>    <span class="c1"># Add all quadrupoles as samplers</span>
+</pre></div>
+</div>
+</section>
+<section id="write-track-collection">
+<h3>Write track collection<a class="headerlink" href="#write-track-collection" title="Link to this heading"></a></h3>
+<p>In order to run other tracking codes with the same initial particles, we can write the track collection into text files that can be input for Mad8 or for Bdsim :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">track_collection</span><span class="o">.</span><span class="n">WriteMad8Track</span><span class="p">(</span><span class="n">mad8outputfile</span><span class="p">)</span>
+<span class="n">track_collection</span><span class="o">.</span><span class="n">WriteBdsimTrack</span><span class="p">(</span><span class="n">bdsimoutputfile</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="run-tracking">
+<h3>Run tracking<a class="headerlink" href="#run-tracking" title="Link to this heading"></a></h3>
+<p>Now that we have both Track_Collection and Tracking instances we can run the pymad8 tracking :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tracking</span><span class="o">.</span><span class="n">RunPymad8Tracking</span><span class="p">(</span><span class="n">track_collection</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In case we have a circulare maching and we want the tracking data after a certain number of turn one can do :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tracking</span><span class="o">.</span><span class="n">RunPymad8Tracking</span><span class="p">(</span><span class="n">track_collection</span><span class="p">,</span> <span class="n">turns</span><span class="o">=</span><span class="n">nb_turns</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The calculated data is then shaped as a pandas DataFrame and stored in <strong>pymad8_df</strong></p>
+</section>
+<section id="plotting">
+<h3>Plotting<a class="headerlink" href="#plotting" title="Link to this heading"></a></h3>
+<p>After runing the tracking function. One can use the plotting function avaliable to show the trajectory, phase space, correlation and profile histograms :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tracking</span><span class="o">.</span><span class="n">PlotTrajectory</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>                     <span class="c1"># Trajectory of the 5th particle in X</span>
+<span class="n">tracking</span><span class="o">.</span><span class="n">PlotPhaseSpace</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>                    <span class="c1"># Phase space in X at 50m</span>
+<span class="n">tracking</span><span class="o">.</span><span class="n">PlotCorrelation</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="n">ref_sampler</span><span class="o">=</span><span class="s1">&#39;IP&#39;</span><span class="p">)</span> <span class="c1"># Correlation in X at 50m w.r.t sampler named &#39;IP&#39;</span>
+<span class="n">tracking</span><span class="o">.</span><span class="n">PlotHist</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>                          <span class="c1"># Beam profile in X at 50m</span>
+</pre></div>
+</div>
+</section>
+<section id="loading-external-tracking-data">
+<h3>Loading external tracking data<a class="headerlink" href="#loading-external-tracking-data" title="Link to this heading"></a></h3>
+<p>One can use the Tracking instance to load a BDSIM root file and store the tracking data in a similar way as <strong>pymad8_df</strong> :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tracking</span><span class="o">.</span><span class="n">LoadBdsimTrack</span><span class="p">(</span><span class="n">rootfile</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The data is then stored in <strong>bdsim_df</strong> and can then be use to plot trajectory comparison between pymad8 and BDSIM.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Make sure to use the same initial particles using the <cite>WriteBdsimTrack</cite> function</p>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="convert.html" class="btn btn-neutral float-left" title="Converting Models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="support.html" class="btn btn-neutral float-right" title="Support" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Royal Holloway, University of London 2024.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

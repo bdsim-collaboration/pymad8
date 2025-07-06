@@ -1,0 +1,494 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module Contents &mdash; pymad8 0.1.dev1+ga5a75ef documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=25bda9d2"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Version History" href="version_history.html" />
+    <link rel="prev" title="Support" href="support.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pymad8
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="licence.html">Licence &amp; Disclaimer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authorship.html">Authorship</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">MAD8 File Loading &amp; Manipulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plot.html">Plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="convert.html">Converting Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simulation.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Module Contents</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-pymad8.Input">pymad8.Input module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pymad8.Input.decodeFileLine"><code class="docutils literal notranslate"><span class="pre">decodeFileLine()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pymad8.Input.removeComments"><code class="docutils literal notranslate"><span class="pre">removeComments()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pymad8.Input.removeContinuationSymbols"><code class="docutils literal notranslate"><span class="pre">removeContinuationSymbols()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pymad8.Input.tidy"><code class="docutils literal notranslate"><span class="pre">tidy()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pymad8.Output">pymad8.Output module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pymad8.Output.Output"><code class="docutils literal notranslate"><span class="pre">Output</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.Clear"><code class="docutils literal notranslate"><span class="pre">Output.Clear()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.calcBeamSize"><code class="docutils literal notranslate"><span class="pre">Output.calcBeamSize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.getAperture"><code class="docutils literal notranslate"><span class="pre">Output.getAperture()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.getColumnsByKeys"><code class="docutils literal notranslate"><span class="pre">Output.getColumnsByKeys()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.getElementByIndex"><code class="docutils literal notranslate"><span class="pre">Output.getElementByIndex()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.getElementByNames"><code class="docutils literal notranslate"><span class="pre">Output.getElementByNames()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.getElementByNearestS"><code class="docutils literal notranslate"><span class="pre">Output.getElementByNearestS()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.getIndexByNames"><code class="docutils literal notranslate"><span class="pre">Output.getIndexByNames()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.getIndexByNearestS"><code class="docutils literal notranslate"><span class="pre">Output.getIndexByNearestS()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.getIndexByTypes"><code class="docutils literal notranslate"><span class="pre">Output.getIndexByTypes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.getIndexByValues"><code class="docutils literal notranslate"><span class="pre">Output.getIndexByValues()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.getNameByNearestS"><code class="docutils literal notranslate"><span class="pre">Output.getNameByNearestS()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.getNamesByIndex"><code class="docutils literal notranslate"><span class="pre">Output.getNamesByIndex()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.getNamesByTypes"><code class="docutils literal notranslate"><span class="pre">Output.getNamesByTypes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.getNamesByValues"><code class="docutils literal notranslate"><span class="pre">Output.getNamesByValues()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.getRowByNearestS"><code class="docutils literal notranslate"><span class="pre">Output.getRowByNearestS()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.getRowsByFunction"><code class="docutils literal notranslate"><span class="pre">Output.getRowsByFunction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.getRowsByIndex"><code class="docutils literal notranslate"><span class="pre">Output.getRowsByIndex()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.getRowsByNames"><code class="docutils literal notranslate"><span class="pre">Output.getRowsByNames()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.getRowsByTypes"><code class="docutils literal notranslate"><span class="pre">Output.getRowsByTypes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.getRowsByValues"><code class="docutils literal notranslate"><span class="pre">Output.getRowsByValues()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.getTypeByNearestS"><code class="docutils literal notranslate"><span class="pre">Output.getTypeByNearestS()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.getTypesByIndex"><code class="docutils literal notranslate"><span class="pre">Output.getTypesByIndex()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.getTypesByNames"><code class="docutils literal notranslate"><span class="pre">Output.getTypesByNames()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.getTypesByValues"><code class="docutils literal notranslate"><span class="pre">Output.getTypesByValues()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.plotXY"><code class="docutils literal notranslate"><span class="pre">Output.plotXY()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.sMax"><code class="docutils literal notranslate"><span class="pre">Output.sMax()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.sMin"><code class="docutils literal notranslate"><span class="pre">Output.sMin()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Output.Output.subline"><code class="docutils literal notranslate"><span class="pre">Output.subline()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pymad8.Plot">pymad8.Plot module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pymad8.Plot.AddMachineLatticeToFigure"><code class="docutils literal notranslate"><span class="pre">AddMachineLatticeToFigure()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pymad8.Plot.Optics"><code class="docutils literal notranslate"><span class="pre">Optics</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Plot.Optics.Alpha"><code class="docutils literal notranslate"><span class="pre">Optics.Alpha()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Plot.Optics.Beta"><code class="docutils literal notranslate"><span class="pre">Optics.Beta()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Plot.Optics.Disp"><code class="docutils literal notranslate"><span class="pre">Optics.Disp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Plot.Optics.Mu"><code class="docutils literal notranslate"><span class="pre">Optics.Mu()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymad8.Plot.Optics.Sigma"><code class="docutils literal notranslate"><span class="pre">Optics.Sigma()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pymad8-sim-module">pymad8.Sim module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pymad8-track-module">pymad8.Track module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pymad8-visualisation-module">pymad8.Visualisation module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="version_history.html">Version History</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pymad8</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Module Contents</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/moduledocs.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-contents">
+<h1>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h1>
+<p>This documentation is automatically generated by scanning all the source code. Parts
+may be incomplete.</p>
+<section id="module-pymad8.Input">
+<span id="pymad8-input-module"></span><h2>pymad8.Input module<a class="headerlink" href="#module-pymad8.Input" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pymad8.Input.decodeFileLine">
+<span class="sig-prename descclassname"><span class="pre">pymad8.Input.</span></span><span class="sig-name descname"><span class="pre">decodeFileLine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Input.decodeFileLine" title="Link to this definition"></a></dt>
+<dd><div class="line-block">
+<div class="line">Decode line for each element type</div>
+<div class="line">input : string of a mad8 line</div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pymad8.Input.removeComments">
+<span class="sig-prename descclassname"><span class="pre">pymad8.Input.</span></span><span class="sig-name descname"><span class="pre">removeComments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Input.removeComments" title="Link to this definition"></a></dt>
+<dd><div class="line-block">
+<div class="line">Remove comment lines</div>
+<div class="line">input : list of file lines</div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pymad8.Input.removeContinuationSymbols">
+<span class="sig-prename descclassname"><span class="pre">pymad8.Input.</span></span><span class="sig-name descname"><span class="pre">removeContinuationSymbols</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Input.removeContinuationSymbols" title="Link to this definition"></a></dt>
+<dd><div class="line-block">
+<div class="line">Remove continuation symbols from input</div>
+<div class="line">input : list of file lines</div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pymad8.Input.tidy">
+<span class="sig-prename descclassname"><span class="pre">pymad8.Input.</span></span><span class="sig-name descname"><span class="pre">tidy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Input.tidy" title="Link to this definition"></a></dt>
+<dd><div class="line-block">
+<div class="line">Tidy input, remove EOL, remove empty lines</div>
+<div class="line">input : list of file lines</div>
+</div>
+</dd></dl>
+
+</section>
+<section id="module-pymad8.Output">
+<span id="pymad8-output-module"></span><h2>pymad8.Output module<a class="headerlink" href="#module-pymad8.Output" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pymad8.Output.Output">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymad8.Output.</span></span><span class="sig-name descname"><span class="pre">Output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filetype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'twiss'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<div class="line-block">
+<div class="line">Class to load different Mad8 output files in a Pandas DataFrame</div>
+<div class="line">&gt;&gt;&gt; twiss = pymad8.Output(‘/twiss.tape’)</div>
+<div class="line">&gt;&gt;&gt; rmat = pymad8.Output(‘/rmat.tape’,’rmat’)</div>
+<div class="line">&gt;&gt;&gt; chrom = pymad8.Output(‘/chrom.tape’,’chrom’)</div>
+<div class="line">&gt;&gt;&gt; envel = pymad8.Output(‘/envel.tape’,’envel’)</div>
+<div class="line">&gt;&gt;&gt; survey = pymad8.Output(‘/survey.tape’,’survey’)</div>
+<div class="line">&gt;&gt;&gt; struct = pymad8.Output(‘/struct.tape’,’struct’)</div>
+<div class="line">&gt;&gt;&gt; track = pymad8.Output(‘/track.tape’,’track’)</div>
+<div class="line">&gt;&gt;&gt; optics = pymad8.Output(‘/optics.tape’,’optics’)</div>
+<div class="line"><br /></div>
+<div class="line">By default the filetype is twiss</div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.Clear">
+<span class="sig-name descname"><span class="pre">Clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.Clear" title="Link to this definition"></a></dt>
+<dd><p>Empties all data structures in this instance</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.calcBeamSize">
+<span class="sig-name descname"><span class="pre">calcBeamSize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">EmitX</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EmitY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Esprd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BunchLen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.calcBeamSize" title="Link to this definition"></a></dt>
+<dd><p>Calculate the beam sizes and beam divergences in both planes for all
+elements Then the four columns are added at the end of the DataFrame
+Works only if a twiss file was loaded previously</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.getAperture">
+<span class="sig-name descname"><span class="pre">getAperture</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defaultAperSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.getAperture" title="Link to this definition"></a></dt>
+<dd><div class="line-block">
+<div class="line">Get aperture of an element using corresponding index</div>
+<div class="line">If none provided or is 0 : set to a default aperture of 0.1m</div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.getColumnsByKeys">
+<span class="sig-name descname"><span class="pre">getColumnsByKeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keylist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.getColumnsByKeys" title="Link to this definition"></a></dt>
+<dd><p>Return Columns that ar in keylist</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.getElementByIndex">
+<span class="sig-name descname"><span class="pre">getElementByIndex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indexlist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keylist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.getElementByIndex" title="Link to this definition"></a></dt>
+<dd><p>Return value of elements given their indices and for chosen columns</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.getElementByNames">
+<span class="sig-name descname"><span class="pre">getElementByNames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">namelist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keylist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.getElementByNames" title="Link to this definition"></a></dt>
+<dd><p>Return value of elements given their names and for chosen columns</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.getElementByNearestS">
+<span class="sig-name descname"><span class="pre">getElementByNearestS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keylist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.getElementByNearestS" title="Link to this definition"></a></dt>
+<dd><p>Return value of elements at a given s position and for chosen columns</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.getIndexByNames">
+<span class="sig-name descname"><span class="pre">getIndexByNames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">namelist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.getIndexByNames" title="Link to this definition"></a></dt>
+<dd><p>Return Index or Index list of elements that are in namelist</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.getIndexByNearestS">
+<span class="sig-name descname"><span class="pre">getIndexByNearestS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.getIndexByNearestS" title="Link to this definition"></a></dt>
+<dd><p>Return Index of the closest element in the beamline</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.getIndexByTypes">
+<span class="sig-name descname"><span class="pre">getIndexByTypes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typelist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.getIndexByTypes" title="Link to this definition"></a></dt>
+<dd><p>Return Index or Index list of elements that are in typelist</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.getIndexByValues">
+<span class="sig-name descname"><span class="pre">getIndexByValues</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.getIndexByValues" title="Link to this definition"></a></dt>
+<dd><div class="line-block">
+<div class="line">Return Index or Index list of elements that have certain values for a chosen column</div>
+<div class="line"><em>Same arguments as getRowsByValues</em></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.getNameByNearestS">
+<span class="sig-name descname"><span class="pre">getNameByNearestS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.getNameByNearestS" title="Link to this definition"></a></dt>
+<dd><p>Return Name of the closest element in the beamline</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.getNamesByIndex">
+<span class="sig-name descname"><span class="pre">getNamesByIndex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indexlist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.getNamesByIndex" title="Link to this definition"></a></dt>
+<dd><p>Return Name or Name list of elements that are in indexlist</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.getNamesByTypes">
+<span class="sig-name descname"><span class="pre">getNamesByTypes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typelist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.getNamesByTypes" title="Link to this definition"></a></dt>
+<dd><p>Return Name or Name list of elements that are in typelist</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.getNamesByValues">
+<span class="sig-name descname"><span class="pre">getNamesByValues</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.getNamesByValues" title="Link to this definition"></a></dt>
+<dd><div class="line-block">
+<div class="line">Return Name or Name list of elements that have certain values for a chosen column</div>
+<div class="line"><em>Same arguments as getRowsByValues</em></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.getRowByNearestS">
+<span class="sig-name descname"><span class="pre">getRowByNearestS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.getRowByNearestS" title="Link to this definition"></a></dt>
+<dd><p>Return Rows of the closest element in the beamline</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.getRowsByFunction">
+<span class="sig-name descname"><span class="pre">getRowsByFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.getRowsByFunction" title="Link to this definition"></a></dt>
+<dd><p>Return a sub-datafarme using a boolean function</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.getRowsByIndex">
+<span class="sig-name descname"><span class="pre">getRowsByIndex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indexlist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.getRowsByIndex" title="Link to this definition"></a></dt>
+<dd><p>Return Rows of elements that are in indexlist</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.getRowsByNames">
+<span class="sig-name descname"><span class="pre">getRowsByNames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">namelist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.getRowsByNames" title="Link to this definition"></a></dt>
+<dd><p>Return Rows of elements that are in namelist</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.getRowsByTypes">
+<span class="sig-name descname"><span class="pre">getRowsByTypes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typelist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.getRowsByTypes" title="Link to this definition"></a></dt>
+<dd><p>Return Rows of elements that are in typelist</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.getRowsByValues">
+<span class="sig-name descname"><span class="pre">getRowsByValues</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minValue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxValue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equalValues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.getRowsByValues" title="Link to this definition"></a></dt>
+<dd><p>Return Rows of elements that have certain values for a chosen column</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.getTypeByNearestS">
+<span class="sig-name descname"><span class="pre">getTypeByNearestS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.getTypeByNearestS" title="Link to this definition"></a></dt>
+<dd><p>Return Type of the closest element in the beamline</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.getTypesByIndex">
+<span class="sig-name descname"><span class="pre">getTypesByIndex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indexlist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.getTypesByIndex" title="Link to this definition"></a></dt>
+<dd><p>Return Type or Type list of elements that are in indexlist</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.getTypesByNames">
+<span class="sig-name descname"><span class="pre">getTypesByNames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">namelist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.getTypesByNames" title="Link to this definition"></a></dt>
+<dd><p>Return Type or Type list of elements that are in namelist</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.getTypesByValues">
+<span class="sig-name descname"><span class="pre">getTypesByValues</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.getTypesByValues" title="Link to this definition"></a></dt>
+<dd><div class="line-block">
+<div class="line">Return Type or Type list of elements that have certain values for a chosen column</div>
+<div class="line"><em>Same arguments as getRowsByValues</em></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.plotXY">
+<span class="sig-name descname"><span class="pre">plotXY</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xkey</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ykey</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.plotXY" title="Link to this definition"></a></dt>
+<dd><p>Quick plot of one colums of our dataframe w.r.t. another</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.sMax">
+<span class="sig-name descname"><span class="pre">sMax</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.sMax" title="Link to this definition"></a></dt>
+<dd><p>Return maximal S value</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.sMin">
+<span class="sig-name descname"><span class="pre">sMin</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.sMin" title="Link to this definition"></a></dt>
+<dd><p>Return minimal S value</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Output.Output.subline">
+<span class="sig-name descname"><span class="pre">subline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Output.Output.subline" title="Link to this definition"></a></dt>
+<dd><p>Select only a portion of the inital lattice</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pymad8.Plot">
+<span id="pymad8-plot-module"></span><h2>pymad8.Plot module<a class="headerlink" href="#module-pymad8.Plot" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pymad8.Plot.AddMachineLatticeToFigure">
+<span class="sig-prename descclassname"><span class="pre">pymad8.Plot.</span></span><span class="sig-name descname"><span class="pre">AddMachineLatticeToFigure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">figure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mad8opt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tightLayout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Plot.AddMachineLatticeToFigure" title="Link to this definition"></a></dt>
+<dd><div class="line-block">
+<div class="line">Add a diagram above the current graph in the figure that represents the accelerator based on a mad8 twiss file.</div>
+<div class="line"><br /></div>
+<div class="line">Note you can use matplotlib’s gcf() ‘get current figure’ as an argument.</div>
+<div class="line"><br /></div>
+<div class="line">&gt;&gt;&gt; pymad8.Plot.AddMachineLatticeToFigure(gcf(), ‘/mad8_twiss_tape’)</div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pymad8.Plot.Optics">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymad8.Plot.</span></span><span class="sig-name descname"><span class="pre">Optics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mad8file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beamParams</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Plot.Optics" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<div class="line-block">
+<div class="line">Class to load pymad8 DataFrames and make optics plots</div>
+<div class="line">&gt;&gt;&gt; plot_data = pymad8.Plot.Optics(‘/mad8_twiss_tape’)</div>
+<div class="line">&gt;&gt;&gt; plot_data.Betas()</div>
+<div class="line"><br /></div>
+<div class="line">Plot avaliable are plotBetas, plotAlphas, plotMus, plotDisp and plotSigmas</div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Plot.Optics.Alpha">
+<span class="sig-name descname"><span class="pre">Alpha</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Plot.Optics.Alpha" title="Link to this definition"></a></dt>
+<dd><p>Plot the Alpha functions for both planes and both Mad</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Plot.Optics.Beta">
+<span class="sig-name descname"><span class="pre">Beta</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Plot.Optics.Beta" title="Link to this definition"></a></dt>
+<dd><p>Plot the Beta functions for both planes and both Mad</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Plot.Optics.Disp">
+<span class="sig-name descname"><span class="pre">Disp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Plot.Optics.Disp" title="Link to this definition"></a></dt>
+<dd><p>Plot the Dispertion functions for both planes and both Mad</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Plot.Optics.Mu">
+<span class="sig-name descname"><span class="pre">Mu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Plot.Optics.Mu" title="Link to this definition"></a></dt>
+<dd><p>Plot the Mu functions for both planes and both Mad</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymad8.Plot.Optics.Sigma">
+<span class="sig-name descname"><span class="pre">Sigma</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymad8.Plot.Optics.Sigma" title="Link to this definition"></a></dt>
+<dd><p>Plot the beam size and beam divergence functions for both planes and both Mad</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="pymad8-sim-module">
+<h2>pymad8.Sim module<a class="headerlink" href="#pymad8-sim-module" title="Link to this heading"></a></h2>
+</section>
+<section id="pymad8-track-module">
+<h2>pymad8.Track module<a class="headerlink" href="#pymad8-track-module" title="Link to this heading"></a></h2>
+</section>
+<section id="pymad8-visualisation-module">
+<h2>pymad8.Visualisation module<a class="headerlink" href="#pymad8-visualisation-module" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="support.html" class="btn btn-neutral float-left" title="Support" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="version_history.html" class="btn btn-neutral float-right" title="Version History" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Royal Holloway, University of London 2024.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
