@@ -1,9 +1,6 @@
 import pylab as _pl
 import numpy as _np
 import matplotlib.pyplot as _plt
-from scipy.interpolate import interp1d
-from scipy.optimize import curve_fit
-from scipy.optimize import fsolve
 import pandas as _pd
 import glob as _gl
 import pybdsim as _bd
@@ -331,6 +328,7 @@ class Tracking_data:
         def linear(x, a, b):
             return a * x + b
 
+        from scipy.optimize import curve_fit  # Lazy import as scipy.optimize is slow to load.
         popt, pcov = curve_fit(linear, V, ref_V)
         slope, cst = popt
         err = sum((ref_V - slope * V - cst) ** 2)
@@ -346,6 +344,7 @@ class Tracking_data:
         for s in S:
             Vect_Chi2 = _np.append(Vect_Chi2, self.CalcCorrelChi2(s, coord, ref_S, ref_coord)[0])
 
+        from scipy.interpolate import interp1d
         Curve_Chi2 = interp1d(S, Vect_Chi2, fill_value="extrapolate")
         return Curve_Chi2
 
@@ -611,8 +610,10 @@ class Tracking:
 
         S = self.twiss.getColumnsByKeys('S').to_numpy()
         Vect_Theory = calcTheory(mu_vect)
+        from scipy.interpolate import interp1d
         Curve_Theory = interp1d(S, Vect_Theory, fill_value="extrapolate")
 
+        from scipy.optimize import fsolve
         S_Fit_list = fsolve(Curve_Theory, initial_fit)
 
         return Curve_Theory, S_Fit_list
@@ -748,6 +749,7 @@ class Tracking:
 
         S_pymad8 = self.pymad8.getVectsByParticle('S', particle)
         V_pymad8 = self.pymad8.getVectsByParticle(coord, particle)
+        from scipy.interpolate import interp1d  # Lazy import as scipy.interpolate is slow to load.
         f_pymad8 = interp1d(S_pymad8, V_pymad8, fill_value="extrapolate")
 
         S_bdsim = self.bdsim.getVectsByParticle('S', particle)

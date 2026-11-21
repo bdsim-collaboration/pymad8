@@ -1,5 +1,4 @@
 import numpy as _np
-import matplotlib.pyplot as _plt
 import pandas as _pd
 import fortranformat as _ff
 
@@ -619,6 +618,7 @@ class Output:
 		Y = self.getColumnsByKeys(Ykey)
 		if label is None:
 			label = Ykey
+		import matplotlib.pyplot as _plt
 		_plt.plot(X, Y, color=color, label=label)
 
 	def calcBeamSize(self, EmitX, EmitY, Esprd, BunchLen=0):
