@@ -3,7 +3,6 @@ import numpy as _np
 import matplotlib.pyplot as _plt
 import pandas as _pd
 import glob as _gl
-import pybdsim as _bd
 import pymad8 as _m8
 
 
@@ -556,6 +555,7 @@ class Tracking:
         | Load Bdsim root file and generate orbit files for each particle in the track collection
         | Then store the data in a structure similar to the pymad8 generated one
         """
+        import pybdsim as _bd
         data = _bd.Data.Load(inputfilename)
         e = data.GetEvent()
         et = data.GetEventTree()
