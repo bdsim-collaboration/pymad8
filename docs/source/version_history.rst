@@ -2,6 +2,11 @@
 Version History
 ===============
 
+v2.0.3 - 2026 / 11 / 21
+=======================
+
+* Update package deployment.
+* Manual has full version history.
 
 v2.0.2 - 2024 / 01 / 12
 =======================
