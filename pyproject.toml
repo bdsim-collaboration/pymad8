@@ -20,7 +20,7 @@ classifiers = [
     "Topic :: Software Development"
     ]
 authors = [
-  {name = "JAI@RHUL", email = "stewart.boogert@rhul.ac.uk"}
+  {name = "BDSIM Collaboration", email = "stewart.boogert@rhul.ac.uk"}
 ]
 maintainers = [
   {name = "Stewart Boogert", email = "stewart.boogert@rhul.ac.uk"}
@@ -30,16 +30,18 @@ dependencies = [
   "matplotlib>=3.0",
   "numpy>=1.14",
   "fortranformat",
-  "importlib-metadata"
+  "importlib-resources",
+  "importlib-metadata",
+  "scipy",
 ]
 
 [project.optional-dependencies]
 dev = ["pytest", "sphinx", "sphinx-rtd-theme"]
 
 [project.urls]
-homepage = "http://www.pp.rhul.ac.uk/bdsim/pymad8"
-documentation = "http://www.pp.rhul.ac.uk/bdsim/pymad8"
-repository = "https://bitbucket.org/jairhul/pymad8"
+homepage = "https://bdsim-collaboration.github.io/web/"
+documentation = "https://bdsim-collaboration.github.io/pymad8/"
+repository = "https://github.com/bdsim-collaboration/pymad8"
 
 [build-system]
 requires = ["setuptools>=45", "setuptools_scm[toml]>=6.2"]
@@ -47,3 +49,11 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
 write_to = "src/pymad8/_version.py"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "--strict-markers"
+markers = ["sanity", "regression"]
+testpaths = [
+    "tests",
+]

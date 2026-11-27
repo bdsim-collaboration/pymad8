@@ -2,19 +2,25 @@ name: Test pymad8
 
 on:
   push:
-    branches: [master github-tests]
+    branches:
+      - develop
+      - master
+      - github-tests
   pull_request:
-    branches: [master]
+    branches:
+      - develop
+      - master
   workflow_dispatch:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    # Python 3.9 is not available on the latest Ubuntu runner image.
+    runs-on: ${{ matrix.python-version == '3.9' && 'ubuntu-22.04' || 'ubuntu-latest' }}
 
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
 
     steps:
     - name: Checkout repository
